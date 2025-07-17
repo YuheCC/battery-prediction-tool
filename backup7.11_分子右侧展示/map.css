@@ -1,0 +1,33 @@
+/* map页面专属样式 */
+.page-content {
+  display: flex;
+  height: calc(100vh - 64px);
+  box-sizing: border-box;
+}
+.column-left {
+  flex: 0 0 55%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 12px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.column-right {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  max-height: calc(100vh - 64px);
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  padding: 12px;
+  /* 保证右侧内容区始终可滚动，且不会裁剪图片和内容 */
+}
+.scrollable-module {
+  flex: 1 1 auto;
+  overflow: visible;
+} 

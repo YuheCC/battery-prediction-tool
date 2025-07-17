@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Molecular Universe - 注册</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/register.css">
+    <style>
+        /* 注册页面特定样式优化 */
+        .login-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            animation: fadeInUp 0.6s ease-out;
+            max-width: 480px;
+            width: 100%;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .login-container h2 {
+            text-align: center;
+            color: #1e293b;
+            margin-bottom: 24px;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #374151;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #3B82F6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            background: #ffffff;
+        }
+        
+        .form-group input:valid {
+            border-color: #10b981;
+        }
+        
+        .form-group input:invalid:not(:placeholder-shown) {
+            border-color: #ef4444;
+        }
+        
+        .password-strength {
+            margin-top: 8px;
+            font-size: 0.8rem;
+            color: #6b7280;
+        }
+        
+        .password-strength.weak {
+            color: #ef4444;
+        }
+        
+        .password-strength.medium {
+            color: #f59e0b;
+        }
+        
+        .password-strength.strong {
+            color: #10b981;
+        }
+        
+        button[type="submit"] {
+            width: 100%;
+            padding: 14px 24px;
+            background: linear-gradient(135deg, #3B82F6, #1D4ED8);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        button[type="submit"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+        }
+        
+        button[type="submit"]:active {
+            transform: translateY(0);
+        }
+        
+        button[type="submit"]:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .links {
+            text-align: center;
+            margin-top: 24px;
+        }
+        
+        .links a {
+            color: #3B82F6;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+        
+        .links a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #3B82F6;
+            transition: width 0.3s ease;
+        }
+        
+        .links a:hover::after {
+            width: 100%;
+        }
+        
+        .message {
+            margin-top: 16px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            animation: slideIn 0.3s ease;
+        }
+        
+        .message.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+        
+        .message.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* 背景动画 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            z-index: -1;
+            animation: gradientShift 15s ease infinite;
+        }
+        
+        @keyframes gradientShift {
+            0%, 100% {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            }
+            50% {
+                background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            }
+        }
+        
+        /* 响应式优化 */
+        @media (max-width: 768px) {
+            .login-container {
+                margin: 20px;
+                padding: 30px 20px;
+            }
+            
+            .login-container h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body class="centered-body">
+    <div class="login-container">
+        <h2>创建您的账户</h2>
+        <form id="registerForm">
+            <div class="form-group">
+                <label for="lastName">姓氏</label>
+                <input type="text" id="lastName" name="lastName" required placeholder="请输入您的姓氏">
+            </div>
+            <div class="form-group">
+                <label for="firstName">名字</label>
+                <input type="text" id="firstName" name="firstName" required placeholder="请输入您的名字">
+            </div>
+            <div class="form-group">
+                <label for="email">邮箱地址</label>
+                <input type="email" id="email" name="email" required placeholder="请输入您的邮箱地址">
+            </div>
+            <div class="form-group">
+                <label for="password">密码</label>
+                <input type="password" id="password" name="password" required placeholder="8-30位，必须包含字母和数字" minlength="8" maxlength="30">
+                <div class="password-strength" id="passwordStrength"></div>
+            </div>
+            <div class="form-group">
+                <label for="confirmPassword">确认密码</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required placeholder="请再次输入密码">
+            </div>
+            <button type="submit" id="submitBtn">
+                <span>创建账户</span>
+            </button>
+        </form>
+        <div class="links">
+            <a href="index.html">已有账户？立即登录</a>
+        </div>
+        <div id="registerMessage" class="message"></div>
+    </div>
+    <script src="register.js"></script>
+    <script>
+        // 密码强度检测
+        const passwordInput = document.getElementById('password');
+        const passwordStrength = document.getElementById('passwordStrength');
+        const confirmPasswordInput = document.getElementById('confirmPassword');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        function checkPasswordStrength(password) {
+            let strength = 0;
+            let feedback = [];
+            
+            if (password.length >= 8) strength++;
+            else feedback.push('至少8个字符');
+            
+            if (/[a-z]/.test(password)) strength++;
+            else feedback.push('包含小写字母');
+            
+            if (/[A-Z]/.test(password)) strength++;
+            else feedback.push('包含大写字母');
+            
+            if (/[0-9]/.test(password)) strength++;
+            else feedback.push('包含数字');
+            
+            if (/[^A-Za-z0-9]/.test(password)) strength++;
+            else feedback.push('包含特殊字符');
+            
+            return { strength, feedback };
+        }
+        
+        passwordInput.addEventListener('input', function() {
+            const result = checkPasswordStrength(this.value);
+            const strengthText = ['', '弱', '中等', '强', '很强', '非常强'];
+            const strengthClass = ['', 'weak', 'medium', 'strong', 'strong', 'strong'];
+            
+            if (this.value) {
+                passwordStrength.textContent = `密码强度: ${strengthText[result.strength]} ${result.feedback.length > 0 ? '(' + result.feedback.join(', ') + ')' : ''}`;
+                passwordStrength.className = `password-strength ${strengthClass[result.strength]}`;
+            } else {
+                passwordStrength.textContent = '';
+                passwordStrength.className = 'password-strength';
+            }
+            
+            validateForm();
+        });
+        
+        confirmPasswordInput.addEventListener('input', validateForm);
+        
+        function validateForm() {
+            const password = passwordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
+            const isValid = password && confirmPassword && password === confirmPassword && password.length >= 8;
+            
+            submitBtn.disabled = !isValid;
+            
+            if (confirmPassword && password !== confirmPassword) {
+                confirmPasswordInput.style.borderColor = '#ef4444';
+            } else if (confirmPassword) {
+                confirmPasswordInput.style.borderColor = '#10b981';
+            }
+        }
+    </script>
+</body>
+</html> 

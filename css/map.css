@@ -1,0 +1,253 @@
+/* map页面专属样式 */ 
+
+/* 右上角弹窗样式 */
+.column-right {
+  position: absolute;
+  top: 90px; /* header高度+间距 */
+  right: 40px;
+  width: 370px;
+  max-width: 90vw;
+  z-index: 10;
+}
+
+.scrollable-module {
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: 16px 18px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.10);
+}
+
+/* 页面内容区背景图填充 */
+.page-content {
+  position: relative;
+  min-height: calc(100vh - 70px); /* 70px为header高度，视实际可调整 */
+  background: url('../molecule-bg.jpg') center center no-repeat;
+  background-size: cover;
+  z-index: 1;
+}
+
+/* 保证内容区元素正常显示 */
+.page-content > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* 可选：让内容区背景微微变暗，突出内容 */
+.page-content::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.15);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* 右侧分子详情样式 */
+.scrollable-module .modal-title {
+  color: #222;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.scrollable-module .modal-divider {
+  border: none;
+  border-top: 1.5px solid #e5e7eb;
+  margin: 0 0 18px 0;
+}
+
+.scrollable-module .modal-body {
+  color: #222;
+}
+
+.scrollable-module .modal-label {
+  font-weight: 600;
+  color: #2563eb;
+  margin-bottom: 4px;
+  font-size: 1.08rem;
+  text-align: center;
+}
+
+.scrollable-module .modal-value-box {
+  background: #f4f7fa;
+  border-radius: 7px;
+  padding: 8px 12px;
+  font-family: 'Fira Mono', 'Menlo', 'Consolas', monospace;
+  font-size: 1rem;
+  color: #222;
+  word-break: break-all;
+  text-align: center;
+  font-weight: normal;
+}
+
+.scrollable-module .modal-prop-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 6px;
+  font-size: 1.01rem;
+}
+
+.scrollable-module .modal-prop-table td {
+  padding: 8px 8px;
+  border-bottom: 1px solid #e5e7eb;
+  color: #222;
+  text-align: left;
+}
+
+.scrollable-module .modal-prop-table tr:last-child td {
+  border-bottom: none;
+}
+
+.scrollable-module .modal-prop-table td:first-child {
+  font-weight: 600;
+  color: #555;
+  width: 54%;
+}
+
+.scrollable-module .modal-prop-table td:last-child {
+  text-align: right;
+  color: #2563eb;
+  font-family: 'Fira Mono', 'Menlo', 'Consolas', monospace;
+} 
+
+/* Molecule Modal Dark Style */
+.molecule-modal .modal-content {
+  background: #111;
+  border-radius: 10px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.45);
+  max-width: 600px;
+  width: 98vw;
+  padding: 24px 18px 18px 18px;
+  position: relative;
+  animation: fadeInUp 0.3s cubic-bezier(.4,1.6,.6,1);
+  color: #fff;
+}
+.modal-title {
+  text-align: center;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #fff;
+}
+.modal-divider {
+  border: none;
+  border-top: 1.5px solid #aaa;
+  margin: 0 0 18px 0;
+}
+.modal-close {
+  position: absolute;
+  right: 18px;
+  top: 18px;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: #fff;
+  cursor: pointer;
+  transition: color 0.2s;
+  z-index: 2;
+}
+.modal-close:hover {
+  color: #e53e3e;
+}
+.modal-img-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 18px;
+}
+.modal-section {
+  margin-bottom: 18px;
+}
+.modal-label {
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 4px;
+  font-size: 1.08rem;
+  text-align: center;
+}
+.modal-value-box {
+  background: #222;
+  border-radius: 7px;
+  padding: 8px 12px;
+  font-family: 'Fira Mono', 'Menlo', 'Consolas', monospace;
+  font-size: 1rem;
+  color: #fff;
+  word-break: break-all;
+  text-align: center;
+}
+.modal-prop-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 6px;
+  font-size: 1.01rem;
+}
+.modal-prop-table td {
+  padding: 8px 8px;
+  border-bottom: 1px solid #444;
+  color: #fff;
+  text-align: left;
+}
+.modal-prop-table tr:last-child td {
+  border-bottom: none;
+}
+.modal-prop-table td:first-child {
+  font-weight: 600;
+  color: #fff;
+  width: 54%;
+}
+.modal-prop-table td:last-child {
+  text-align: right;
+  color: #fff;
+  font-family: 'Fira Mono', 'Menlo', 'Consolas', monospace;
+}
+@media (max-width: 900px) {
+  .molecule-modal .modal-content {
+    max-width: 99vw;
+    padding: 8px 2vw 8px 2vw;
+  }
+} 
+
+@media (max-width: 600px) {
+  .column-right {
+    right: 4vw;
+    width: 98vw;
+    top: 70px;
+  }
+  .scrollable-module {
+    padding: 8px 2vw;
+  }
+} 
+
+/* map-info-modal弹窗右上角定位 */
+.map-info-modal {
+  position: absolute;
+  top: 30px;
+  right: 40px;
+  z-index: 9999;
+  width: 370px;
+  max-width: 90vw;
+  background: transparent !important;
+}
+
+.scrollable-module {
+  background: #fff !important;
+  border-radius: 14px;
+  box-shadow: 0 8px 40px 0 rgba(0,0,0,0.22), 0 1.5px 8px 0 rgba(0,0,0,0.10);
+  padding: 22px 24px;
+  max-height: 80vh;
+  overflow-y: auto;
+  z-index: 10001;
+  opacity: 1 !important;
+  color: #222;
+}
+
+@media (max-width: 600px) {
+  .map-info-modal {
+    right: 2vw;
+    top: 10px;
+    width: 98vw;
+  }
+} 

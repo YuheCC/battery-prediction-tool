@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Mini Sidebar Test</title>
+    <style>
+        .sidebar {
+            width: 244px;
+            background: #fafafa;
+            border-right: 1px solid #e2e8f0;
+            padding: 16px;
+            transition: width 0.3s ease;
+        }
+        
+        .sidebar.mini-sidebar {
+            width: 40px !important;
+            padding: 0 !important;
+            display: flex !important;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .sidebar.mini-sidebar .content {
+            display: none !important;
+        }
+        
+        .mini-toggle-btn {
+            display: none;
+            margin: 16px auto;
+            width: 20px;
+            height: 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            color: #6b7280;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .sidebar.mini-sidebar .mini-toggle-btn {
+            display: flex !important;
+        }
+        
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+        
+        .main {
+            flex: 1;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar" id="sidebar">
+            <button class="mini-toggle-btn" id="miniToggleBtn">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="3" y="5" width="14" height="2" rx="1" fill="currentColor"/>
+                    <rect x="3" y="9" width="14" height="2" rx="1" fill="currentColor"/>
+                    <rect x="3" y="13" width="14" height="2" rx="1" fill="currentColor"/>
+                </svg>
+            </button>
+            
+            <div class="content">
+                <h3>Sidebar Content</h3>
+                <p>This is expanded content</p>
+                <button onclick="alert('Toggle clicked')">Toggle Mini</button>
+            </div>
+        </aside>
+        
+        <main class="main">
+            <h1>Simple Test</h1>
+            <p>Click the toggle button in the sidebar to test mini mode.</p>
+            <p>Current state: <span id="state">Expanded</span></p>
+        </main>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.getElementById('sidebar');
+            const miniToggleBtn = document.getElementById('miniToggleBtn');
+            const stateSpan = document.getElementById('state');
+            
+            function updateState() {
+                const isMini = sidebar.classList.contains('mini-sidebar');
+                stateSpan.textContent = isMini ? 'Mini' : 'Expanded';
+            }
+            
+            function toggleSidebar() {
+                sidebar.classList.toggle('mini-sidebar');
+                updateState();
+            }
+            
+            miniToggleBtn.addEventListener('click', toggleSidebar);
+            updateState();
+        });
+    </script>
+</body>
+</html> 

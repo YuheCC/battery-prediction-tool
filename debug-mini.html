@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Mini Sidebar</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .debug-info {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body class="chat-page-body">
+    <header class="main-header">
+        <div class="logo-container">
+            <img src="logo.png" alt="SES Logo" class="logo-img">
+        </div>
+        <nav class="main-nav">
+            <a href="map.html" class="nav-item">Map</a>
+            <a href="chat.html" class="nav-item active">Ask</a>
+            <a href="#" class="nav-item">Search</a>
+            <a href="#" class="nav-item">Filter</a>
+            <a href="#" class="nav-item">Favourites</a>
+        </nav>
+        <div class="user-actions">
+            <a href="about.html" class="nav-item" target="_blank" rel="noopener noreferrer">About ↗</a>
+        </div>
+    </header>
+    
+    <div class="chat-container">
+        <aside class="chat-sidebar" id="chatSidebar">
+            <div class="sidebar-top-row" style="flex-direction:column;align-items:flex-start;gap:0;padding:0 0 12px 0;">
+                <div style="width:100%;display:flex;align-items:center;gap:12px;padding:0 2px 16px 2px;">
+                  <div style="margin-left:5px;">ASK</div>
+                  <button id="toggleSidebarBtn" class="toggle-sidebar-btn" title="Toggle sidebar" style="margin-left:auto;background:none;border:none;cursor:pointer;padding:4px;">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <rect x="3" y="5" width="14" height="2" rx="1" fill="#222"/>
+                      <rect x="3" y="9" width="14" height="2" rx="1" fill="#222"/>
+                      <rect x="3" y="13" width="14" height="2" rx="1" fill="#222"/>
+                    </svg>
+                  </button>
+                </div>
+                
+                <!-- Mini模式下的切换按钮 -->
+                <button id="miniToggleSidebarBtn" class="mini-toggle-btn" title="Toggle sidebar">
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="3" y="5" width="14" height="2" rx="1" fill="currentColor"/>
+                    <rect x="3" y="9" width="14" height="2" rx="1" fill="currentColor"/>
+                    <rect x="3" y="13" width="14" height="2" rx="1" fill="currentColor"/>
+                  </svg>
+                </button>
+                
+                <!-- Mini模式下的新聊天按钮 -->
+                <a href="#" class="mini-new-chat-btn" id="miniNewChatBtn" title="新聊天">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="7" y="3" width="2" height="12" rx="1" fill="currentColor"/>
+                    <rect x="2" y="9" width="12" height="2" rx="1" fill="currentColor"/>
+                  </svg>
+                </a>
+                
+                <!-- Mini模式下的搜索按钮 -->
+                <a href="#" class="mini-search-btn" id="miniSearchBtn" title="搜索聊天">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.5"/>
+                    <path d="M12.5 12.5L15 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                  </svg>
+                </a>
+                
+                <a href="#" class="new-chat-btn" id="mainNewChatBtn" style="width:calc(100% - 4px);margin:0 -18px 0 2px;display:flex;align-items:center;gap:8px;padding:10px 6px;font-size:14px;border:none;box-shadow:none;outline:none;background:transparent;">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="7" y="3" width="2" height="12" rx="1" fill="#222"/><rect x="2" y="9" width="12" height="2" rx="1" fill="#222"/></svg>
+                  <span>新聊天</span>
+                </a>
+                
+                <a href="#" class="new-chat-btn" id="searchChatBtn" style="width:calc(100% - 4px);margin:0 -18px 0 2px;display:flex;align-items:center;gap:8px;padding:10px 6px;font-size:14px;border:none;box-shadow:none;outline:none;background:transparent;">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="7" cy="7" r="5" stroke="#222" stroke-width="1.5"/><path d="M12.5 12.5L15 15" stroke="#222" stroke-width="1.5" stroke-linecap="round"/></svg>
+                  <span>搜索聊天</span>
+                </a>
+            </div>
+            
+            <nav class="history-nav">
+                <p class="history-title">Recent</p>
+                <ul>
+                    <li>
+                        <a href="#" class="recent-chat" data-chat-id="1">电解质溶剂稳定性预测分析</a>
+                        <button class="chat-menu-btn" data-chat-id="1">⋯</button>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+        
+        <main class="chat-main" id="chatMain">
+            <div class="chat-messages" id="chat-messages">
+                <div class="message-wrapper bot">
+                    <div class="message">Debug: Click the toggle button to test mini sidebar</div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <div class="debug-info" id="debugInfo">
+        <div>Sidebar State: <span id="sidebarState">Expanded</span></div>
+        <div>Mini Toggle Visible: <span id="miniToggleVisible">No</span></div>
+        <div>Mini New Chat Visible: <span id="miniNewChatVisible">No</span></div>
+        <div>Mini Search Visible: <span id="miniSearchVisible">No</span></div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.getElementById('chatSidebar');
+            const toggleSidebarBtn = document.getElementById('toggleSidebarBtn');
+            const miniToggleSidebarBtn = document.getElementById('miniToggleSidebarBtn');
+            const miniNewChatBtn = document.getElementById('miniNewChatBtn');
+            const miniSearchBtn = document.getElementById('miniSearchBtn');
+            
+            const sidebarState = document.getElementById('sidebarState');
+            const miniToggleVisible = document.getElementById('miniToggleVisible');
+            const miniNewChatVisible = document.getElementById('miniNewChatVisible');
+            const miniSearchVisible = document.getElementById('miniSearchVisible');
+            
+            function updateDebugInfo() {
+                const isMini = sidebar.classList.contains('mini-sidebar');
+                sidebarState.textContent = isMini ? 'Mini' : 'Expanded';
+                
+                const miniToggleStyle = window.getComputedStyle(miniToggleSidebarBtn);
+                const miniNewChatStyle = window.getComputedStyle(miniNewChatBtn);
+                const miniSearchStyle = window.getComputedStyle(miniSearchBtn);
+                
+                miniToggleVisible.textContent = miniToggleStyle.display !== 'none' ? 'Yes' : 'No';
+                miniNewChatVisible.textContent = miniNewChatStyle.display !== 'none' ? 'Yes' : 'No';
+                miniSearchVisible.textContent = miniSearchStyle.display !== 'none' ? 'Yes' : 'No';
+            }
+            
+            function toggleSidebar() {
+                sidebar.classList.toggle('mini-sidebar');
+                updateDebugInfo();
+            }
+            
+            if (toggleSidebarBtn) {
+                toggleSidebarBtn.addEventListener('click', toggleSidebar);
+            }
+            
+            if (miniToggleSidebarBtn) {
+                miniToggleSidebarBtn.addEventListener('click', toggleSidebar);
+            }
+            
+            if (miniNewChatBtn) {
+                miniNewChatBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    alert('Mini New Chat clicked!');
+                });
+            }
+            
+            if (miniSearchBtn) {
+                miniSearchBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    alert('Mini Search clicked!');
+                });
+            }
+            
+            updateDebugInfo();
+            
+            // 每秒更新一次调试信息
+            setInterval(updateDebugInfo, 1000);
+        });
+    </script>
+</body>
+</html> 

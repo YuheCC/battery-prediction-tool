@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "lastName": "张",
+    "firstName": "三",
+    "email": "zhangsan@example.com",
+    "password": "Test1234",
+    "email_verified": true
+  },
+  {
+    "id": 2,
+    "lastName": "李",
+    "firstName": "四",
+    "email": "lisi@example.com",
+    "password": "Test1234",
+    "email_verified": false
+  },
+  {
+    "id": 3,
+    "lastName": "王",
+    "firstName": "五",
+    "email": "wangwu@example.com",
+    "password": "WrongPass1",
+    "email_verified": true
+  },
+  {
+    "id": 4,
+    "lastName": "chen",
+    "firstName": "yuhe",
+    "email": "yuhe.chen@ses.ai",
+    "password": "12345678a",
+    "email_verified": false
+  },
+  {
+    "id": 5,
+    "lastName": "测试",
+    "firstName": "用户",
+    "email": "test@example.com",
+    "password": "Test1234",
+    "email_verified": false
+  }
+]
