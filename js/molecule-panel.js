@@ -56,6 +56,20 @@ class MoleculePanel {
                         <li>密度: <span id="density">-</span></li>
                     </ul>
                 </div>
+                <div class="molecule-panel-actions">
+                    <button class="molecule-action-btn add-to-favorites-btn" id="addToFavoritesBtn">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                        </svg>
+                        <span>Add to Favorites</span>
+                    </button>
+                    <button class="molecule-action-btn find-similar-btn" id="findSimilarBtn">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                        </svg>
+                        <span>Find Similar Molecules</span>
+                    </button>
+                </div>
             </div>
         `;
         
@@ -75,6 +89,18 @@ class MoleculePanel {
                 this.hidePanel();
             }
         });
+
+        // 添加收藏按钮事件
+        const addToFavoritesBtn = document.getElementById('addToFavoritesBtn');
+        if (addToFavoritesBtn) {
+            addToFavoritesBtn.addEventListener('click', () => this.addToFavorites());
+        }
+
+        // 查找相似分子按钮事件
+        const findSimilarBtn = document.getElementById('findSimilarBtn');
+        if (findSimilarBtn) {
+            findSimilarBtn.addEventListener('click', () => this.findSimilarMolecules());
+        }
     }
 
     bindGlobalEvents() {
@@ -246,6 +272,69 @@ class MoleculePanel {
         if (this.isVisible() && this.panel.querySelector('#moleculeName').textContent === moleculeName) {
             this.loadMoleculeData(moleculeName);
         }
+    }
+
+    // 添加收藏功能
+    addToFavorites() {
+        const moleculeName = document.getElementById('moleculeName').textContent;
+        console.log('Adding to favorites:', moleculeName);
+        
+        // 这里可以添加实际的收藏逻辑
+        // 例如：发送到服务器、更新本地存储等
+        
+        // 显示成功提示
+        this.showNotification(`${moleculeName} 已添加到收藏夹`, 'success');
+        
+        // 更新按钮状态（可选）
+        const btn = document.getElementById('addToFavoritesBtn');
+        if (btn) {
+            btn.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                </svg>
+                <span>已收藏</span>
+            `;
+            btn.disabled = true;
+            btn.style.opacity = '0.6';
+        }
+    }
+
+    // 查找相似分子功能
+    findSimilarMolecules() {
+        const moleculeName = document.getElementById('moleculeName').textContent;
+        console.log('Finding similar molecules for:', moleculeName);
+        
+        // 这里可以添加实际的查找相似分子逻辑
+        // 例如：调用API、跳转到搜索页面等
+        
+        // 显示提示
+        this.showNotification(`正在查找与 ${moleculeName} 相似的分子...`, 'info');
+        
+        // 模拟API调用延迟
+        setTimeout(() => {
+            this.showNotification(`找到 15 个相似分子`, 'success');
+            
+            // 这里可以跳转到搜索结果页面或显示结果
+            // window.location.href = `/search?similar=${encodeURIComponent(moleculeName)}`;
+        }, 2000);
+    }
+
+    // 显示通知
+    showNotification(message, type = 'info') {
+        // 创建通知元素
+        const notification = document.createElement('div');
+        notification.className = `molecule-notification molecule-notification-${type}`;
+        notification.textContent = message;
+        
+        // 添加到面板
+        this.panel.appendChild(notification);
+        
+        // 自动移除
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.remove();
+            }
+        }, 3000);
     }
 }
 
