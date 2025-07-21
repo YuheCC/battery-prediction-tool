@@ -174,6 +174,7 @@ body.chat-page-body {
 .chat-container {
     display: flex;
     height: calc(100vh - 64px); /* Full height minus header */
+    position: relative;
 }
 
 .chat-container.sidebar-collapsed .chat-main {
@@ -393,6 +394,9 @@ body.chat-page-body {
     padding: 12px 18px;
     border-radius: 18px;
     line-height: 1.6;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
 }
 
 .message-wrapper.user .message {
@@ -406,7 +410,9 @@ body.chat-page-body {
     color: #1e293b;
     border-bottom-left-radius: 4px;
     text-align: left;
-    white-space: pre-line;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .chemical-molecule {
@@ -478,7 +484,7 @@ body.chat-page-body {
     position: fixed;
     top: 64px; /* 顶部导航栏高度 */
     right: 0;
-    width: calc(50% + 40px);
+    width: 400px; /* 固定宽度，确保内容完整显示 */
     height: calc(100vh - 64px);
     background: white;
     border-left: 1px solid #e2e8f0;
@@ -486,6 +492,7 @@ body.chat-page-body {
     z-index: 1000;
     display: none;
     overflow-y: auto;
+    overflow-x: hidden;
     transition: all 0.3s ease;
 }
 
@@ -496,6 +503,9 @@ body.chat-page-body {
     padding: 20px 24px;
     border-bottom: 1px solid #e2e8f0;
     background: #f8fafc;
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
 .molecule-panel-header h2 {
@@ -522,12 +532,16 @@ body.chat-page-body {
 
 .molecule-panel-content {
     padding: 24px;
+    max-width: 100%;
+    overflow-x: hidden;
 }
 
 .molecule-info,
 .molecule-structure,
 .molecule-properties {
     margin-bottom: 32px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .molecule-info h3,
@@ -543,6 +557,8 @@ body.chat-page-body {
     margin: 8px 0;
     color: #4a5568;
     line-height: 1.6;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .structure-placeholder {
@@ -551,6 +567,15 @@ body.chat-page-body {
     border-radius: 8px;
     padding: 40px 20px;
     text-align: center;
+    color: #64748b;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.placeholder-text {
+    font-size: 14px;
     color: #64748b;
 }
 
@@ -563,6 +588,12 @@ body.chat-page-body {
     margin: 8px 0;
     color: #4a5568;
     line-height: 1.6;
+    padding: 4px 0;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.molecule-properties li:last-child {
+    border-bottom: none;
 }
 
 /* 浮层激活时的布局调整 */
@@ -684,12 +715,41 @@ body.chat-page-body {
     width: 100%;
 }
 
+/* 响应式设计 - 小屏幕适配 */
+@media (max-width: 1200px) {
+    .molecule-panel {
+        width: 350px;
+    }
+    
+    .chat-container.molecule-panel-active .chat-main {
+        width: calc(100% - 400px);
+        max-width: calc(100% - 400px);
+        flex: 0 0 calc(100% - 400px);
+    }
+}
+
+@media (max-width: 768px) {
+    .molecule-panel {
+        width: 100%;
+        right: 0;
+    }
+    
+    .chat-container.molecule-panel-active .chat-main {
+        display: none;
+    }
+    
+    .chat-container.molecule-panel-active .chat-sidebar {
+        display: none;
+    }
+}
+
 .chat-container.molecule-panel-active .chat-main {
-    width: calc(50% - 50px);
-    max-width: calc(50% - 50px);
-    flex: 0 0 calc(50% - 50px);
+    width: calc(100% - 450px); /* 减去分子面板宽度和边距 */
+    max-width: calc(100% - 450px);
+    flex: 0 0 calc(100% - 450px);
     transition: all 0.3s ease;
     margin-left: 50px;
+    min-width: 400px; /* 确保聊天区域有最小宽度 */
 }
 
 .chat-container.molecule-panel-active .chat-sidebar {

@@ -40,11 +40,14 @@ class MoleculePanel {
                     <h3 id="moleculeName">分子名称</h3>
                     <p id="moleculeDescription">分子描述信息将在这里显示...</p>
                 </div>
-                <div class="structure-placeholder">
-                    <div class="placeholder-text">分子结构图</div>
+                <div class="molecule-structure">
+                    <h3>分子结构图</h3>
+                    <div class="structure-placeholder">
+                        <div class="placeholder-text">分子结构图</div>
+                    </div>
                 </div>
                 <div class="molecule-properties">
-                    <h4>分子属性</h4>
+                    <h3>分子属性</h3>
                     <ul id="moleculeProperties">
                         <li>分子量: <span id="molecularWeight">-</span></li>
                         <li>化学式: <span id="chemicalFormula">-</span></li>
