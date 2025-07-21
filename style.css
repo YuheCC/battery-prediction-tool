@@ -555,21 +555,20 @@ body.chat-page-body {
     overflow-wrap: break-word;
 }
 
-.molecule-info h3,
+.molecule-info h1 {
+    margin: 0 0 24px 0;
+    font-size: 28px;
+    font-weight: 700;
+    color: #1e293b;
+    text-align: center;
+}
+
 .molecule-structure h3,
 .molecule-properties h3 {
     margin: 0 0 16px 0;
     font-size: 16px;
     font-weight: 600;
     color: #1e293b;
-}
-
-.molecule-info p {
-    margin: 8px 0;
-    color: #4a5568;
-    line-height: 1.6;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
 }
 
 .structure-placeholder {

@@ -37,8 +37,7 @@ class MoleculePanel {
             </div>
             <div class="molecule-panel-content">
                 <div class="molecule-info">
-                    <h3 id="moleculeName">分子名称</h3>
-                    <p id="moleculeDescription">分子描述信息将在这里显示...</p>
+                    <h1 id="moleculeName">分子名称</h1>
                 </div>
                 <div class="molecule-structure">
                     <h3>分子结构图</h3>
@@ -208,12 +207,6 @@ class MoleculePanel {
         // 模拟分子数据
         const moleculeData = this.getMoleculeData(moleculeName);
         
-        // 更新描述
-        const descElement = document.getElementById('moleculeDescription');
-        if (descElement) {
-            descElement.textContent = moleculeData.description;
-        }
-
         // 更新属性
         const properties = moleculeData.properties;
         Object.keys(properties).forEach(key => {
@@ -238,7 +231,6 @@ class MoleculePanel {
         // 模拟数据 - 实际应用中可以从API获取
         const data = {
             'TMSPi': {
-                description: 'TMSPi是一种重要的有机硅化合物，在电池电解质中用作添加剂，具有优异的电化学性能。',
                 properties: {
                     smiles: 'C[Si](C)(C)OP(=O)(C[Si](C)(C)O)C[Si](C)(C)O',
                     molecularWeight: '314.54 g/mol',
@@ -254,7 +246,6 @@ class MoleculePanel {
                 }
             },
             'LiPF6': {
-                description: '六氟磷酸锂是一种重要的锂离子电池电解质盐，具有高离子电导率和良好的电化学稳定性。',
                 properties: {
                     smiles: 'F[P-](F)(F)(F)(F)F.[Li+]',
                     molecularWeight: '151.91 g/mol',
@@ -270,7 +261,6 @@ class MoleculePanel {
                 }
             },
             'LiFSI': {
-                description: '双(氟磺酰)亚胺锂是一种新型电解质盐，具有优异的热稳定性和电化学性能。',
                 properties: {
                     smiles: 'FS(=O)(=O)N=S(=O)(=O)F.[Li+]',
                     molecularWeight: '187.07 g/mol',
@@ -286,7 +276,6 @@ class MoleculePanel {
                 }
             },
             'EC': {
-                description: '碳酸乙烯酯是锂离子电池中最常用的溶剂之一，具有高介电常数和良好的溶解性。',
                 properties: {
                     smiles: 'C1COC(=O)O1',
                     molecularWeight: '88.06 g/mol',
@@ -302,7 +291,6 @@ class MoleculePanel {
                 }
             },
             'DEC': {
-                description: '碳酸二乙酯是一种重要的有机溶剂，在锂离子电池中用作共溶剂。',
                 properties: {
                     smiles: 'CCOC(=O)OCC',
                     molecularWeight: '118.13 g/mol',
@@ -318,7 +306,6 @@ class MoleculePanel {
                 }
             },
             'DMC': {
-                description: '碳酸二甲酯是一种低粘度溶剂，在锂离子电池中用作共溶剂。',
                 properties: {
                     smiles: 'COC(=O)OC',
                     molecularWeight: '90.08 g/mol',
@@ -336,7 +323,6 @@ class MoleculePanel {
         };
 
         return data[moleculeName] || {
-            description: `${moleculeName} 的详细信息正在加载中...`,
             properties: {
                 smiles: '-',
                 molecularWeight: '-',
