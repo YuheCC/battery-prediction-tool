@@ -216,14 +216,12 @@ class MoleculePanel {
             }
         });
 
-        // 更新分子结构图（如果有的话）
+        // 更新分子结构图
         const structureImg = document.getElementById('moleculeStructureImg');
-        if (structureImg && moleculeName === 'TMSPi') {
-            // 设置TMSPi的分子结构图
-            structureImg.src = 'tmspi-structure.svg';
+        if (structureImg) {
+            // 为所有分子显示虚拟分子结构图
+            structureImg.src = 'molecule-structure.svg';
             structureImg.style.display = 'block';
-        } else if (structureImg) {
-            structureImg.style.display = 'none';
         }
     }
 
