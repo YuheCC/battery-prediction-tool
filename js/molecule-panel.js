@@ -36,77 +36,93 @@ class MoleculePanel {
                 </button>
             </div>
             <div class="molecule-panel-content">
-                <div class="molecule-info">
-                    <h1 id="moleculeName">分子名称</h1>
-                </div>
-                <div class="molecule-structure">
-                    <h3>分子结构图</h3>
-                    <div class="structure-image">
-                        <img id="moleculeStructureImg" src="molecule-structure.png" alt="分子结构图" />
+                <div class="molecule-panel-main">
+                    <div class="molecule-info">
+                        <h1 id="moleculeName">分子名称</h1>
                     </div>
-                </div>
-                <div class="molecule-properties">
-                    <h3>分子属性</h3>
-                    <div class="properties-grid">
-                        <div class="property-item">
-                            <span class="property-label">SMILES:</span>
-                            <span class="property-value" id="smiles">-</span>
-                        </div>
-                        <div class="property-item">
-                            <span class="property-label">分子量:</span>
-                            <span class="property-value" id="molecularWeight">-</span>
-                        </div>
-                        <div class="property-item">
-                            <span class="property-label">预测熔点:</span>
-                            <span class="property-value" id="meltingPoint">-</span>
-                        </div>
-                        <div class="property-item">
-                            <span class="property-label">预测沸点:</span>
-                            <span class="property-value" id="boilingPoint">-</span>
-                        </div>
-                        <div class="property-item">
-                            <span class="property-label">预测闪点:</span>
-                            <span class="property-value" id="flashPoint">-</span>
-                        </div>
-                        <div class="property-item">
-                            <span class="property-label">燃烧焓:</span>
-                            <span class="property-value" id="combustionEnthalpy">-</span>
-                        </div>
-                        <div class="property-item">
-                            <span class="property-label">HOMO:</span>
-                            <span class="property-value" id="homo">-</span>
-                        </div>
-                        <div class="property-item">
-                            <span class="property-label">LUMO:</span>
-                            <span class="property-value" id="lumo">-</span>
-                        </div>
-                        <div class="property-item">
-                            <span class="property-label">ESP Max:</span>
-                            <span class="property-value" id="espMax">-</span>
-                        </div>
-                        <div class="property-item">
-                            <span class="property-label">ESP Min:</span>
-                            <span class="property-value" id="espMin">-</span>
-                        </div>
-                        <div class="property-item full-width">
-                            <span class="property-label">商业可行性:</span>
-                            <span class="property-value" id="commercialViability">-</span>
+                    <div class="molecule-structure">
+                        <h3>分子结构图</h3>
+                        <div class="structure-image">
+                            <img id="moleculeStructureImg" src="molecule-structure.png" alt="分子结构图" />
                         </div>
                     </div>
+                    <div class="molecule-properties">
+                        <h3>分子属性</h3>
+                        <div class="properties-grid">
+                            <div class="property-item">
+                                <span class="property-label">SMILES:</span>
+                                <span class="property-value" id="smiles">-</span>
+                            </div>
+                            <div class="property-item">
+                                <span class="property-label">分子量:</span>
+                                <span class="property-value" id="molecularWeight">-</span>
+                            </div>
+                            <div class="property-item">
+                                <span class="property-label">预测熔点:</span>
+                                <span class="property-value" id="meltingPoint">-</span>
+                            </div>
+                            <div class="property-item">
+                                <span class="property-label">预测沸点:</span>
+                                <span class="property-value" id="boilingPoint">-</span>
+                            </div>
+                            <div class="property-item">
+                                <span class="property-label">预测闪点:</span>
+                                <span class="property-value" id="flashPoint">-</span>
+                            </div>
+                            <div class="property-item">
+                                <span class="property-label">燃烧焓:</span>
+                                <span class="property-value" id="combustionEnthalpy">-</span>
+                            </div>
+                            <div class="property-item">
+                                <span class="property-label">HOMO:</span>
+                                <span class="property-value" id="homo">-</span>
+                            </div>
+                            <div class="property-item">
+                                <span class="property-label">LUMO:</span>
+                                <span class="property-value" id="lumo">-</span>
+                            </div>
+                            <div class="property-item">
+                                <span class="property-label">ESP Max:</span>
+                                <span class="property-value" id="espMax">-</span>
+                            </div>
+                            <div class="property-item">
+                                <span class="property-label">ESP Min:</span>
+                                <span class="property-value" id="espMin">-</span>
+                            </div>
+                            <div class="property-item full-width">
+                                <span class="property-label">商业可行性:</span>
+                                <span class="property-value" id="commercialViability">-</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="molecule-panel-actions">
+                        <button class="molecule-action-btn add-to-favorites-btn" id="addToFavoritesBtn">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                            </svg>
+                            <span>Add to Favorites</span>
+                        </button>
+                        <button class="molecule-action-btn find-similar-btn" id="findSimilarBtn">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                            </svg>
+                            <span>Find Similar Molecules</span>
+                        </button>
+                    </div>
                 </div>
-                <div class="molecule-panel-actions">
-                    <button class="molecule-action-btn add-to-favorites-btn" id="addToFavoritesBtn">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-                        </svg>
-                        <span>Add to Favorites</span>
-                    </button>
-                    <button class="molecule-action-btn find-similar-btn" id="findSimilarBtn">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-                        </svg>
-                        <span>Find Similar Molecules</span>
-                    </button>
+                <div class="similar-molecules-panel" id="similarMoleculesPanel" style="display: none;">
+                    <div class="similar-molecules-header">
+                        <h3>相似分子推荐</h3>
+                        <button class="back-to-molecule-btn" id="backToMoleculeBtn">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                            </svg>
+                            <span>返回原分子</span>
+                        </button>
+                    </div>
+                    <div class="similar-molecules-grid" id="similarMoleculesGrid">
+                        <!-- 相似分子卡片将在这里动态生成 -->
+                    </div>
                 </div>
             </div>
         `;
@@ -138,6 +154,12 @@ class MoleculePanel {
         const findSimilarBtn = document.getElementById('findSimilarBtn');
         if (findSimilarBtn) {
             findSimilarBtn.addEventListener('click', () => this.findSimilarMolecules());
+        }
+
+        // 返回原分子按钮事件
+        const backToMoleculeBtn = document.getElementById('backToMoleculeBtn');
+        if (backToMoleculeBtn) {
+            backToMoleculeBtn.addEventListener('click', () => this.backToOriginalMolecule());
         }
     }
 
@@ -389,19 +411,145 @@ class MoleculePanel {
         const moleculeName = document.getElementById('moleculeName').textContent;
         console.log('Finding similar molecules for:', moleculeName);
         
-        // 这里可以添加实际的查找相似分子逻辑
-        // 例如：调用API、跳转到搜索页面等
-        
         // 显示提示
         this.showNotification(`正在查找与 ${moleculeName} 相似的分子...`, 'info');
         
         // 模拟API调用延迟
         setTimeout(() => {
-            this.showNotification(`找到 15 个相似分子`, 'success');
+            this.expandPanel();
+            this.loadSimilarMolecules(moleculeName);
+            this.showNotification(`找到 5 个相似分子`, 'success');
+        }, 1500);
+    }
+
+    // 扩展面板
+    expandPanel() {
+        this.panel.classList.add('expanded');
+        this.chatContainer.classList.add('expanded');
+    }
+
+    // 收缩面板
+    collapsePanel() {
+        this.panel.classList.remove('expanded');
+        this.chatContainer.classList.remove('expanded');
+    }
+
+    // 返回原分子
+    backToOriginalMolecule() {
+        const mainPanel = document.querySelector('.molecule-panel-main');
+        const similarPanel = document.getElementById('similarMoleculesPanel');
+        
+        if (mainPanel && similarPanel) {
+            mainPanel.style.display = 'block';
+            similarPanel.style.display = 'none';
+            this.collapsePanel();
+        }
+    }
+
+    // 加载相似分子
+    loadSimilarMolecules(originalMoleculeName) {
+        const similarMolecules = this.getSimilarMolecules(originalMoleculeName);
+        const grid = document.getElementById('similarMoleculesGrid');
+        
+        if (grid) {
+            grid.innerHTML = '';
             
-            // 这里可以跳转到搜索结果页面或显示结果
-            // window.location.href = `/search?similar=${encodeURIComponent(moleculeName)}`;
-        }, 2000);
+            similarMolecules.forEach(molecule => {
+                const card = this.createSimilarMoleculeCard(molecule);
+                grid.appendChild(card);
+            });
+        }
+
+        // 显示相似分子面板
+        const mainPanel = document.querySelector('.molecule-panel-main');
+        const similarPanel = document.getElementById('similarMoleculesPanel');
+        
+        if (mainPanel && similarPanel) {
+            mainPanel.style.display = 'none';
+            similarPanel.style.display = 'block';
+        }
+    }
+
+    // 创建相似分子卡片
+    createSimilarMoleculeCard(molecule) {
+        const card = document.createElement('div');
+        card.className = 'similar-molecule-card';
+        card.addEventListener('click', () => this.selectSimilarMolecule(molecule));
+        
+        card.innerHTML = `
+            <div class="similar-molecule-header">
+                <div class="similar-molecule-name">${molecule.name}</div>
+                <div class="similarity-score">${molecule.similarity}%</div>
+            </div>
+            <div class="similar-molecule-structure">
+                <img src="molecule-structure.svg" alt="${molecule.name} structure" />
+            </div>
+            <div class="similar-molecule-properties">
+                <div class="similar-property-item">
+                    <span class="similar-property-label">分子量:</span>
+                    <span class="similar-property-value">${molecule.molecularWeight}</span>
+                </div>
+                <div class="similar-property-item">
+                    <span class="similar-property-label">熔点:</span>
+                    <span class="similar-property-value">${molecule.meltingPoint}</span>
+                </div>
+                <div class="similar-property-item">
+                    <span class="similar-property-label">沸点:</span>
+                    <span class="similar-property-value">${molecule.boilingPoint}</span>
+                </div>
+                <div class="similar-property-item">
+                    <span class="similar-property-label">HOMO:</span>
+                    <span class="similar-property-value">${molecule.homo}</span>
+                </div>
+            </div>
+        `;
+        
+        return card;
+    }
+
+    // 选择相似分子
+    selectSimilarMolecule(molecule) {
+        console.log('Selected similar molecule:', molecule.name);
+        this.showNotification(`已选择 ${molecule.name}`, 'success');
+        
+        // 这里可以加载选中分子的详细信息
+        // this.showPanel(molecule.name);
+    }
+
+    // 获取相似分子数据
+    getSimilarMolecules(originalMoleculeName) {
+        // 模拟相似分子数据
+        const similarMolecules = {
+            'TMSPi': [
+                { name: 'TMSi', similarity: 95, molecularWeight: '298.32 g/mol', meltingPoint: '-12.5 °C', boilingPoint: '228.5 °C', homo: '-7.42 eV' },
+                { name: 'TMSCl', similarity: 88, molecularWeight: '310.45 g/mol', meltingPoint: '-8.2 °C', boilingPoint: '235.1 °C', homo: '-7.38 eV' },
+                { name: 'TMSP', similarity: 82, molecularWeight: '322.18 g/mol', meltingPoint: '-5.8 °C', boilingPoint: '242.3 °C', homo: '-7.51 eV' },
+                { name: 'TMSO', similarity: 78, molecularWeight: '306.29 g/mol', meltingPoint: '-15.2 °C', boilingPoint: '219.7 °C', homo: '-7.29 eV' },
+                { name: 'TMSN', similarity: 75, molecularWeight: '297.34 g/mol', meltingPoint: '-3.4 °C', boilingPoint: '248.9 °C', homo: '-7.63 eV' }
+            ],
+            'LiPF6': [
+                { name: 'LiBF4', similarity: 92, molecularWeight: '93.75 g/mol', meltingPoint: '293°C', boilingPoint: '分解', homo: '-7.12 eV' },
+                { name: 'LiClO4', similarity: 85, molecularWeight: '106.39 g/mol', meltingPoint: '236°C', boilingPoint: '分解', homo: '-7.08 eV' },
+                { name: 'LiAsF6', similarity: 78, molecularWeight: '195.86 g/mol', meltingPoint: '348°C', boilingPoint: '分解', homo: '-7.25 eV' },
+                { name: 'LiCF3SO3', similarity: 72, molecularWeight: '156.01 g/mol', meltingPoint: '500°C', boilingPoint: '分解', homo: '-7.31 eV' },
+                { name: 'LiN(SO2CF3)2', similarity: 68, molecularWeight: '287.09 g/mol', meltingPoint: '234°C', boilingPoint: '分解', homo: '-7.19 eV' }
+            ],
+            'LiFSI': [
+                { name: 'LiTFSI', similarity: 94, molecularWeight: '287.09 g/mol', meltingPoint: '234°C', boilingPoint: '分解', homo: '-7.19 eV' },
+                { name: 'LiBETI', similarity: 87, molecularWeight: '301.12 g/mol', meltingPoint: '245°C', boilingPoint: '分解', homo: '-7.22 eV' },
+                { name: 'LiTDI', similarity: 81, molecularWeight: '295.08 g/mol', meltingPoint: '238°C', boilingPoint: '分解', homo: '-7.15 eV' },
+                { name: 'LiPDI', similarity: 76, molecularWeight: '289.05 g/mol', meltingPoint: '241°C', boilingPoint: '分解', homo: '-7.28 eV' },
+                { name: 'LiTDI', similarity: 73, molecularWeight: '293.11 g/mol', meltingPoint: '236°C', boilingPoint: '分解', homo: '-7.21 eV' }
+            ]
+        };
+
+        return similarMolecules[originalMoleculeName] || [
+            { name: 'Similar 1', similarity: 85, molecularWeight: '150.0 g/mol', meltingPoint: '25°C', boilingPoint: '150°C', homo: '-7.0 eV' },
+            { name: 'Similar 2', similarity: 78, molecularWeight: '160.0 g/mol', meltingPoint: '30°C', boilingPoint: '160°C', homo: '-7.2 eV' },
+            { name: 'Similar 3', similarity: 72, molecularWeight: '170.0 g/mol', meltingPoint: '35°C', boilingPoint: '170°C', homo: '-7.4 eV' },
+            { name: 'Similar 4', similarity: 68, molecularWeight: '180.0 g/mol', meltingPoint: '40°C', boilingPoint: '180°C', homo: '-7.6 eV' },
+            { name: 'Similar 5', similarity: 65, molecularWeight: '190.0 g/mol', meltingPoint: '45°C', boilingPoint: '190°C', homo: '-7.8 eV' }
+        ];
     }
 
     // 显示通知
