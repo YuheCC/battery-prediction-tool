@@ -518,16 +518,27 @@ body.chat-page-body {
 .molecule-panel-close {
     background: none;
     border: none;
-    font-size: 24px;
+    font-size: 20px;
     color: #6b7280;
     cursor: pointer;
-    padding: 4px;
-    border-radius: 4px;
-    transition: color 0.2s;
+    padding: 8px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
 }
 
 .molecule-panel-close:hover {
     color: #374151;
+    background-color: #f3f4f6;
+}
+
+.molecule-panel-close svg {
+    width: 20px;
+    height: 20px;
 }
 
 .molecule-panel-content {
