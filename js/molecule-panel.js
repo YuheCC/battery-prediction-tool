@@ -42,19 +42,58 @@ class MoleculePanel {
                 </div>
                 <div class="molecule-structure">
                     <h3>分子结构图</h3>
-                    <div class="structure-placeholder">
-                        <div class="placeholder-text">分子结构图</div>
+                    <div class="structure-image">
+                        <img id="moleculeStructureImg" src="molecule-structure.png" alt="分子结构图" />
                     </div>
                 </div>
                 <div class="molecule-properties">
                     <h3>分子属性</h3>
-                    <ul id="moleculeProperties">
-                        <li>分子量: <span id="molecularWeight">-</span></li>
-                        <li>化学式: <span id="chemicalFormula">-</span></li>
-                        <li>熔点: <span id="meltingPoint">-</span></li>
-                        <li>沸点: <span id="boilingPoint">-</span></li>
-                        <li>密度: <span id="density">-</span></li>
-                    </ul>
+                    <div class="properties-grid">
+                        <div class="property-item">
+                            <span class="property-label">SMILES:</span>
+                            <span class="property-value" id="smiles">-</span>
+                        </div>
+                        <div class="property-item">
+                            <span class="property-label">分子量:</span>
+                            <span class="property-value" id="molecularWeight">-</span>
+                        </div>
+                        <div class="property-item">
+                            <span class="property-label">预测熔点:</span>
+                            <span class="property-value" id="meltingPoint">-</span>
+                        </div>
+                        <div class="property-item">
+                            <span class="property-label">预测沸点:</span>
+                            <span class="property-value" id="boilingPoint">-</span>
+                        </div>
+                        <div class="property-item">
+                            <span class="property-label">预测闪点:</span>
+                            <span class="property-value" id="flashPoint">-</span>
+                        </div>
+                        <div class="property-item">
+                            <span class="property-label">燃烧焓:</span>
+                            <span class="property-value" id="combustionEnthalpy">-</span>
+                        </div>
+                        <div class="property-item">
+                            <span class="property-label">HOMO:</span>
+                            <span class="property-value" id="homo">-</span>
+                        </div>
+                        <div class="property-item">
+                            <span class="property-label">LUMO:</span>
+                            <span class="property-value" id="lumo">-</span>
+                        </div>
+                        <div class="property-item">
+                            <span class="property-label">ESP Max:</span>
+                            <span class="property-value" id="espMax">-</span>
+                        </div>
+                        <div class="property-item">
+                            <span class="property-label">ESP Min:</span>
+                            <span class="property-value" id="espMin">-</span>
+                        </div>
+                        <div class="property-item full-width">
+                            <span class="property-label">商业可行性:</span>
+                            <span class="property-value" id="commercialViability">-</span>
+                        </div>
+                    </div>
                 </div>
                 <div class="molecule-panel-actions">
                     <button class="molecule-action-btn add-to-favorites-btn" id="addToFavoritesBtn">
@@ -183,59 +222,115 @@ class MoleculePanel {
                 element.textContent = properties[key];
             }
         });
+
+        // 更新分子结构图（如果有的话）
+        const structureImg = document.getElementById('moleculeStructureImg');
+        if (structureImg && moleculeName === 'TMSPi') {
+            // 设置TMSPi的分子结构图
+            structureImg.src = 'tmspi-structure.svg';
+            structureImg.style.display = 'block';
+        } else if (structureImg) {
+            structureImg.style.display = 'none';
+        }
     }
 
     getMoleculeData(moleculeName) {
         // 模拟数据 - 实际应用中可以从API获取
         const data = {
+            'TMSPi': {
+                description: 'TMSPi是一种重要的有机硅化合物，在电池电解质中用作添加剂，具有优异的电化学性能。',
+                properties: {
+                    smiles: 'C[Si](C)(C)OP(=O)(C[Si](C)(C)O)C[Si](C)(C)O',
+                    molecularWeight: '314.54 g/mol',
+                    meltingPoint: '-9.46 °C',
+                    boilingPoint: '231.99 °C',
+                    flashPoint: '110.04 °C',
+                    combustionEnthalpy: '-86.48 eV',
+                    homo: '-7.55 eV',
+                    lumo: '0.46 eV',
+                    espMax: '0.71 eV',
+                    espMin: '-1.83 eV',
+                    commercialViability: 'Likely commercially available'
+                }
+            },
             'LiPF6': {
                 description: '六氟磷酸锂是一种重要的锂离子电池电解质盐，具有高离子电导率和良好的电化学稳定性。',
                 properties: {
+                    smiles: 'F[P-](F)(F)(F)(F)F.[Li+]',
                     molecularWeight: '151.91 g/mol',
-                    chemicalFormula: 'LiPF6',
                     meltingPoint: '200°C',
                     boilingPoint: '分解',
-                    density: '2.84 g/cm³'
+                    flashPoint: '-',
+                    combustionEnthalpy: '-',
+                    homo: '-',
+                    lumo: '-',
+                    espMax: '-',
+                    espMin: '-',
+                    commercialViability: 'Commercially available'
                 }
             },
             'LiFSI': {
                 description: '双(氟磺酰)亚胺锂是一种新型电解质盐，具有优异的热稳定性和电化学性能。',
                 properties: {
+                    smiles: 'FS(=O)(=O)N=S(=O)(=O)F.[Li+]',
                     molecularWeight: '187.07 g/mol',
-                    chemicalFormula: 'LiN(SO2F)2',
                     meltingPoint: '145°C',
                     boilingPoint: '分解',
-                    density: '2.15 g/cm³'
+                    flashPoint: '-',
+                    combustionEnthalpy: '-',
+                    homo: '-',
+                    lumo: '-',
+                    espMax: '-',
+                    espMin: '-',
+                    commercialViability: 'Commercially available'
                 }
             },
             'EC': {
                 description: '碳酸乙烯酯是锂离子电池中最常用的溶剂之一，具有高介电常数和良好的溶解性。',
                 properties: {
+                    smiles: 'C1COC(=O)O1',
                     molecularWeight: '88.06 g/mol',
-                    chemicalFormula: 'C3H4O3',
                     meltingPoint: '36.4°C',
                     boilingPoint: '248°C',
-                    density: '1.32 g/cm³'
+                    flashPoint: '-',
+                    combustionEnthalpy: '-',
+                    homo: '-',
+                    lumo: '-',
+                    espMax: '-',
+                    espMin: '-',
+                    commercialViability: 'Commercially available'
                 }
             },
             'DEC': {
                 description: '碳酸二乙酯是一种重要的有机溶剂，在锂离子电池中用作共溶剂。',
                 properties: {
+                    smiles: 'CCOC(=O)OCC',
                     molecularWeight: '118.13 g/mol',
-                    chemicalFormula: 'C5H10O3',
                     meltingPoint: '-43°C',
                     boilingPoint: '126°C',
-                    density: '0.97 g/cm³'
+                    flashPoint: '-',
+                    combustionEnthalpy: '-',
+                    homo: '-',
+                    lumo: '-',
+                    espMax: '-',
+                    espMin: '-',
+                    commercialViability: 'Commercially available'
                 }
             },
             'DMC': {
                 description: '碳酸二甲酯是一种低粘度溶剂，在锂离子电池中用作共溶剂。',
                 properties: {
+                    smiles: 'COC(=O)OC',
                     molecularWeight: '90.08 g/mol',
-                    chemicalFormula: 'C3H6O3',
                     meltingPoint: '4.6°C',
                     boilingPoint: '90°C',
-                    density: '1.07 g/cm³'
+                    flashPoint: '-',
+                    combustionEnthalpy: '-',
+                    homo: '-',
+                    lumo: '-',
+                    espMax: '-',
+                    espMin: '-',
+                    commercialViability: 'Commercially available'
                 }
             }
         };
@@ -243,11 +338,17 @@ class MoleculePanel {
         return data[moleculeName] || {
             description: `${moleculeName} 的详细信息正在加载中...`,
             properties: {
+                smiles: '-',
                 molecularWeight: '-',
-                chemicalFormula: moleculeName,
                 meltingPoint: '-',
                 boilingPoint: '-',
-                density: '-'
+                flashPoint: '-',
+                combustionEnthalpy: '-',
+                homo: '-',
+                lumo: '-',
+                espMax: '-',
+                espMin: '-',
+                commercialViability: '-'
             }
         };
     }

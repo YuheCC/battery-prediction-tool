@@ -590,21 +590,56 @@ body.chat-page-body {
     color: #64748b;
 }
 
-.molecule-properties ul {
-    margin: 0;
-    padding-left: 20px;
+.structure-image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background: #f8fafc;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
 }
 
-.molecule-properties li {
-    margin: 8px 0;
-    color: #4a5568;
-    line-height: 1.6;
-    padding: 4px 0;
-    border-bottom: 1px solid #f1f5f9;
+.structure-image img {
+    max-width: 100%;
+    max-height: 200px;
+    object-fit: contain;
+    border-radius: 4px;
 }
 
-.molecule-properties li:last-child {
-    border-bottom: none;
+.properties-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.property-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 8px 0;
+}
+
+.property-item.full-width {
+    grid-column: 1 / -1;
+}
+
+.property-label {
+    font-size: 12px;
+    color: #6b7280;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.property-value {
+    font-size: 14px;
+    color: #1f2937;
+    font-weight: 600;
+    font-family: 'Fira Mono', 'Menlo', 'Consolas', monospace;
+    word-break: break-all;
+    line-height: 1.4;
 }
 
 /* 分子面板操作按钮样式 */
