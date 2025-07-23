@@ -309,77 +309,18 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  // 显示分子详情浮层
+  // 显示分子详情浮层 - 使用模块化版本
   function showMoleculePanel(moleculeName) {
-    // 收起侧边栏为mini样式
-    const sidebar = document.getElementById('chatSidebar');
-    const chatMain = document.getElementById('chatMain');
-    const chatContainer = document.querySelector('.chat-container');
-    
-    // 添加浮层显示状态
-    chatContainer.classList.add('molecule-panel-active');
-    
-    // 收起侧边栏
-    sidebar.classList.add('mini-sidebar');
-    
-    // 创建或显示分子浮层
-    let moleculePanel = document.getElementById('moleculePanel');
-    if (!moleculePanel) {
-      moleculePanel = document.createElement('div');
-      moleculePanel.id = 'moleculePanel';
-      moleculePanel.className = 'molecule-panel';
-      document.body.appendChild(moleculePanel);
-    }
-    
-    // 更新浮层内容
-    moleculePanel.innerHTML = `
-      <div class="molecule-panel-header">
-        <h2>${moleculeName}</h2>
-        <button class="molecule-panel-close" onclick="closeMoleculePanel()">×</button>
-      </div>
-      <div class="molecule-panel-content">
-        <div class="molecule-info">
-          <h3>分子信息</h3>
-          <p><strong>化学式：</strong>${moleculeName}</p>
-          <p><strong>分子量：</strong>根据具体分子计算</p>
-          <p><strong>应用：</strong>电池电解质中的重要组分</p>
-        </div>
-        <div class="molecule-structure">
-          <h3>分子结构</h3>
-          <div class="structure-placeholder">
-            <p>分子结构图将在这里显示</p>
-          </div>
-        </div>
-        <div class="molecule-properties">
-          <h3>物理化学性质</h3>
-          <ul>
-            <li><strong>熔点：</strong>根据具体分子</li>
-            <li><strong>沸点：</strong>根据具体分子</li>
-            <li><strong>溶解度：</strong>在有机溶剂中良好溶解</li>
-            <li><strong>稳定性：</strong>在电池环境中相对稳定</li>
-          </ul>
-        </div>
-      </div>
-    `;
-    
-    moleculePanel.style.display = 'block';
+    // 触发分子点击事件，让模块化的分子面板处理
+    window.dispatchEvent(new CustomEvent('moleculeClicked', { 
+      detail: { moleculeName } 
+    }));
   }
 
-  // 关闭分子详情浮层
+  // 关闭分子详情浮层 - 使用模块化版本
   window.closeMoleculePanel = function() {
-    const sidebar = document.getElementById('chatSidebar');
-    const chatContainer = document.querySelector('.chat-container');
-    const moleculePanel = document.getElementById('moleculePanel');
-    
-    // 移除浮层显示状态
-    chatContainer.classList.remove('molecule-panel-active');
-    
-    // 恢复侧边栏为正常状态
-    sidebar.classList.remove('mini-sidebar');
-    
-    // 隐藏浮层
-    if (moleculePanel) {
-      moleculePanel.style.display = 'none';
+    if (window.moleculePanel) {
+      window.moleculePanel.hide();
     }
   };
 
@@ -490,6 +431,7 @@ document.addEventListener('DOMContentLoaded', function() {
       menu.className = 'chat-delete-menu';
       menu.innerHTML = `
         <div class="delete-menu-content">
+          <button class="rename-chat-btn" data-chat-id="${chatId}">修改名称</button>
           <button class="pin-chat-btn" data-chat-id="${chatId}">${isPinned ? '取消置顶' : '置顶对话'}</button>
           <button class="delete-chat-btn" data-chat-id="${chatId}">删除对话</button>
         </div>
@@ -517,6 +459,15 @@ document.addEventListener('DOMContentLoaded', function() {
         document.addEventListener('click', closeMenu);
       }, 0);
       
+      // 修改名称按钮点击事件
+      const renameBtn = menu.querySelector('.rename-chat-btn');
+      renameBtn.addEventListener('click', function() {
+        const chatIdToRename = this.getAttribute('data-chat-id');
+        renameChat(chatIdToRename);
+        menu.remove();
+        document.removeEventListener('click', closeMenu);
+      });
+
       // 置顶/取消置顶按钮点击事件
       const pinBtn = menu.querySelector('.pin-chat-btn');
       pinBtn.addEventListener('click', function() {
@@ -593,6 +544,61 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     console.log('Deleted chat:', chatId);
+  }
+
+  // 修改对话名称函数
+  function renameChat(chatId) {
+    const chatElement = document.querySelector(`[data-chat-id="${chatId}"]`);
+    if (!chatElement) return;
+    
+    const currentName = chatElement.textContent;
+    
+    // 创建输入框
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.value = currentName;
+    input.className = 'chat-rename-input';
+    input.style.cssText = `
+      width: 100%;
+      padding: 4px 8px;
+      border: 1px solid #d1d5db;
+      border-radius: 4px;
+      font-size: 14px;
+      background: white;
+      color: #374151;
+    `;
+    
+    // 替换原来的文本
+    chatElement.textContent = '';
+    chatElement.appendChild(input);
+    input.focus();
+    input.select();
+    
+    // 处理回车键确认
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        const newName = input.value.trim();
+        if (newName) {
+          chatElement.textContent = newName;
+          console.log('Renamed chat:', chatId, 'to:', newName);
+        } else {
+          chatElement.textContent = currentName; // 如果输入为空，恢复原名
+        }
+      } else if (e.key === 'Escape') {
+        chatElement.textContent = currentName; // 取消修改，恢复原名
+      }
+    });
+    
+    // 处理失焦事件
+    input.addEventListener('blur', function() {
+      const newName = input.value.trim();
+      if (newName) {
+        chatElement.textContent = newName;
+        console.log('Renamed chat:', chatId, 'to:', newName);
+      } else {
+        chatElement.textContent = currentName; // 如果输入为空，恢复原名
+      }
+    });
   }
 
   // 页面加载时插入欢迎语

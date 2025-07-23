@@ -1,1 +1,66 @@
- 
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="300" height="200" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .atom { font-family: Arial, sans-serif; font-weight: bold; }
+      .bond { stroke: #000; stroke-width: 2; }
+      .double-bond { stroke: #000; stroke-width: 3; }
+      .silicon { fill: #ff8c00; }
+      .oxygen { fill: #ff0000; }
+      .phosphorus { fill: #ffa500; }
+      .carbon { fill: #000; }
+      .hydrogen { fill: #666; }
+    </style>
+  </defs>
+  
+  <!-- 中心磷原子 -->
+  <circle cx="150" cy="100" r="8" class="phosphorus"/>
+  <text x="150" y="105" text-anchor="middle" class="atom" style="fill: white; font-size: 10px;">P</text>
+  
+  <!-- 双键氧原子 -->
+  <circle cx="150" cy="80" r="6" class="oxygen"/>
+  <text x="150" y="84" text-anchor="middle" class="atom" style="fill: white; font-size: 8px;">O</text>
+  <line x1="150" y1="86" x2="150" y2="92" class="double-bond"/>
+  
+  <!-- 三个硅原子 -->
+  <circle cx="120" cy="100" r="6" class="silicon"/>
+  <text x="120" y="104" text-anchor="middle" class="atom" style="fill: white; font-size: 8px;">Si</text>
+  <line x1="126" y1="100" x2="142" y2="100" class="bond"/>
+  
+  <circle cx="180" cy="100" r="6" class="silicon"/>
+  <text x="180" y="104" text-anchor="middle" class="atom" style="fill: white; font-size: 8px;">Si</text>
+  <line x1="174" y1="100" x2="158" y2="100" class="bond"/>
+  
+  <circle cx="150" cy="120" r="6" class="silicon"/>
+  <text x="150" y="124" text-anchor="middle" class="atom" style="fill: white; font-size: 8px;">Si</text>
+  <line x1="150" y1="114" x2="150" y2="126" class="bond"/>
+  
+  <!-- 甲基基团 -->
+  <circle cx="100" cy="100" r="4" class="carbon"/>
+  <text x="100" y="103" text-anchor="middle" class="atom" style="fill: white; font-size: 6px;">C</text>
+  <line x1="104" y1="100" x2="114" y2="100" class="bond"/>
+  
+  <circle cx="200" cy="100" r="4" class="carbon"/>
+  <text x="200" y="103" text-anchor="middle" class="atom" style="fill: white; font-size: 6px;">C</text>
+  <line x1="196" y1="100" x2="186" y2="100" class="bond"/>
+  
+  <circle cx="150" cy="140" r="4" class="carbon"/>
+  <text x="150" y="143" text-anchor="middle" class="atom" style="fill: white; font-size: 6px;">C</text>
+  <line x1="150" y1="136" x2="150" y2="126" class="bond"/>
+  
+  <!-- 氢原子 -->
+  <circle cx="90" cy="100" r="3" class="hydrogen"/>
+  <text x="90" y="102" text-anchor="middle" class="atom" style="fill: white; font-size: 5px;">H</text>
+  <line x1="93" y1="100" x2="96" y2="100" class="bond"/>
+  
+  <circle cx="210" cy="100" r="3" class="hydrogen"/>
+  <text x="210" y="102" text-anchor="middle" class="atom" style="fill: white; font-size: 5px;">H</text>
+  <line x1="207" y1="100" x2="204" y2="100" class="bond"/>
+  
+  <circle cx="150" cy="150" r="3" class="hydrogen"/>
+  <text x="150" y="152" text-anchor="middle" class="atom" style="fill: white; font-size: 5px;">H</text>
+  <line x1="150" y1="147" x2="150" y2="144" class="bond"/>
+  
+  <!-- 标题 -->
+  <text x="150" y="20" text-anchor="middle" style="font-family: Arial, sans-serif; font-size: 14px; font-weight: bold;">TMSPi Structure</text>
+</svg> 

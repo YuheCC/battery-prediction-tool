@@ -32,8 +32,9 @@ body.chat-page-body {
     display: flex;
     align-items: center;
     height: 64px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Softer shadow */
-    border-bottom: 1px solid #e2e8f0; /* Subtle border */
+    border-bottom: 1px solid #d1d5db; /* Thinner border for cleaner look */
+    z-index: 10001; /* Ensure header is above all other elements */
+    position: relative;
 }
 .logo-container {
     display: flex;
@@ -173,8 +174,27 @@ body.chat-page-body {
 /* Chat Layout Styles */
 .chat-container {
     display: flex;
-    height: calc(100vh - 64px); /* Full height minus header */
+    height: calc(100vh - 64px);
+    background: #f8fafc;
     position: relative;
+    transition: all 0.3s ease;
+}
+
+.chat-container .chat-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.chat-container .chat-sidebar {
+    width: 220px;
+    background: white;
+    border-right: 1px solid #e2e8f0;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
 }
 
 .chat-container.sidebar-collapsed .chat-main {
@@ -187,44 +207,77 @@ body.chat-page-body {
 }
 
 .chat-sidebar {
-    width: 244px;
+    width: 200px;
     background-color: #fafafa; /* Very light grey background */
-    padding: 16px;
+    padding: 12px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 16px;
     border-right: 1px solid #e2e8f0;
 }
 
 .new-chat-btn {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 12px;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
+    gap: 10px;
+    padding: 8px 12px;
     text-decoration: none;
-    color: #374151;
-    font-weight: 500;
-    transition: background-color 0.2s;
+    color: #6b7280;
+    font-size: 13px;
+    font-weight: 400;
+    transition: all 0.2s ease;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
 }
 
 .new-chat-btn:hover {
-    background-color: #e5e7eb;
+    background-color: rgba(0, 0, 0, 0.03);
+    color: #374151;
 }
 
 .new-chat-btn svg {
-    width: 20px;
-    height: 20px;
-    color: #374151;
+    width: 16px;
+    height: 16px;
+    color: #9ca3af;
+    transition: color 0.2s ease;
+}
+
+.new-chat-btn:hover svg {
+    color: #6b7280;
 }
 
 .toggle-sidebar-btn svg {
-    color: #374151;
+    color: #6b7280;
+    transition: color 0.2s ease;
 }
 
 .toggle-sidebar-btn:hover svg {
     color: #56B26A;
+}
+
+/* ASK标题样式优化 */
+.ask-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1f2937;
+    letter-spacing: -0.025em;
+    margin: 0;
+    padding: 0;
+}
+
+/* 侧边栏顶部区域优化 */
+.sidebar-top-section {
+    padding: 4px 12px 12px 12px;
+    border-bottom: 1px solid #f1f5f9;
+    background: transparent;
+}
+
+.sidebar-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 12px;
 }
 
 .history-nav .history-title {
@@ -253,7 +306,7 @@ body.chat-page-body {
 }
 
 .history-nav li:hover {
-    background-color: #e5e7eb;
+    background-color: rgba(0, 0, 0, 0.03);
 }
 
 .history-nav li a {
@@ -289,55 +342,119 @@ body.chat-page-body {
 .chat-delete-menu {
     position: absolute;
     background: white;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05);
     z-index: 1000;
+    min-width: 140px;
+    backdrop-filter: blur(10px);
+    animation: menuSlideIn 0.2s ease-out;
+    transform-origin: top left;
+}
+
+@keyframes menuSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95) translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
 }
 
 .delete-menu-content {
-    padding: 8px 0;
+    padding: 6px 0;
+}
+
+.pin-chat-btn,
+.delete-chat-btn,
+.rename-chat-btn {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 10px 16px;
+    background: none;
+    border: none;
+    color: #374151;
+    font-size: 13px;
+    font-weight: 400;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s ease;
+    gap: 10px;
+}
+
+.pin-chat-btn:hover,
+.delete-chat-btn:hover,
+.rename-chat-btn:hover {
+    background-color: rgba(0, 0, 0, 0.03);
+    color: #1f2937;
 }
 
 .pin-chat-btn {
-    display: block;
-    width: 100%;
-    padding: 8px 16px;
-    background: none;
-    border: none;
-    color: #374151;
-    font-size: 14px;
-    cursor: pointer;
-    text-align: left;
-    transition: background-color 0.2s;
-    border-bottom: 1px solid #e2e8f0;
-}
-
-.pin-chat-btn:hover {
-    background-color: #f1f5f9;
+    border-bottom: 1px solid #f1f5f9;
 }
 
 .delete-chat-btn {
-    display: block;
-    width: 100%;
-    padding: 8px 16px;
-    background: none;
-    border: none;
-    color: #374151;
-    font-size: 14px;
-    cursor: pointer;
-    text-align: left;
-    transition: background-color 0.2s;
+    color: #dc2626;
 }
 
 .delete-chat-btn:hover {
-    background-color: #f1f5f9;
+    background-color: #fef2f2;
+    color: #b91c1c;
+}
+
+/* 菜单按钮图标样式 */
+.menu-btn-icon {
+    width: 14px;
+    height: 14px;
+    opacity: 0.7;
+}
+
+.pin-chat-btn:hover .menu-btn-icon,
+.delete-chat-btn:hover .menu-btn-icon,
+.rename-chat-btn:hover .menu-btn-icon {
+    opacity: 1;
+}
+
+/* 修改对话名称输入框样式 */
+.chat-rename-input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 400;
+    background: white;
+    color: #374151;
+    outline: none;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+
+.chat-rename-input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    background-color: #f8fafc;
+}
+
+.chat-rename-input:hover {
+    border-color: #d1d5db;
+    background-color: #f9fafb;
 }
 
 .history-nav li.pinned::before {
-    content: "📌";
+    content: "";
+    display: inline-block;
+    width: 12px;
+    height: 12px;
     margin-right: 8px;
-    font-size: 12px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01-.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13' /%3E%3C/svg%3E");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0.7;
 }
 
 .chat-main {
@@ -482,93 +599,259 @@ body.chat-page-body {
 /* 分子浮层样式 */
 .molecule-panel {
     position: fixed;
-    top: 64px; /* 顶部导航栏高度 */
+    top: 64px;
     right: 0;
-    width: 400px; /* 固定宽度，确保内容完整显示 */
+    width: 520px; /* 增加宽度以容纳两列分子 */
     height: calc(100vh - 64px);
     background: white;
     border-left: 1px solid #e2e8f0;
-    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
     z-index: 1000;
     display: none;
-    overflow-y: auto;
-    overflow-x: hidden;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
 }
 
-/* 扩展的分子面板样式 */
 .molecule-panel.expanded {
-    width: 800px; /* 扩展后的宽度 */
+    width: 880px;
 }
 
+/* 面板内容区域优化 - 减少上边距 */
 .molecule-panel-content {
-    display: flex;
-    height: 100%;
+    padding: 4px 4px; /* 减少左右内边距从8px到4px */
+    height: calc(100% - 60px);
+    overflow-y: auto;
+    background: transparent;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 #f1f5f9;
+}
+
+.molecule-panel-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.molecule-panel-content::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 3px;
+}
+
+.molecule-panel-content::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+    transition: background 0.2s ease;
+}
+
+.molecule-panel-content::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
 }
 
 .molecule-panel-main {
-    flex: 1;
-    padding: 24px;
-    border-right: 1px solid #e2e8f0;
+    padding: 2px 2px; /* 减少左右内边距从4px到2px */
+    height: 100%;
     overflow-y: auto;
+    animation: fadeInUp 0.3s ease;
 }
 
-.similar-molecules-panel {
-    flex: 1;
-    padding: 24px;
-    background: #f8fafc;
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 相似分子区域优化 */
+.similar-molecules-section {
+    padding: 16px 2px; /* 减少左右内边距从4px到2px */
+    height: 100%;
     overflow-y: auto;
+    animation: slideInRight 0.3s ease;
+    background: transparent;
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.similar-molecules-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+}
+
+.similar-molecules-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0;
+}
+
+.back-to-original-btn {
+    background: linear-gradient(135deg, #64748b, #475569);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.back-to-original-btn:hover {
+    background: linear-gradient(135deg, #475569, #334155);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(100, 116, 139, 0.3);
+}
+
+.back-to-original-btn svg {
+    width: 14px;
+    height: 14px;
+}
+
+/* 响应式优化 */
+@media (max-width: 1200px) {
+    .molecule-panel {
+        width: 420px;
+    }
+    
+    .molecule-panel.expanded {
+        width: 800px;
+    }
+    
+    .chat-container.molecule-panel-active .chat-main {
+        margin-right: 420px;
+        max-width: calc(100vw - 420px);
+    }
+    
+    .chat-container.molecule-panel-active.expanded .chat-main {
+        margin-right: 800px;
+        max-width: calc(100vw - 800px);
+    }
+}
+
+@media (max-width: 768px) {
+    .molecule-panel {
+        width: 100%;
+        right: 0;
+        top: 0;
+        height: 100vh;
+        border-left: none;
+        box-shadow: none;
+    }
+    
+    .molecule-panel-header {
+        padding: 16px 20px;
+    }
+    
+    .molecule-panel-content {
+        padding: 20px 16px;
+    }
+    
+    .molecule-panel-main {
+        padding: 16px 12px;
+    }
+    
+    .chat-container.molecule-panel-active .chat-main {
+        margin-right: 0;
+        max-width: 100%;
+        display: none;
+    }
+    
+    .chat-container.molecule-panel-active .chat-sidebar {
+        display: none;
+    }
+}
+
+/* 加载动画 */
+.molecule-panel.loading {
+    position: relative;
+}
+
+.molecule-panel.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 40px;
+    height: 40px;
+    margin: -20px 0 0 -20px;
+    border: 3px solid #e2e8f0;
+    border-top: 3px solid #3b82f6;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    z-index: 1001;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 .molecule-panel-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 24px;
+    padding: 12px 16px;
     border-bottom: 1px solid #e2e8f0;
-    background: #f8fafc;
-    position: sticky;
-    top: 0;
-    z-index: 10;
+    background: white;
+    flex-shrink: 0;
 }
 
-.molecule-panel-header h2 {
-    margin: 0;
-    font-size: 20px;
+.molecule-panel-header .molecule-panel-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.molecule-panel-title {
+    font-size: 16px;
     font-weight: 600;
     color: #1e293b;
+    margin: 0;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
 }
 
 .molecule-panel-close {
     background: none;
     border: none;
-    font-size: 20px;
-    color: #6b7280;
+    color: #64748b;
     cursor: pointer;
-    padding: 8px;
-    border-radius: 6px;
+    padding: 4px;
+    border-radius: 4px;
     transition: all 0.2s ease;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
+    width: 24px;
+    height: 24px;
 }
 
 .molecule-panel-close:hover {
+    background: #f1f5f9;
     color: #374151;
-    background-color: #f3f4f6;
 }
 
 .molecule-panel-close svg {
-    width: 20px;
-    height: 20px;
-}
-
-.molecule-panel-content {
-    padding: 24px;
-    max-width: 100%;
-    overflow-x: hidden;
+    width: 16px;
+    height: 16px;
 }
 
 .molecule-info,
@@ -741,37 +1024,34 @@ body.chat-page-body {
 /* 分子面板通知样式 */
 .molecule-notification {
     position: fixed;
-    top: 80px;
+    top: 20px;
     right: 20px;
     padding: 12px 16px;
     border-radius: 8px;
+    color: white;
     font-size: 14px;
     font-weight: 500;
-    z-index: 2000;
-    animation: notificationSlideIn 0.3s ease;
-    max-width: 300px;
-    word-wrap: break-word;
-}
-
-.molecule-notification-success {
-    background-color: #d1fae5;
-    color: #065f46;
-    border: 1px solid #a7f3d0;
+    z-index: 10000;
+    animation: slideInRight 0.3s ease;
 }
 
 .molecule-notification-info {
-    background-color: #dbeafe;
-    color: #1e40af;
-    border: 1px solid #93c5fd;
+    background: #3b82f6;
+}
+
+.molecule-notification-success {
+    background: #10b981;
+}
+
+.molecule-notification-warning {
+    background: #f59e0b;
 }
 
 .molecule-notification-error {
-    background-color: #fee2e2;
-    color: #991b1b;
-    border: 1px solid #fca5a5;
+    background: #ef4444;
 }
 
-@keyframes notificationSlideIn {
+@keyframes slideInRight {
     from {
         transform: translateX(100%);
         opacity: 0;
@@ -823,49 +1103,40 @@ body.chat-page-body {
     height: 16px;
 }
 
-.similar-molecules-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 16px;
-}
-
-.similar-molecule-card {
-    background: white;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    padding: 16px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.similar-molecule-card:hover {
-    border-color: #3b82f6;
-    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.1);
-}
-
-.similar-molecule-header {
+/* 相似分子比较布局 */
+.similar-molecules-comparison {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
+    gap: 4px;
+    height: calc(100vh - 200px);
 }
 
-.similar-molecule-name {
+.original-molecule-section {
+    flex: 1;
+    border-right: 1px solid #e2e8f0;
+    padding-right: 4px !important;
+}
+
+.similar-molecules-section {
+    flex: 1;
+    padding-left: 4px !important;
+}
+
+.original-molecule-section h4,
+.similar-molecules-section h4 {
+    margin: 0 0 12px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.original-molecule-info h5 {
+    margin: 0 0 8px 0;
     font-size: 16px;
     font-weight: 600;
     color: #1e293b;
 }
 
-.similarity-score {
-    background: #dbeafe;
-    color: #1e40af;
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-size: 12px;
-    font-weight: 500;
-}
-
-.similar-molecule-structure {
+.original-molecule-structure {
     width: 100%;
     height: 80px;
     background: #f8fafc;
@@ -877,38 +1148,293 @@ body.chat-page-body {
     margin-bottom: 12px;
 }
 
-.similar-molecule-structure img {
+.original-molecule-structure img {
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
 }
 
-.similar-molecule-properties {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+.original-molecule-properties {
+    display: flex;
+    flex-direction: column;
     gap: 8px;
-    font-size: 12px;
 }
 
-.similar-property-item {
+.original-property-item {
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 11px;
 }
 
-.similar-property-label {
-    color: #6b7280;
+.original-property-item:last-child {
+    border-bottom: none;
+}
+
+.original-property-label {
+    font-size: 11px;
+    color: #64748b;
     font-weight: 500;
 }
 
-.similar-property-value {
-    color: #1f2937;
+.original-property-value {
+    font-size: 11px;
+    color: #1e293b;
+    font-weight: 500;
+}
+
+.similar-molecules-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    max-height: calc(100vh - 300px);
+    overflow-y: auto;
+}
+
+
+
+/* 统一分子卡片样式 - 超紧凑版本 */
+.molecule-card {
+    background: transparent;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px; /* 增加圆角 */
+    padding: 16px 6px; /* 减少左右内边距从12px到6px */
+    margin-bottom: 16px;
+    transition: all 0.3s ease;
+    margin-left: 0;
+    margin-right: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.molecule-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6, #06b6d4);
+    border-radius: 12px 12px 0 0;
+}
+
+.molecule-card:hover {
+    border-color: #3b82f6;
+    transform: translateY(-2px);
+}
+
+.molecule-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f1f5f9;
+    min-height: 32px;
+}
+
+.molecule-card-name {
+    font-size: 20px; /* 增大分子名称字体 */
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+    flex: 1;
+}
+
+.molecule-card-similarity {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
     font-weight: 600;
-    font-family: 'Fira Mono', 'Menlo', 'Consolas', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* 分子结构图优化 */
+.molecule-card-structure {
+    width: 100%;
+    height: 140px; /* 增加高度 */
+    background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    overflow: hidden;
+    position: relative;
+}
+
+.molecule-card-structure::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 30%, rgba(59, 130, 246, 0.03) 50%, transparent 70%);
+    pointer-events: none;
+}
+
+.molecule-structure-diagram {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.molecule-structure-diagram svg {
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* 分子属性优化 */
+.molecule-card-properties {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.molecule-card-property-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 13px;
+    line-height: 1.4;
+    transition: all 0.2s ease;
+}
+
+.molecule-card-property-item:hover {
+    background: transparent;
+    border-radius: 6px;
+    padding: 10px 8px;
+    margin: 0 -8px;
+}
+
+.molecule-card-property-label {
+    font-size: 13px;
+    color: #64748b;
+    font-weight: 500;
+    flex-shrink: 0;
+}
+
+.molecule-card-property-value {
+    font-size: 13px;
+    color: #1e293b;
+    font-weight: 600;
+    text-align: right;
+    word-break: break-word;
+    max-width: 60%;
+}
+
+/* 按钮样式优化 */
+.molecule-card-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.molecule-card-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: white;
+    color: #374151;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
+}
+
+.molecule-card-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.molecule-card-btn:hover::before {
+    left: 100%;
+}
+
+.molecule-card-btn svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+}
+
+.molecule-card-btn:hover svg {
+    transform: scale(1.1);
+}
+
+.molecule-card-btn.add-to-favorites {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white;
+    border-color: #3b82f6;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+.molecule-card-btn.add-to-favorites:hover {
+    background: linear-gradient(135deg, #2563eb, #1e40af);
+    border-color: #2563eb;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    transform: translateY(-1px);
+}
+
+.molecule-card-btn.find-similar {
+    background: linear-gradient(135deg, #f97316, #ea580c);
+    color: white;
+    border-color: #f97316;
+    box-shadow: 0 2px 8px rgba(249, 115, 22, 0.3);
+}
+
+.molecule-card-btn.find-similar:hover {
+    background: linear-gradient(135deg, #ea580c, #c2410c);
+    border-color: #ea580c;
+    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.4);
+    transform: translateY(-1px);
 }
 
 /* 浮层激活时的布局调整 */
 .chat-container.molecule-panel-active .chat-main {
-    transition: width 0.3s ease, margin-left 0.3s ease;
+    flex: 1;
+    max-width: calc(100vw - 520px - 300px); /* 额外减少300px宽度 */
+    transition: all 0.3s ease;
+    overflow-x: hidden;
+    /* 确保聊天区域居中，左右间距一致 */
+    margin-left: 0 !important; /* 紧贴侧边栏 */
+    margin-right: 520px !important;
+    width: calc(100vw - 520px - 200px - 300px) !important; /* 减去浮窗宽度、侧边栏宽度和额外300px */
 }
 
 .chat-container.molecule-panel-active .chat-sidebar {
@@ -925,6 +1451,8 @@ body.chat-page-body {
     display: flex !important;
     flex-direction: column;
     align-items: center;
+    justify-content: flex-start;
+    padding-top: 2px;
 }
 
 .chat-sidebar.mini-sidebar .sidebar-top-row {
@@ -937,6 +1465,20 @@ body.chat-page-body {
 }
 
 .chat-sidebar.mini-sidebar .sidebar-top-row > div:first-child {
+    display: none !important;
+}
+
+/* 在mini模式下，只隐藏ASK标题，但保留mini图标 */
+.chat-sidebar.mini-sidebar .ask-title {
+    display: none !important;
+}
+
+.chat-sidebar.mini-sidebar .toggle-sidebar-btn {
+    display: none !important;
+}
+
+/* 隐藏mini模式下的sidebar-actions区域 */
+.chat-sidebar.mini-sidebar .sidebar-actions {
     display: none !important;
 }
 
@@ -957,7 +1499,6 @@ body.chat-page-body {
 }
 
 /* 确保mini图标显示 */
-.chat-sidebar.mini-sidebar .mini-toggle-btn,
 .chat-sidebar.mini-sidebar .mini-new-chat-btn,
 .chat-sidebar.mini-sidebar .mini-search-btn {
     display: flex !important;
@@ -965,24 +1506,27 @@ body.chat-page-body {
     opacity: 1 !important;
 }
 
+/* 保留mini模式下的切换按钮，用于切换回完整模式 */
 .chat-sidebar.mini-sidebar .mini-toggle-btn {
     display: flex !important;
     align-items: center;
     justify-content: center;
-    margin: 16px auto;
-    width: 20px;
-    height: 20px;
+    margin: 8px auto;
+    width: 24px;
+    height: 24px;
     background: none;
     border: none;
     cursor: pointer;
     padding: 0;
-    color: #374151;
-    transition: color 0.2s;
+    color: #6b7280;
+    transition: color 0.2s ease;
 }
 
 .chat-sidebar.mini-sidebar .mini-toggle-btn:hover {
     color: #56B26A;
 }
+
+
 
 .chat-sidebar:not(.mini-sidebar) .mini-toggle-btn {
     display: none !important;
@@ -993,15 +1537,15 @@ body.chat-page-body {
     display: flex !important;
     align-items: center;
     justify-content: center;
-    transition: color 0.2s;
-    margin: 8px auto;
-    width: 20px;
-    height: 20px;
+    transition: color 0.2s ease;
+    margin: 12px auto;
+    width: 24px;
+    height: 24px;
     background: none;
     border: none;
     cursor: pointer;
     padding: 0;
-    color: #374151;
+    color: #6b7280;
 }
 
 .chat-sidebar.mini-sidebar .mini-new-chat-btn:hover,
@@ -1022,19 +1566,46 @@ body.chat-page-body {
 /* 浮层激活时的布局调整 */
 .chat-container.molecule-panel-active {
     display: flex;
-    width: 100%;
+    transition: all 0.3s ease;
 }
 
-/* 响应式设计 - 小屏幕适配 */
+.chat-container.molecule-panel-active.expanded .chat-main {
+    margin-left: auto;
+    margin-right: 880px; /* 扩展时调整主内容区域 */
+    max-width: calc(100vw - 880px);
+    width: calc(100vw - 880px - 200px); /* 减去浮窗宽度和侧边栏宽度 */
+}
+
+/* 扩展的分子面板样式 */
+.molecule-panel.expanded {
+    width: 900px; /* 扩展后的宽度 */
+}
+
+.chat-container.molecule-panel-active.expanded .chat-main {
+    margin-left: auto;
+    margin-right: 900px; /* 扩展时调整主内容区域 */
+    max-width: calc(100vw - 900px);
+    width: calc(100vw - 900px - 200px); /* 减去浮窗宽度和侧边栏宽度 */
+}
+
+/* 响应式调整 */
 @media (max-width: 1200px) {
     .molecule-panel {
-        width: 350px;
+        width: 500px; /* 增加宽度以容纳两列分子 */
     }
-    
+
     .chat-container.molecule-panel-active .chat-main {
-        width: calc(100% - 400px);
-        max-width: calc(100% - 400px);
-        flex: 0 0 calc(100% - 400px);
+        margin-left: 0 !important; /* 紧贴侧边栏 */
+        margin-right: 500px !important;
+        max-width: calc(100vw - 500px - 150px); /* 额外减少150px宽度 */
+        width: calc(100vw - 500px - 200px - 150px) !important; /* 减去浮窗宽度、侧边栏宽度和额外150px */
+    }
+
+    .chat-container.molecule-panel-active.expanded .chat-main {
+        margin-left: auto;
+        margin-right: 900px;
+        max-width: calc(100vw - 900px);
+        width: calc(100vw - 900px - 200px); /* 减去浮窗宽度和侧边栏宽度 */
     }
 }
 
@@ -1042,41 +1613,19 @@ body.chat-page-body {
     .molecule-panel {
         width: 100%;
         right: 0;
+        top: 0;
+        height: 100vh;
     }
-    
+
     .chat-container.molecule-panel-active .chat-main {
-        display: none;
+        margin-right: 0;
+        max-width: 100%;
+        display: none; /* 移动端隐藏主内容 */
     }
-    
+
     .chat-container.molecule-panel-active .chat-sidebar {
         display: none;
     }
-}
-
-.chat-container.molecule-panel-active .chat-main {
-    width: calc(100% - 450px); /* 减去分子面板宽度和边距 */
-    max-width: calc(100% - 450px);
-    flex: 0 0 calc(100% - 450px);
-    transition: all 0.3s ease;
-    margin-left: 50px;
-    min-width: 400px; /* 确保聊天区域有最小宽度 */
-}
-
-/* 当分子面板扩展时的聊天区域调整 */
-.chat-container.molecule-panel-active.expanded .chat-main {
-    width: calc(100% - 850px); /* 减去扩展后的分子面板宽度和边距 */
-    max-width: calc(100% - 850px);
-    flex: 0 0 calc(100% - 850px);
-}
-
-.chat-container.molecule-panel-active .chat-sidebar {
-    flex-shrink: 0;
-    transition: width 0.3s ease;
-    position: fixed;
-    left: 0;
-    top: 64px;
-    height: calc(100vh - 64px);
-    z-index: 100;
 }
 
 .chat-input-container {
@@ -2552,4 +3101,645 @@ main.about-content {
     color: #111827;
     text-align: left;
     font-weight: 700;
+}
+
+/* 统一分子卡片样式 - 放大版本 */
+.molecule-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 12px 12px; /* 减少上内边距从16px到12px */
+    margin-bottom: 12px;
+    margin-top: 0; /* 确保没有上边距 */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    transition: all 0.2s ease;
+    margin-left: 0;
+    margin-right: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.molecule-card:hover {
+    border-color: #3b82f6;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+    transform: translateY(-2px);
+}
+
+.molecule-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px; /* 减少下边距从12px到10px */
+    padding-bottom: 6px; /* 减少内边距从8px到6px */
+    border-bottom: 1px solid #f1f5f9;
+    margin-top: 0; /* 确保没有上边距 */
+}
+
+.molecule-card-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.molecule-card-similarity {
+    background: #dbeafe;
+    color: #1e40af;
+    padding: 3px 8px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.molecule-card-structure {
+    width: 100%;
+    height: 120px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    overflow: hidden;
+}
+
+.molecule-card-structure img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.molecule-card-properties {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.molecule-card-property-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 13px;
+    line-height: 1.3;
+}
+
+.molecule-card-property-item:last-child {
+    border-bottom: none;
+}
+
+.molecule-card-property-label {
+    font-size: 13px;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.molecule-card-property-value {
+    font-size: 13px;
+    color: #1e293b;
+    font-weight: 500;
+    text-align: right;
+}
+
+.molecule-card-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.molecule-card-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: white;
+    color: #374151;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.molecule-card-btn svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+}
+
+.molecule-card-btn:hover {
+    border-color: #3b82f6;
+    background: #f8fafc;
+    transform: translateY(-1px);
+}
+
+.molecule-card-btn.add-to-favorites {
+    background: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+}
+
+.molecule-card-btn.add-to-favorites:hover {
+    background: #2563eb;
+    border-color: #2563eb;
+}
+
+.molecule-card-btn.find-similar {
+    background: #f97316;
+    color: white;
+    border-color: #f97316;
+}
+
+.molecule-card-btn.find-similar:hover {
+    background: #ea580c;
+    border-color: #ea580c;
+}
+
+.molecule-structure-diagram {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8fafc;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.molecule-structure-diagram svg {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+/* 原子颜色样式 */
+.molecule-structure-diagram .atom {
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    text-anchor: middle;
+    dominant-baseline: middle;
+}
+
+.molecule-structure-diagram .carbon {
+    fill: #000;
+    font-size: 14px;
+}
+
+.molecule-structure-diagram .oxygen {
+    fill: #ff0000;
+    font-size: 14px;
+}
+
+.molecule-structure-diagram .fluorine {
+    fill: #00ff00;
+    font-size: 14px;
+}
+
+.molecule-structure-diagram .nitrogen {
+    fill: #0000ff;
+    font-size: 14px;
+}
+
+.molecule-structure-diagram .hydrogen {
+    fill: #666;
+    font-size: 12px;
+}
+
+.molecule-structure-diagram .silicon {
+    fill: #8b4513;
+    font-size: 14px;
+}
+
+.molecule-structure-diagram .phosphorus {
+    fill: #ff8c00;
+    font-size: 14px;
+}
+
+/* 化学键样式 */
+.molecule-structure-diagram .bond {
+    stroke: #000;
+    stroke-width: 2;
+    fill: none;
+}
+
+.molecule-structure-diagram .double-bond {
+    stroke: #000;
+    stroke-width: 3;
+    fill: none;
+}
+
+.molecule-structure-diagram .ring {
+    stroke: #000;
+    stroke-width: 2;
+    fill: none;
+}
+
+/* 分子卡片样式优化 - 减弱效果 */
+.molecule-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px; /* 减少圆角 */
+    padding: 16px 12px; /* 减少内边距 */
+    margin-bottom: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06); /* 减弱阴影 */
+    transition: all 0.2s ease; /* 减少动画时间 */
+    margin-left: 0;
+    margin-right: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+/* 去掉顶部颜色条 */
+.molecule-card::before {
+    display: none; /* 隐藏顶部颜色条 */
+}
+
+.molecule-card:hover {
+    border-color: #d1d5db; /* 减弱悬停边框颜色 */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* 减弱悬停阴影 */
+    transform: translateY(-1px); /* 减少悬停上移距离 */
+}
+
+.molecule-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px; /* 减少下边距 */
+    padding-bottom: 8px; /* 减少内边距 */
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.molecule-card-name {
+    font-size: 18px; /* 减小字体 */
+    font-weight: 600; /* 减弱字重 */
+    color: #1e293b;
+    margin: 0;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+}
+
+.molecule-card-similarity {
+    background: #e2e8f0; /* 改为单色背景 */
+    color: #475569; /* 改为深灰色文字 */
+    padding: 3px 8px; /* 减少内边距 */
+    border-radius: 6px; /* 减少圆角 */
+    font-size: 10px; /* 减小字体 */
+    font-weight: 500; /* 减弱字重 */
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* 分子结构图优化 - 减弱效果 */
+.molecule-card-structure {
+    width: 100%;
+    height: 120px; /* 减少高度 */
+    background: #f8fafc; /* 改为单色背景 */
+    border: 1px solid #e2e8f0;
+    border-radius: 6px; /* 减少圆角 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px; /* 减少下边距从16px到8px */
+    overflow: hidden;
+    position: relative;
+}
+
+/* 去掉结构图的光效 */
+.molecule-card-structure::before {
+    display: none;
+}
+
+.molecule-structure-diagram {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.molecule-structure-diagram svg {
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain;
+    filter: none; /* 去掉阴影滤镜 */
+}
+
+/* 分子属性优化 - 减弱效果 */
+.molecule-card-properties {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px; /* 减少间距 */
+    margin-bottom: 8px; /* 减少下边距从16px到8px */
+    background: #f8fafc; /* 添加背景色统一容器 */
+    border-radius: 6px; /* 添加圆角 */
+    padding: 8px; /* 添加内边距 */
+    border: 1px solid #e2e8f0; /* 添加边框 */
+}
+
+/* 商业可用性与其他属性在同一区域 */
+.molecule-card-property-item.commercial-viability {
+    grid-column: 1 / -1; /* 跨越所有列 */
+    border-top: none; /* 移除上边框分隔 */
+    margin-top: 0; /* 移除上边距 */
+    padding-top: 6px; /* 与其他属性保持一致的内边距 */
+}
+
+.molecule-card-property-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 6px; /* 调整内边距 */
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 12px; /* 减小字体 */
+    line-height: 1.3;
+    transition: all 0.2s ease;
+    border-radius: 4px; /* 添加圆角 */
+}
+
+.molecule-card-property-item:hover {
+    background: #e2e8f0; /* 悬停背景 */
+    border-radius: 4px;
+}
+
+.molecule-card-property-item:last-child {
+    border-bottom: none; /* 最后一项不显示下边框 */
+}
+
+.molecule-card-property-label {
+    font-size: 12px; /* 减小字体 */
+    color: #64748b;
+    font-weight: 500;
+    flex-shrink: 0;
+}
+
+.molecule-card-property-value {
+    font-size: 12px; /* 减小字体 */
+    color: #1e293b;
+    font-weight: 500; /* 减弱字重 */
+    text-align: right;
+    word-break: break-word;
+    max-width: 60%;
+}
+
+/* 按钮样式优化 - 减弱效果 */
+.molecule-card-actions {
+    display: flex;
+    gap: 8px; /* 减少间距 */
+    margin-top: 4px; /* 减少上边距从8px到4px */
+}
+
+.molecule-card-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px; /* 减少间距 */
+    padding: 10px 14px; /* 减少内边距 */
+    border: 1px solid #e2e8f0; /* 添加细边框 */
+    border-radius: 8px; /* 减少圆角 */
+    background: white;
+    color: #64748b;
+    font-size: 12px; /* 减少字体 */
+    font-weight: 500; /* 减少字重 */
+    cursor: pointer;
+    transition: all 0.2s ease; /* 简化动画 */
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: none; /* 移除阴影 */
+}
+
+/* 去掉按钮光效 */
+.molecule-card-btn::before {
+    display: none;
+}
+
+.molecule-card-btn:hover::before {
+    display: none;
+}
+
+.molecule-card-btn svg {
+    width: 14px; /* 减少图标尺寸 */
+    height: 14px;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+}
+
+.molecule-card-btn:hover svg {
+    transform: none; /* 去掉图标缩放 */
+}
+
+.molecule-card-btn.add-to-favorites {
+    background: #f0f9ff; /* 浅蓝色背景 */
+    color: #0ea5e9; /* 青春蓝色 */
+    border-color: #0ea5e9;
+}
+
+.molecule-card-btn.add-to-favorites:hover {
+    background: #0ea5e9;
+    color: white;
+    border-color: #0ea5e9;
+}
+
+.molecule-card-btn.find-similar {
+    background: #fef3c7; /* 浅黄色背景 */
+    color: #f59e0b; /* 青春橙色 */
+    border-color: #f59e0b;
+}
+
+.molecule-card-btn.find-similar:hover {
+    background: #f59e0b;
+    color: white;
+    border-color: #f59e0b;
+}
+
+/* 功能组信息栏样式 */
+.functional-groups-section {
+    margin: 8px 0; /* 减少上下边距从12px到8px */
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    background: #f8fafc;
+    overflow: hidden;
+}
+
+.functional-groups-header {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: #f1f5f9;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.functional-groups-header:hover {
+    background: #e2e8f0;
+}
+
+.functional-groups-header.collapsed {
+    border-bottom: none;
+}
+
+.functional-groups-header.expanded {
+    background: #e2e8f0;
+}
+
+.chevron-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+    color: #64748b;
+    transition: transform 0.2s ease;
+}
+
+.functional-groups-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151;
+    margin: 0;
+}
+
+.functional-groups-content {
+    display: none;
+    padding: 12px;
+    background: white;
+}
+
+.functional-groups-content h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0 0 8px 0;
+}
+
+.functional-groups-content p {
+    font-size: 12px;
+    color: #64748b;
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* 相似分子比较布局样式 */
+.similar-molecules-comparison {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    height: 100%;
+    padding: 0;
+}
+
+.original-molecule-section {
+    background: transparent;
+    border-radius: 8px;
+    padding: 16px 8px; /* 减少左右内边距从16px到8px */
+    border: none;
+}
+
+.similar-molecules-section {
+    background: transparent;
+    border-radius: 8px;
+    padding: 16px 8px; /* 减少左右内边距从16px到8px */
+    border: none;
+    overflow-y: auto;
+    max-height: calc(100vh - 120px);
+}
+
+.original-molecule-section h3,
+.similar-molecules-section h3 {
+    margin: 0 0 12px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.similar-molecules-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+}
+
+.similar-molecules-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.back-to-original-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.back-to-original-btn:hover {
+    background: #e2e8f0;
+    color: #475569;
+}
+
+.back-to-original-btn svg {
+    width: 14px;
+    height: 14px;
+}
+
+.similar-molecules-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    max-height: calc(100vh - 200px);
+    overflow-y: auto;
+}
+
+/* 相似分子卡片使用与原始分子相同的样式 */
+
+/* 相似分子卡片使用与原始分子相同的样式 */
+
+/* 响应式调整 */
+@media (max-width: 1200px) {
+    .similar-molecules-comparison {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .original-molecule-section,
+    .similar-molecules-section {
+        padding: 12px;
+    }
+}
+
+@media (max-width: 768px) {
+    .similar-molecules-comparison {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .similar-molecules-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
 }

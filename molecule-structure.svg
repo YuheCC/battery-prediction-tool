@@ -1,1 +1,97 @@
- 
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="300" height="200" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .atom { font-family: Arial, sans-serif; font-weight: bold; }
+      .bond { stroke: #000; stroke-width: 2; }
+      .double-bond { stroke: #000; stroke-width: 3; }
+      .triple-bond { stroke: #000; stroke-width: 4; }
+      .carbon { fill: #000; }
+      .oxygen { fill: #ff0000; }
+      .nitrogen { fill: #0000ff; }
+      .hydrogen { fill: #666; }
+      .chlorine { fill: #00ff00; }
+      .sulfur { fill: #ffff00; }
+      .phosphorus { fill: #ffa500; }
+    </style>
+  </defs>
+  
+  <!-- 中心碳原子 -->
+  <circle cx="150" cy="100" r="8" class="carbon"/>
+  <text x="150" y="105" text-anchor="middle" class="atom" style="fill: white; font-size: 10px;">C</text>
+  
+  <!-- 双键氧原子 -->
+  <circle cx="150" cy="80" r="6" class="oxygen"/>
+  <text x="150" y="84" text-anchor="middle" class="atom" style="fill: white; font-size: 8px;">O</text>
+  <line x1="150" y1="86" x2="150" y2="92" class="double-bond"/>
+  
+  <!-- 单键氧原子 -->
+  <circle cx="170" cy="100" r="6" class="oxygen"/>
+  <text x="170" y="104" text-anchor="middle" class="atom" style="fill: white; font-size: 8px;">O</text>
+  <line x1="162" y1="100" x2="168" y2="100" class="bond"/>
+  
+  <!-- 氮原子 -->
+  <circle cx="130" cy="100" r="6" class="nitrogen"/>
+  <text x="130" y="104" text-anchor="middle" class="atom" style="fill: white; font-size: 8px;">N</text>
+  <line x1="136" y1="100" x2="142" y2="100" class="bond"/>
+  
+  <!-- 碳原子链 -->
+  <circle cx="110" cy="100" r="6" class="carbon"/>
+  <text x="110" y="104" text-anchor="middle" class="atom" style="fill: white; font-size: 8px;">C</text>
+  <line x1="116" y1="100" x2="124" y2="100" class="bond"/>
+  
+  <circle cx="90" cy="100" r="6" class="carbon"/>
+  <text x="90" y="104" text-anchor="middle" class="atom" style="fill: white; font-size: 8px;">C</text>
+  <line x1="96" y1="100" x2="104" y2="100" class="bond"/>
+  
+  <!-- 氢原子 -->
+  <circle cx="80" cy="100" r="3" class="hydrogen"/>
+  <text x="80" y="102" text-anchor="middle" class="atom" style="fill: white; font-size: 5px;">H</text>
+  <line x1="83" y1="100" x2="86" y2="100" class="bond"/>
+  
+  <circle cx="100" cy="90" r="3" class="hydrogen"/>
+  <text x="100" y="92" text-anchor="middle" class="atom" style="fill: white; font-size: 5px;">H</text>
+  <line x1="100" y1="93" x2="100" y2="96" class="bond"/>
+  
+  <circle cx="100" cy="110" r="3" class="hydrogen"/>
+  <text x="100" y="112" text-anchor="middle" class="atom" style="fill: white; font-size: 5px;">H</text>
+  <line x1="100" y1="107" x2="100" y2="104" class="bond"/>
+  
+  <circle cx="120" cy="90" r="3" class="hydrogen"/>
+  <text x="120" y="92" text-anchor="middle" class="atom" style="fill: white; font-size: 5px;">H</text>
+  <line x1="120" y1="93" x2="120" y2="96" class="bond"/>
+  
+  <circle cx="120" cy="110" r="3" class="hydrogen"/>
+  <text x="120" y="112" text-anchor="middle" class="atom" style="fill: white; font-size: 5px;">H</text>
+  <line x1="120" y1="107" x2="120" y2="104" class="bond"/>
+  
+  <!-- 氯原子 -->
+  <circle cx="190" cy="100" r="6" class="chlorine"/>
+  <text x="190" y="104" text-anchor="middle" class="atom" style="fill: white; font-size: 8px;">Cl</text>
+  <line x1="176" y1="100" x2="184" y2="100" class="bond"/>
+  
+  <!-- 硫原子 -->
+  <circle cx="150" cy="120" r="6" class="sulfur"/>
+  <text x="150" y="124" text-anchor="middle" class="atom" style="fill: white; font-size: 8px;">S</text>
+  <line x1="150" y1="114" x2="150" y2="126" class="bond"/>
+  
+  <!-- 磷原子 -->
+  <circle cx="150" cy="140" r="6" class="phosphorus"/>
+  <text x="150" y="144" text-anchor="middle" class="atom" style="fill: white; font-size: 8px;">P</text>
+  <line x1="150" y1="134" x2="150" y2="146" class="bond"/>
+  
+  <!-- 额外的氢原子 -->
+  <circle cx="140" cy="120" r="3" class="hydrogen"/>
+  <text x="140" y="122" text-anchor="middle" class="atom" style="fill: white; font-size: 5px;">H</text>
+  <line x1="143" y1="120" x2="146" y2="120" class="bond"/>
+  
+  <circle cx="160" cy="120" r="3" class="hydrogen"/>
+  <text x="160" y="122" text-anchor="middle" class="atom" style="fill: white; font-size: 5px;">H</text>
+  <line x1="157" y1="120" x2="154" y2="120" class="bond"/>
+  
+  <!-- 标题 -->
+  <text x="150" y="20" text-anchor="middle" style="font-family: Arial, sans-serif; font-size: 14px; font-weight: bold;">Molecular Structure</text>
+  
+  <!-- 图例 -->
+  <text x="20" y="180" style="font-family: Arial, sans-serif; font-size: 10px; fill: #666;">C: Black, O: Red, N: Blue, H: Gray, Cl: Green, S: Yellow, P: Orange</text>
+</svg> 

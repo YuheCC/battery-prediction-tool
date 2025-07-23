@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>分子面板测试</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            padding: 20px;
+            background: #f5f5f5;
+            font-family: Arial, sans-serif;
+        }
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .test-buttons {
+            margin: 20px 0;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .test-btn {
+            padding: 10px 20px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .test-btn:hover {
+            background: #1d4ed8;
+        }
+        .instructions {
+            background: #fef3c7;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .molecule-panel {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 400px;
+            height: 100vh;
+            background: white;
+            border-left: 1px solid #e2e8f0;
+            box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: none;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>分子面板功能测试</h1>
+        
+        <div class="instructions">
+            <h3>测试步骤：</h3>
+            <p>1. 点击下面的按钮来显示分子面板</p>
+            <p>2. 在分子面板中点击"Find Similar Molecules"按钮</p>
+            <p>3. 查看右侧的相似分子卡片是否应用了紧凑样式</p>
+        </div>
+        
+        <div class="test-buttons">
+            <button class="test-btn" onclick="showMoleculePanel('TMSPi')">显示 TMSPi</button>
+            <button class="test-btn" onclick="showMoleculePanel('LiPF6')">显示 LiPF6</button>
+            <button class="test-btn" onclick="showMoleculePanel('LiFSI')">显示 LiFSI</button>
+            <button class="test-btn" onclick="showMoleculePanel('EC')">显示 EC</button>
+            <button class="test-btn" onclick="showMoleculePanel('DEC')">显示 DEC</button>
+            <button class="test-btn" onclick="showMoleculePanel('DMC')">显示 DMC</button>
+        </div>
+        
+        <div class="instructions">
+            <h3>分子卡片样式预览：</h3>
+            <p>下面的卡片展示了优化后的紧凑样式：</p>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div class="molecule-card">
+                <div class="molecule-card-header">
+                    <h3 class="molecule-card-name">TMSPi</h3>
+                    <div class="molecule-card-similarity">95%</div>
+                </div>
+                <div class="molecule-card-structure">
+                    <img src="molecule-structure.svg" alt="TMSPi structure" />
+                </div>
+                <div class="molecule-card-properties">
+                    <div class="molecule-card-property-item">
+                        <span class="molecule-card-property-label">分子量:</span>
+                        <span class="molecule-card-property-value">314.54 g/mol</span>
+                    </div>
+                    <div class="molecule-card-property-item">
+                        <span class="molecule-card-property-label">熔点:</span>
+                        <span class="molecule-card-property-value">-9.46 °C</span>
+                    </div>
+                    <div class="molecule-card-property-item">
+                        <span class="molecule-card-property-label">沸点:</span>
+                        <span class="molecule-card-property-value">231.99 °C</span>
+                    </div>
+                    <div class="molecule-card-property-item">
+                        <span class="molecule-card-property-label">HOMO:</span>
+                        <span class="molecule-card-property-value">-7.55 eV</span>
+                    </div>
+                    <div class="molecule-card-property-item">
+                        <span class="molecule-card-property-label">LUMO:</span>
+                        <span class="molecule-card-property-value">0.46 eV</span>
+                    </div>
+                    <div class="molecule-card-property-item">
+                        <span class="molecule-card-property-label">SMILES:</span>
+                        <span class="molecule-card-property-value">C[Si](C)(C)OP(=O)(C[Si](C)(C)O)C[Si](C)(C)O</span>
+                    </div>
+                </div>
+                <div class="molecule-card-actions">
+                    <button class="molecule-card-btn add-to-favorites">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                        </svg>
+                        <span>收藏</span>
+                    </button>
+                    <button class="molecule-card-btn find-similar">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                        </svg>
+                        <span>查找相似</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="molecule-card">
+                <div class="molecule-card-header">
+                    <h3 class="molecule-card-name">LiPF6</h3>
+                    <div class="molecule-card-similarity">88%</div>
+                </div>
+                <div class="molecule-card-structure">
+                    <img src="molecule-structure.svg" alt="LiPF6 structure" />
+                </div>
+                <div class="molecule-card-properties">
+                    <div class="molecule-card-property-item">
+                        <span class="molecule-card-property-label">分子量:</span>
+                        <span class="molecule-card-property-value">151.91 g/mol</span>
+                    </div>
+                    <div class="molecule-card-property-item">
+                        <span class="molecule-card-property-label">熔点:</span>
+                        <span class="molecule-card-property-value">200°C</span>
+                    </div>
+                    <div class="molecule-card-property-item">
+                        <span class="molecule-card-property-label">沸点:</span>
+                        <span class="molecule-card-property-value">分解</span>
+                    </div>
+                    <div class="molecule-card-property-item">
+                        <span class="molecule-card-property-label">HOMO:</span>
+                        <span class="molecule-card-property-value">-</span>
+                    </div>
+                    <div class="molecule-card-property-item">
+                        <span class="molecule-card-property-label">LUMO:</span>
+                        <span class="molecule-card-property-value">-</span>
+                    </div>
+                    <div class="molecule-card-property-item">
+                        <span class="molecule-card-property-label">SMILES:</span>
+                        <span class="molecule-card-property-value">F[P-](F)(F)(F)(F)F.[Li+]</span>
+                    </div>
+                </div>
+                <div class="molecule-card-actions">
+                    <button class="molecule-card-btn add-to-favorites">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                        </svg>
+                        <span>收藏</span>
+                    </button>
+                    <button class="molecule-card-btn find-similar">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                        </svg>
+                        <span>查找相似</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 模拟分子面板功能
+        function showMoleculePanel(moleculeName) {
+            console.log('Showing molecule panel for:', moleculeName);
+            
+            // 触发分子点击事件
+            window.dispatchEvent(new CustomEvent('moleculeClicked', { 
+                detail: { moleculeName } 
+            }));
+        }
+        
+        // 监听分子点击事件
+        window.addEventListener('moleculeClicked', (e) => {
+            console.log('Molecule clicked:', e.detail.moleculeName);
+            // 这里可以添加显示分子面板的逻辑
+        });
+    </script>
+</body>
+</html> 
