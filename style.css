@@ -491,6 +491,163 @@ body.chat-page-body {
     font-weight: 600;
 }
 
+/* 新聊天界面样式 */
+.new-chat-interface {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    height: 100%;
+    min-height: 60vh;
+    padding: 20px;
+    padding-top: 80px;
+}
+
+.new-chat-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 800px;
+    width: 100%;
+    text-align: center;
+}
+
+.new-chat-logo {
+    margin-bottom: 20px;
+    color: #56B26A;
+    opacity: 0.8;
+}
+
+.new-chat-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0 0 10px 0;
+    line-height: 1.2;
+}
+
+.new-chat-subtitle {
+    font-size: 16px;
+    color: #64748b;
+    margin: 0 0 32px 0;
+    line-height: 1.5;
+}
+
+.new-chat-input-container {
+    width: 100%;
+    max-width: 700px;
+}
+
+.new-chat-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 20px;
+    transition: all 0.2s ease;
+    margin-bottom: 16px;
+}
+
+.new-chat-input-wrapper:focus-within {
+    border-color: #56B26A;
+    box-shadow: 0 0 0 3px rgba(86, 178, 106, 0.1);
+}
+
+.new-chat-input-wrapper textarea {
+    flex: 1;
+    border: none;
+    outline: none;
+    resize: none;
+    font-size: 18px;
+    line-height: 1.6;
+    font-family: inherit;
+    background: transparent;
+    color: #1e293b;
+    min-height: 80px;
+    max-height: 160px;
+}
+
+.new-chat-input-wrapper textarea::placeholder {
+    color: #9ca3af;
+}
+
+.new-chat-send-btn {
+    background: #56B26A;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    margin-left: 16px;
+}
+
+.new-chat-send-btn:hover {
+    background: #4a9d5a;
+    transform: scale(1.05);
+}
+
+.new-chat-send-btn:disabled {
+    background: #d1d5db;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.new-chat-send-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+.new-chat-deep-space-checkbox {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 16px;
+}
+
+.new-chat-deep-space-checkbox label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 14px;
+    color: #64748b;
+    gap: 8px;
+}
+
+.new-chat-deep-space-checkbox input[type="checkbox"] {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #d1d5db;
+    border-radius: 4px;
+    background: white;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.new-chat-deep-space-checkbox input[type="checkbox"]:checked {
+    background: #56B26A;
+    border-color: #56B26A;
+}
+
+.new-chat-deep-space-checkbox input[type="checkbox"]:checked::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+}
+
 .message-wrapper {
     display: flex;
     margin-bottom: 30px;
@@ -498,6 +655,7 @@ body.chat-page-body {
 
 .message-wrapper.user {
     justify-content: flex-end;
+    position: relative;
 }
 
 .message-wrapper.bot {
@@ -520,6 +678,109 @@ body.chat-page-body {
     background-color: #56B26A; /* Theme color */
     color: white;
     border-bottom-right-radius: 4px;
+    text-align: left;
+    align-self: flex-end;
+    max-width: 80%;
+}
+
+/* 用户消息容器样式 */
+.message-container {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    width: 100%;
+    margin-bottom: 8px;
+}
+
+/* 编辑按钮容器样式 */
+.edit-btn-container {
+    position: absolute;
+    bottom: -20px;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.message-wrapper.user:hover .edit-btn-container {
+    opacity: 1;
+}
+
+/* 编辑按钮样式 */
+.edit-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    color: #6b7280;
+    transition: color 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.edit-btn:hover {
+    color: #374151;
+}
+
+/* 编辑输入框样式 */
+.edit-input {
+    width: 100%;
+    min-height: 60px;
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    resize: vertical;
+    outline: none;
+    background: white;
+    color: #333;
+}
+
+.edit-input:focus {
+    border-color: #56B26A;
+    box-shadow: 0 0 0 2px rgba(86, 178, 106, 0.1);
+}
+
+/* 编辑按钮容器样式 */
+.edit-buttons {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.edit-save-btn,
+.edit-cancel-btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+}
+
+.edit-save-btn {
+    background-color: #56B26A;
+    color: white;
+}
+
+.edit-save-btn:hover {
+    background-color: #4a9d5a;
+}
+
+.edit-cancel-btn {
+    background-color: #6b7280;
+    color: white;
+}
+
+.edit-cancel-btn:hover {
+    background-color: #5a6268;
 }
 
 .message-wrapper.bot .message {
@@ -1200,8 +1461,8 @@ body.chat-page-body {
     background: transparent;
     border: 1px solid #e2e8f0;
     border-radius: 8px; /* 增加圆角 */
-    padding: 16px 6px; /* 减少左右内边距从12px到6px */
-    margin-bottom: 16px;
+    padding: 16px 8px; /* 增加左右内边距从2px到8px */
+    margin-bottom: 12px; /* 减少底部边距从16px到12px */
     transition: all 0.3s ease;
     margin-left: 0;
     margin-right: 0;
@@ -1229,8 +1490,8 @@ body.chat-page-body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 16px;
-    padding-bottom: 12px;
+    margin-bottom: 10px; /* 减少底部边距从12px到10px */
+    padding-bottom: 10px;
     border-bottom: 1px solid #f1f5f9;
     min-height: 32px;
 }
@@ -1266,7 +1527,7 @@ body.chat-page-body {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 20px;
+    margin-bottom: 12px; /* 减少底部边距从16px到12px */
     overflow: hidden;
     position: relative;
 }
@@ -1304,15 +1565,15 @@ body.chat-page-body {
 .molecule-card-properties {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 20px;
+    gap: 6px;
+    margin-bottom: 12px;
 }
 
 .molecule-card-property-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 0;
+    padding: 8px 0;
     border-bottom: 1px solid #f1f5f9;
     font-size: 13px;
     line-height: 1.4;
@@ -1345,8 +1606,8 @@ body.chat-page-body {
 /* 按钮样式优化 */
 .molecule-card-actions {
     display: flex;
-    gap: 12px;
-    margin-top: 8px;
+    gap: 8px;
+    margin-top: 6px;
 }
 
 .molecule-card-btn {
@@ -1354,8 +1615,8 @@ body.chat-page-body {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    padding: 12px 16px;
+    gap: 6px;
+    padding: 8px 10px;
     border: 1px solid #d1d5db;
     border-radius: 8px;
     background: white;
@@ -1900,7 +2161,7 @@ body.chat-page-body {
 .send-btn {
     background: #56B26A;
     border: none;
-    border-radius: 8px;
+    border-radius: 50%;
     width: 40px;
     height: 40px;
     display: flex;
@@ -1908,11 +2169,12 @@ body.chat-page-body {
     justify-content: center;
     cursor: pointer;
     color: white;
-    transition: background-color 0.2s;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
 }
 
 .send-btn:hover {
-    background: #449a57;
+    background: #4a9d5a;
 }
 
 .send-btn svg {
@@ -3108,7 +3370,7 @@ main.about-content {
     background: white;
     border: 1px solid #e2e8f0;
     border-radius: 8px;
-    padding: 12px 12px; /* 减少上内边距从16px到12px */
+    padding: 12px 8px; /* 增加左右内边距从2px到8px */
     margin-bottom: 12px;
     margin-top: 0; /* 确保没有上边距 */
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
@@ -3174,8 +3436,8 @@ main.about-content {
 .molecule-card-properties {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    margin-bottom: 16px;
+    gap: 6px;
+    margin-bottom: 12px;
 }
 
 .molecule-card-property-item {
@@ -3348,7 +3610,7 @@ main.about-content {
     background: white;
     border: 1px solid #e2e8f0;
     border-radius: 8px; /* 减少圆角 */
-    padding: 16px 12px; /* 减少内边距 */
+    padding: 16px 8px; /* 增加左右内边距从2px到8px */
     margin-bottom: 12px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06); /* 减弱阴影 */
     transition: all 0.2s ease; /* 减少动画时间 */
@@ -3440,11 +3702,11 @@ main.about-content {
 .molecule-card-properties {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 8px; /* 减少间距 */
-    margin-bottom: 8px; /* 减少下边距从16px到8px */
+    gap: 6px; /* 减少间距 */
+    margin-bottom: 6px; /* 减少下边距从8px到6px */
     background: #f8fafc; /* 添加背景色统一容器 */
     border-radius: 6px; /* 添加圆角 */
-    padding: 8px; /* 添加内边距 */
+    padding: 6px; /* 减少内边距从8px到6px */
     border: 1px solid #e2e8f0; /* 添加边框 */
 }
 
@@ -3506,7 +3768,7 @@ main.about-content {
     align-items: center;
     justify-content: center;
     gap: 6px; /* 减少间距 */
-    padding: 10px 14px; /* 减少内边距 */
+    padding: 8px 10px; /* 减少内边距 */
     border: 1px solid #e2e8f0; /* 添加细边框 */
     border-radius: 8px; /* 减少圆角 */
     background: white;
