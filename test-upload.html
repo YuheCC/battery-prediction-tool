@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文件上传测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .upload-area {
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+        .upload-area:hover {
+            border-color: #56B26A;
+        }
+        .upload-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        .file-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 8px;
+        }
+        .success {
+            color: #56B26A;
+        }
+        .error {
+            color: #ef4444;
+        }
+    </style>
+</head>
+<body>
+    <h1>文件上传测试</h1>
+    
+    <div class="upload-area" id="uploadArea">
+        <div class="upload-content">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M17 8L12 3L7 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M12 3V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span>点击上传文件</span>
+            <small>支持 CSV、Excel 格式</small>
+        </div>
+    </div>
+    
+    <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" style="display: none;">
+    
+    <div class="file-info" id="fileInfo" style="display: none;">
+        <h3>文件信息</h3>
+        <div id="fileDetails"></div>
+    </div>
+
+    <script>
+        let uploadArea, fileInput, fileInfo, fileDetails;
+        
+        function init() {
+            uploadArea = document.getElementById('uploadArea');
+            fileInput = document.getElementById('fileInput');
+            fileInfo = document.getElementById('fileInfo');
+            fileDetails = document.getElementById('fileDetails');
+            
+            console.log('初始化文件上传测试页面');
+            
+            // 绑定事件
+            uploadArea.addEventListener('click', handleUploadClick);
+            fileInput.addEventListener('change', handleFileChange);
+            
+            console.log('事件绑定完成');
+        }
+        
+        function handleUploadClick(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('上传区域被点击');
+            fileInput.click();
+        }
+        
+        function handleFileChange(e) {
+            console.log('文件选择事件触发');
+            const file = e.target.files[0];
+            
+            if (file) {
+                console.log('选择的文件:', file.name);
+                console.log('文件大小:', file.size, 'bytes');
+                console.log('文件类型:', file.type);
+                
+                // 显示文件信息
+                showFileInfo(file);
+                
+                // 清空文件输入，允许重复选择同一文件
+                e.target.value = '';
+            } else {
+                console.log('没有选择文件');
+            }
+        }
+        
+        function showFileInfo(file) {
+            const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+            const allowedTypes = ['.csv', '.xlsx', '.xls'];
+            const isValidType = allowedTypes.includes(fileExtension);
+            const isValidSize = file.size <= 10 * 1024 * 1024; // 10MB
+            
+            let status = '';
+            let statusClass = '';
+            
+            if (isValidType && isValidSize) {
+                status = '✅ 文件验证通过';
+                statusClass = 'success';
+            } else {
+                status = '❌ 文件验证失败';
+                statusClass = 'error';
+            }
+            
+            fileDetails.innerHTML = `
+                <p><strong>文件名:</strong> ${file.name}</p>
+                <p><strong>文件大小:</strong> ${(file.size / 1024).toFixed(2)} KB</p>
+                <p><strong>文件类型:</strong> ${file.type || '未知'}</p>
+                <p><strong>文件扩展名:</strong> ${fileExtension}</p>
+                <p><strong>格式支持:</strong> ${isValidType ? '✅' : '❌'}</p>
+                <p><strong>大小限制:</strong> ${isValidSize ? '✅' : '❌'}</p>
+                <p class="${statusClass}"><strong>状态:</strong> ${status}</p>
+            `;
+            
+            fileInfo.style.display = 'block';
+        }
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html> 

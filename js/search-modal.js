@@ -102,13 +102,13 @@ class SearchModal {
     loadRecentChats() {
         // 模拟聊天数据
         this.searchResults = [
+            { id: 7, title: 'LiFePO4石墨电池电解质推荐' },
             { id: 1, title: '电解质溶剂稳定性预测分析' },
             { id: 2, title: '锂枝晶形成原因及抑制方法' },
             { id: 3, title: 'SEI层组成成分研究' },
             { id: 4, title: '高镍正极材料性能优化' },
             { id: 5, title: '固态电解质界面稳定性' },
-            { id: 6, title: '电池热管理系统设计' },
-            { id: 7, title: 'LiFePO4石墨电池电解质推荐' }
+            { id: 6, title: '电池热管理系统设计' }
         ];
 
         this.showAllChats();

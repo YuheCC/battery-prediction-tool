@@ -1,0 +1,3761 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cell Performance Prediction</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* 电池性能表征工具专用样式 */
+        :root {
+            /* 主色调 - 黑色系 */
+            --primary-color: #1a1a1a;
+            --primary-light: #404040;
+            --primary-dark: #000000;
+            --primary-darker: #000000;
+            --secondary-color: #64748b;
+            --accent-color: #fbbf24;
+            
+            /* 功能色 */
+            --success-color: #1a1a1a;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+            
+            /* 文本色 */
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --text-light: #f8fafc;
+            
+            /* 背景色 */
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-hover: #f1f5f9;
+            
+            /* 边框色 */
+            --border-color: #e2e8f0;
+            --border-light: #f1f5f9;
+            --border-dark: #cbd5e1;
+            
+            /* 阴影 */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            
+            /* 圆角 */
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+        }
+
+        .dark {
+            /* 主色调 - 黑色系 */
+            --primary-color: #ffffff;
+            --primary-light: #e5e5e5;
+            --primary-dark: #cccccc;
+            --secondary-color: #94a3b8;
+            --accent-color: #fbbf24;
+            
+            /* 功能色 */
+            --success-color: #ffffff;
+            --warning-color: #fbbf24;
+            --error-color: #f87171;
+            
+            /* 文本色 */
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --text-light: #1e293b;
+            
+            /* 背景色 */
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: #1e293b;
+            --bg-hover: #334155;
+            
+            /* 边框色 */
+            --border-color: #334155;
+            --border-light: #475569;
+            --border-dark: #64748b;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* 为顶部菜单留出空间 */
+        .battery-container {
+            padding-top: 80px; /* 为顶部菜单留出空间 */
+        }
+
+        /* 菜单选中状态样式 */
+        .nav-item.dropdown.active > a {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .nav-item.dropdown.active > a::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 2px 2px 0 0;
+        }
+
+        .dropdown-item.active {
+            background-color: var(--bg-hover);
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        /* 主容器 */
+        .battery-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        /* 页面标题 - 与早期生命预测工具保持一致 */
+        .page-header {
+            margin-bottom: 0;
+            position: relative;
+        }
+
+        .page-title-bar {
+            background: #ffffff;
+            padding: 16px 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-title {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: -22px;
+            margin-top: -20px;
+        }
+
+        .page-title-icon {
+            width: 24px;
+            height: 24px;
+            color: #1a1a1a;
+        }
+
+        .page-subtitle {
+            display: none;
+        }
+
+        .beta-badge {
+            background: #e8f5e8;
+            color: #1a1a1a;
+            font-size: 10px;
+            font-weight: 500;
+            padding: 2px 6px;
+            border-radius: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            line-height: 1;
+            border: 1px solid #d1e7d1;
+            display: inline-block;
+            margin-left: 5px;
+        }
+
+        /* 主布局 */
+        .battery-layout {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 2rem;
+            align-items: start;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 1024px) {
+            .battery-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 功能区容器样式 */
+        .function-area {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        /* Material Selection 样式 */
+        .material-selection-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: -16px;
+            margin-top: 0;
+        }
+
+        .performance-prediction-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: -13px;
+            margin-top: 8px;
+        }
+
+
+
+        .llm-analysis-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: -20px;
+            margin-top: 8px;
+        }
+
+        .material-selection {
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+
+
+
+        .material-selection-body {
+            padding: 20px;
+        }
+
+        .material-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .material-row.three-columns {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .material-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .material-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .material-select {
+            padding: 8px 12px;
+            border: 1px solid var(--border-dark);
+            border-radius: 6px;
+            font-size: 13px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
+        .material-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        /* Compound Information Display Styles */
+        .compound-info {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            margin-top: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .compound-info-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 8px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .compound-info-header h4 {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .close-compound-info {
+            background: none;
+            border: none;
+            font-size: 12px;
+            color: #6b7280;
+            cursor: pointer;
+            padding: 0;
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 2px;
+            transition: all 0.2s ease;
+        }
+
+        .close-compound-info:hover {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .compound-info-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+            padding: 4px;
+        }
+
+        .compound-structure {
+            width: 100%;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+        }
+
+        .structure-image {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .structure-image img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            display: block;
+            margin: auto;
+        }
+
+        .compound-properties {
+            display: contents;
+        }
+
+        .properties-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            font-size: 13px;
+        }
+
+        .property-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .property-item:last-child,
+        .property-item:nth-last-child(2) {
+            border-bottom: none;
+        }
+
+        .property-label {
+            font-size: 10px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .property-value {
+            font-size: 10px;
+            font-weight: 400;
+            color: var(--text-primary);
+            text-align: right;
+        }
+
+        /* SMILES Hint Display Styles - Simple & Modern */
+        .smiles-hint {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            margin-top: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .hint-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .hint-header h4 {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .close-hint {
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: #9ca3af;
+            cursor: pointer;
+            padding: 0;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            transition: color 0.2s ease;
+        }
+
+        .close-hint:hover {
+            color: #6b7280;
+        }
+
+        .hint-content {
+            padding: 16px;
+        }
+
+        .hint-text {
+            font-size: 13px;
+            color: #6b7280;
+            line-height: 1.5;
+        }
+
+        .hint-text p {
+            margin: 0 0 12px 0;
+        }
+
+        .hint-text ul {
+            margin: 12px 0 0 0;
+            padding-left: 0;
+            list-style: none;
+        }
+
+        .hint-text li {
+            margin-bottom: 8px;
+            padding: 8px 12px;
+            background: #f9fafb;
+            border-radius: 6px;
+            border-left: 3px solid #fbbf24;
+        }
+
+        .hint-text code {
+            background: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 12px;
+            color: #374151;
+            font-weight: 500;
+        }
+
+        .material-group-with-ratio {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-width: 260px;
+        }
+
+        .material-input-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .ratio-input-group {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: #f9fafb;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            padding: 4px 8px;
+            min-width: 80px;
+        }
+
+        .ratio-input {
+            border: none;
+            background: transparent;
+            font-size: 13px;
+            color: #374151;
+            outline: none;
+            width: 50px;
+            text-align: center;
+            padding: 4px 2px;
+        }
+
+        .ratio-input:focus {
+            background: #ffffff;
+            border-radius: 4px;
+        }
+
+        .ratio-unit {
+            font-size: 11px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .ratio-input-group:focus-within {
+            border-color: #fbbf24;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+        }
+
+        .additive-row {
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: 3fr 1fr;
+            gap: 16px;
+            align-items: end;
+        }
+
+        /* Calculate Button Container */
+        .calculate-button-container {
+            display: flex;
+            justify-content: center;
+            margin: 2px 0 16px 0;
+        }
+
+        .calculate-button {
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .calculate-button:hover {
+            background: linear-gradient(90deg, var(--primary-dark), var(--primary-darker));
+            transform: translateY(-1px);
+        }
+
+        /* 性能预测结果样式 */
+        .performance-prediction {
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            overflow: hidden;
+        }
+
+
+
+        /* Temperature Switch */
+        .temperature-switch-container {
+            display: flex;
+            justify-content: center;
+            padding: 16px 20px;
+            background: #ffffff;
+            border-bottom: none;
+        }
+
+        .temperature-switch {
+            position: relative;
+            display: flex;
+            background: var(--border-light);
+            border-radius: 8px;
+            padding: 4px;
+            width: 400px;
+            height: 40px;
+        }
+
+        .switch-option {
+            background: none;
+            border: none;
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 6px;
+            position: relative;
+            z-index: 2;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .switch-option:hover {
+            color: var(--text-primary);
+        }
+
+        .switch-option.active {
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        .switch-slider {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: calc(50% - 4px);
+            height: calc(100% - 8px);
+            background: var(--primary-color);
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            z-index: 1;
+        }
+
+        .switch-option[data-temp="45C"].active ~ .switch-slider {
+            transform: translateX(100%);
+        }
+
+
+
+        /* Performance Content */
+        .performance-content {
+            background: #ffffff;
+        }
+
+
+
+        .performance-subtitle {
+            font-size: 12px;
+            color: #6b7280;
+            margin: 0;
+            margin-left: auto;
+        }
+
+        .performance-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0;
+        }
+
+        .performance-grid-two {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .performance-card {
+            padding: 24px 20px;
+            border-right: 1px solid var(--border-light);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 140px;
+        }
+
+        .performance-card:last-child {
+            border-right: none;
+        }
+
+        .performance-card-title {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            font-weight: 500;
+            line-height: 1.4;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .performance-result {
+            margin-bottom: 12px;
+        }
+
+        .result-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+        }
+
+        .result-positive {
+            background: #dcfce7;
+            color: var(--success-color);
+            border: 1px solid #bbf7d0;
+        }
+
+        .result-negative {
+            background: #fef2f2;
+            color: var(--error-color);
+            border: 1px solid #fecaca;
+        }
+
+        .result-icon {
+            width: 14px;
+            height: 14px;
+        }
+
+        .confidence-section {
+            margin-top: auto;
+        }
+
+        .confidence-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        .confidence-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1;
+        }
+
+        /* 分割线样式 */
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border-color), transparent);
+            margin: 32px 0;
+            opacity: 0.6;
+        }
+
+        /* LLM Analysis Button Container */
+        .llm-analysis-button-container {
+            display: flex;
+            justify-content: center;
+            margin: 24px 0;
+        }
+
+        .llm-analysis-btn {
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .llm-analysis-btn:hover {
+            background: linear-gradient(90deg, var(--primary-dark), var(--primary-darker));
+            transform: translateY(-1px);
+        }
+
+        .llm-analysis-btn:disabled {
+            background: linear-gradient(90deg, #6b7280, #4b5563);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* LLM分析样式 */
+        .llm-analysis {
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+
+
+
+        .llm-subtitle {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin: 0;
+            margin-left: auto;
+        }
+
+        .llm-body {
+            padding: 20px;
+        }
+
+        .llm-content {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-primary);
+        }
+
+        .llm-item {
+            margin-bottom: 16px;
+        }
+
+        .llm-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .llm-number {
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .llm-reference {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #f3f4f6;
+        }
+
+        .llm-link {
+            color: #fbbf24;
+            text-decoration: none;
+        }
+
+        .llm-link:hover {
+            text-decoration: underline;
+        }
+
+        /* 卡片样式 - 聊天风格 */
+        .card {
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e5e7eb;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid #f3f4f6;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            position: relative;
+        }
+
+        .card-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #4ade80, #22c55e);
+            border-radius: 20px 20px 0 0;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .card-icon {
+            width: 1.5rem;
+            height: 1.5rem;
+            color: #4ade80;
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        /* 表单样式 */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-label.required::after {
+            content: ' *';
+            color: var(--error-color);
+        }
+
+        .form-select, .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transition: all 0.2s ease;
+        }
+
+        .form-select:focus, .form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(3, 2, 19, 0.1);
+        }
+
+        .form-select {
+            cursor: pointer;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+        }
+
+        /* 数字输入组 */
+        .number-input-group {
+            display: flex;
+            align-items: center;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            background: var(--bg-primary);
+        }
+
+        .number-btn {
+            width: 3rem;
+            height: 3rem;
+            border: none;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 1.25rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .number-btn:hover {
+            background: var(--border-color);
+        }
+
+        .number-btn:active {
+            background: var(--text-muted);
+        }
+
+        .number-input {
+            flex: 1;
+            border: none;
+            padding: 0.75rem 1rem;
+            font-size: 0.875rem;
+            text-align: center;
+            background: transparent;
+            color: var(--text-primary);
+        }
+
+        .number-input:focus {
+            outline: none;
+        }
+
+        /* 帮助图标 */
+        .help-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 1rem;
+            height: 1rem;
+            background: var(--text-muted);
+            color: white;
+            border-radius: 50%;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+            cursor: help;
+        }
+
+        /* 按钮样式 */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.875rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-hover);
+            border-color: var(--border-dark);
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.75rem;
+        }
+
+        /* 计算按钮 */
+        .calculate-btn {
+            width: auto;
+            padding: 8px 20px;
+            font-size: 12px;
+            margin-top: 1rem;
+        }
+
+        /* 历史记录样式 - 与早期生命预测工具一致 */
+        .history-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 8px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .history-item:hover {
+            background: var(--bg-hover);
+            border-color: var(--border-dark);
+        }
+
+        /* 历史记录主要信息样式 */
+        .history-main-info {
+            margin-bottom: 12px;
+        }
+
+        .additive-primary {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .additive-smiles {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-family: 'Courier New', monospace;
+        }
+
+        .additive-amount {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* 历史记录次要信息样式 */
+        .history-secondary-info {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .performance-overview {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            flex-wrap: wrap;
+        }
+
+        .performance-overview .performance-indicator {
+            margin-left: 0;
+        }
+
+        .performance-indicator {
+            font-size: 11px;
+            font-weight: 500;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .performance-indicator.excellent {
+            background: #dcfce7;
+            color: var(--success-color);
+        }
+
+        .performance-indicator.good {
+            background: #dbeafe;
+            color: var(--primary-color);
+        }
+
+        .performance-indicator.fair {
+            background: #fef3c7;
+            color: var(--warning-color);
+        }
+
+        .performance-indicator.poor {
+            background: #fee2e2;
+            color: var(--error-color);
+        }
+
+        /* 历史记录温度标签样式 */
+        .history-temperature-tabs {
+            display: flex;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 4px;
+            margin-bottom: 16px;
+            width: fit-content;
+        }
+
+        .history-temp-tab {
+            background: none;
+            border: none;
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-radius: 6px;
+        }
+
+        .history-temp-tab:hover {
+            color: var(--text-primary);
+        }
+
+        .history-temp-tab.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* 历史记录性能内容样式 */
+        .history-performance-content {
+            margin-top: 16px;
+        }
+
+        .history-performance-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .history-performance-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .history-performance-title {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .history-performance-result {
+            margin-bottom: 8px;
+        }
+
+        .history-result-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .history-confidence-section {
+            margin-top: 8px;
+        }
+
+        /* 现代化弹窗样式 */
+        .modal-header-section {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: 24px;
+            border-radius: 12px 12px 0 0;
+            margin: -24px -24px 24px -24px;
+        }
+
+        .additive-highlight {
+            text-align: center;
+        }
+
+        .additive-smiles-large {
+            font-size: 20px;
+            font-weight: 600;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 8px;
+        }
+
+        .additive-amount-large {
+            font-size: 16px;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
+        .modal-content-sections {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .content-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .section-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--primary-color);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .config-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .config-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .config-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .config-value {
+            font-size: 14px;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .performance-tabs {
+            display: flex;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 4px;
+            margin-bottom: 16px;
+            width: fit-content;
+        }
+
+        .perf-tab {
+            background: none;
+            border: none;
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-radius: 6px;
+        }
+
+        .perf-tab:hover {
+            color: var(--text-primary);
+        }
+
+        .perf-tab.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .performance-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+        }
+
+        .perf-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .perf-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .perf-test-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .perf-result {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .perf-result.positive {
+            background: #dcfce7;
+            color: var(--success-color);
+        }
+
+        .perf-result.negative {
+            background: #fee2e2;
+            color: var(--error-color);
+        }
+
+        .perf-confidence {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .analysis-content {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .analysis-item {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+
+        .analysis-number {
+            width: 24px;
+            height: 24px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .analysis-text {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-primary);
+        }
+
+        .analysis-text strong {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        /* 预测记录详情简洁版本样式 */
+        .history-result-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: 20px;
+            border-radius: 12px 12px 0 0;
+            margin: -24px -24px 20px -24px;
+        }
+
+        .history-additive-info {
+            text-align: center;
+        }
+
+        .history-smiles {
+            font-size: 18px;
+            font-weight: 600;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 6px;
+        }
+
+        .history-amount {
+            font-size: 14px;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
+        .history-result-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .history-config-section,
+        .history-performance-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .history-section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        .history-config-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+        }
+
+        .history-config-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .history-config-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .history-config-value {
+            font-size: 13px;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .history-temp-tabs {
+            display: flex;
+            background: #f3f4f6;
+            border-radius: 8px;
+            padding: 4px;
+            margin: 0 24px 20px 24px;
+            width: fit-content;
+        }
+
+        .history-temp-tab {
+            background: none;
+            border: none;
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #6b7280;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 6px;
+            position: relative;
+            z-index: 2;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .history-temp-tab:hover {
+            color: #1f2937;
+        }
+
+        .history-temp-tab.active {
+            background: #1a1a1a;
+            color: white;
+            font-weight: 600;
+        }
+
+        .history-perf-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+            padding: 20px 24px;
+        }
+
+        .history-perf-item {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .history-perf-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .history-perf-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .history-perf-result {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 6px;
+            border-radius: 3px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .history-perf-result.positive {
+            background: #dcfce7;
+            color: var(--success-color);
+        }
+
+        .history-perf-result.negative {
+            background: #fee2e2;
+            color: var(--error-color);
+        }
+
+        .history-perf-confidence {
+            font-size: 11px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* 历史记录项头部 */
+        .history-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .history-time {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .history-status {
+            font-size: 11px;
+            font-weight: 500;
+            padding: 2px 8px;
+            border-radius: 12px;
+            background: #dcfce7;
+            color: var(--success-color);
+        }
+
+        .history-status.完成 {
+            background: #dcfce7;
+            color: var(--success-color);
+        }
+
+        /* 历史记录项内容 */
+        .history-item-content {
+            margin-bottom: 12px;
+        }
+
+        .history-file {
+            font-size: 14px;
+            font-weight: 500;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+
+        .history-result {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .history-result span {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .avg-cycle-life {
+            font-size: 12px;
+            color: #1a1a1a;
+            font-weight: 500;
+        }
+
+        /* 历史记录项操作 */
+        .history-item-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-start;
+        }
+
+        .view-result-btn, .delete-history-btn {
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+
+        .view-result-btn {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .view-result-btn:hover {
+            background: #e5e7eb;
+            color: #1f2937;
+        }
+
+        .delete-history-btn {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+
+        .delete-history-btn:hover {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .empty-history {
+            text-align: center;
+            padding: 48px 24px;
+            color: #9ca3af;
+            font-size: 14px;
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px dashed #e5e7eb;
+        }
+
+        .empty-history::before {
+            content: '📊';
+            display: block;
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+
+        /* 预测记录容器样式 - 与早期生命预测工具一致 */
+        .prediction-records-container {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .prediction-records-header {
+            background: #ffffff;
+            padding: 16px 20px 8px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .prediction-records-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1f2937;
+            margin: 0;
+        }
+
+        .prediction-records-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .prediction-filter-btn {
+            background: none;
+            border: none;
+            color: #6b7280;
+            padding: 6px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .prediction-filter-btn:hover {
+            background: #f3f4f6;
+            color: #1f2937;
+        }
+
+        .prediction-add-btn {
+            background: #f3f4f6;
+            color: #374151;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .prediction-add-btn:hover {
+            background: #e5e7eb;
+            color: #1f2937;
+        }
+
+        .prediction-records-body {
+            padding: 12px;
+        }
+
+        .prediction-add-section {
+            padding: 8px 12px;
+            background: #ffffff;
+            display: flex;
+            justify-content: center;
+        }
+
+        .prediction-add-section .prediction-add-btn {
+            width: 100%;
+            height: 31.5px;
+            justify-content: center;
+            background: transparent;
+            border: 1px solid #d1d5db;
+            color: #9ca3af;
+            padding: 0 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .prediction-add-section .prediction-add-btn:hover {
+            background: #f9fafb;
+            color: #6b7280;
+        }
+
+        /* 模态框样式 */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            max-width: 1600px;
+            width: 98%;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal.show .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #ffffff;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+            margin: 0;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #6b7280;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            background: #f3f4f6;
+            color: #1f2937;
+        }
+
+        .modal-body {
+            padding: 0;
+            background: #ffffff;
+        }
+
+        /* 结果样式 */
+        .result-section {
+            margin-bottom: 2rem;
+        }
+
+        .result-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .result-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .result-item {
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-light);
+        }
+
+        .result-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
+        }
+
+        .result-value {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .material-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .material-item:last-child {
+            border-bottom: none;
+        }
+
+        .material-label {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .material-value {
+            color: var(--text-secondary);
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.875rem;
+        }
+
+        /* 简洁的材料配置样式 */
+        .material-config-compact {
+            padding: 20px 24px;
+        }
+
+        .material-config-row {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 16px;
+        }
+
+        .material-config-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .material-config-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 200px;
+        }
+
+        .material-config-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: #6b7280;
+            min-width: 80px;
+        }
+
+        .material-config-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1f2937;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        }
+
+        /* LLM分析内容样式 */
+        .llm-analysis-content {
+            padding: 20px 24px;
+        }
+
+        .llm-item {
+            margin-bottom: 16px;
+            padding: 16px;
+            background: #ffffff;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            border-left: 3px solid #fbbf24;
+        }
+
+        .llm-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .llm-number {
+            font-weight: 600;
+            color: #1f2937;
+            font-size: 14px;
+        }
+
+        .llm-reference {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #f3f4f6;
+            background: #ffffff;
+            padding: 12px;
+            border-radius: 6px;
+        }
+
+        .llm-link {
+            color: #fbbf24;
+            text-decoration: none;
+        }
+
+        .llm-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Enhanced Modal Styles */
+        .modal-content {
+            max-width: 1600px;
+            max-height: 90vh;
+        }
+
+        .modal-body {
+            padding: 0;
+            max-height: calc(85vh - 120px);
+            overflow-y: auto;
+        }
+
+        /* Result section enhancements */
+        .result-section {
+            margin-bottom: 0;
+            border-bottom: none;
+            background: #ffffff;
+        }
+
+        .result-section:last-child {
+            border-bottom: none;
+        }
+
+        .result-title {
+            background: #ffffff;
+            margin: 0;
+            padding: 20px 24px;
+            border-bottom: none;
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .result-title svg {
+            width: 18px;
+            height: 18px;
+            color: #6b7280;
+        }
+
+        /* Material items layout */
+        .material-items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            padding: 20px 24px;
+        }
+
+        .material-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: #f9fafb;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .material-label {
+            font-weight: 500;
+            color: #374151;
+            font-size: 13px;
+        }
+
+        .material-value {
+            color: #1f2937;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 12px;
+            background: #ffffff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid #d1d5db;
+            max-width: 220px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Performance results grid */
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 16px;
+            padding: 20px 2rem;
+        }
+
+        .result-item {
+            padding: 16px;
+            background: #f9fafb;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .result-item:hover {
+            background: #f3f4f6;
+            border-color: #d1d5db;
+        }
+
+        .result-label {
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 8px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }
+
+        .result-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1f2937;
+            display: block;
+        }
+
+        /* Modal LLM content styles */
+        .modal .llm-content {
+            padding: 20px 2rem;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #374151;
+        }
+
+        .modal .llm-item {
+            margin-bottom: 20px;
+            padding: 16px;
+            background: #f9fafb;
+            border-radius: 8px;
+            border-left: 4px solid #f59e0b;
+        }
+
+        .modal .llm-item:last-of-type {
+            margin-bottom: 20px;
+        }
+
+        .modal .llm-number {
+            font-weight: 700;
+            color: #7c3aed;
+            font-size: 15px;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .modal .llm-reference {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 0;
+            padding: 16px;
+            background: #f3f4f6;
+            border-radius: 8px;
+            line-height: 1.5;
+        }
+
+        .modal .llm-link {
+            color: #fbbf24;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .modal .llm-link:hover {
+            text-decoration: underline;
+            color: #2563eb;
+        }
+
+        /* Scrollbar styling for modal */
+        .modal-body::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .modal-body::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 3px;
+        }
+
+        .modal-body::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+
+        .modal-body::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* 加载状态 */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .loading .btn {
+            position: relative;
+        }
+
+        .loading .btn::after {
+            content: '';
+            position: absolute;
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .battery-container {
+                padding: 1rem;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .card-body {
+                padding: 1.5rem;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 1rem;
+            }
+
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部菜单 -->
+    <header class="main-header">
+        <div class="logo-container">
+            <img src="logo.png" alt="SES Logo" class="logo-img">
+        </div>
+                    <nav class="main-nav">
+                <a href="map.html" class="nav-item">Map</a>
+                <a href="chat.html" class="nav-item">Ask</a>
+                <a href="#" class="nav-item">Search</a>
+                <a href="#" class="nav-item">Filter</a>
+                <a href="#" class="nav-item">Favorites</a>
+            <div class="nav-item dropdown prediction-dropdown active">
+                <a href="#" class="nav-item prediction-main-link">Prediction</a>
+                    <div class="dropdown-menu">
+                        <a href="battery-prediction.html" class="dropdown-item active">
+                            电池性能表征
+                        </a>
+                        <a href="prediction-tool.html" class="dropdown-item">
+                        电池早期生命预测工具 <span class="beta-badge">Beta</span>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        <div class="user-actions">
+            <a href="about.html" class="nav-item" target="_blank" rel="noopener noreferrer">About ↗</a>
+            <div class="user-avatar-container">
+                <a href="#" class="action-icon user-avatar" id="userAvatar">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24px" height="24px">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                    </svg>
+                </a>
+                <div class="user-dropdown" id="userDropdown">
+                    <div class="user-info">
+                        <div class="user-avatar-large">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="36px" height="36px">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                        </div>
+                        <div class="user-details">
+                            <div class="user-name-container">
+                                <div class="user-email">Yuhe.Chen@ses.ai</div>
+                                <span class="subscription-badge">Explorer</span>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="#" class="dropdown-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="item-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.438.995s.145.755.438.995l1.003.827c.48.398.668 1.03.26 1.431l-1.296 2.247a1.125 1.125 0 01-1.37.49l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.063-.374-.313-.686-.645-.87a6.52 6.52 0 01-.22-.127c-.324-.196-.72-.257-1.075-.124l-1.217.456a1.125 1.125 0 01-1.37-.49l-1.296-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.437-.995s-.145-.755-.437-.995l-1.004-.827a1.125 1.125 0 01-.26-1.431l1.296-2.247a1.125 1.125 0 011.37-.49l1.217.456c.355.133.75.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                        账号设置
+                    </a>
+                    <a href="#" class="dropdown-item" id="feedbackButton">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="item-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" /></svg>
+                        意见与反馈
+                    </a>
+                    <a href="#" class="dropdown-item" id="logoutButton">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="item-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" /></svg>
+                        退出登录
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="battery-container">
+                        <!-- 页面标题区域 -->
+                <div class="page-title-bar">
+                    <h1 class="page-title">
+                        Cell Performance Prediction
+                        <span class="beta-badge">Beta</span>
+                    </h1>
+            </div>
+            
+        <!-- 主布局 -->
+        <div class="battery-layout">
+            <!-- 左侧：功能区 -->
+            <div class="function-area">
+                <!-- Material Selection Title -->
+                <h2 class="material-selection-title">Material Selection</h2>
+                
+                <!-- Material Selection -->
+                <div class="material-selection">
+                    <div class="material-selection-body">
+                        <div class="material-row three-columns">
+                            <div class="material-group-with-ratio">
+                                <label class="material-label">Cathode</label>
+                                <div class="material-input-row">
+                                    <select id="cathode" class="material-select">
+                                <option value="NCM811" selected>NCM811</option>
+                                <option value="NCM622">NCM622</option>
+                                <option value="NCM523">NCM523</option>
+                                <option value="LFP">LFP</option>
+                                <option value="LCO">LCO</option>
+                            </select>
+                                    <div class="ratio-input-group">
+                                        <input type="number" id="cathodeRatio" class="ratio-input" placeholder="50" value="50" min="1" max="100" step="0.1">
+                                        <span class="ratio-unit">%</span>
+                        </div>
+                                </div>
+                            </div>
+                            <div class="material-group-with-ratio">
+                                <label class="material-label">Anode</label>
+                                <div class="material-input-row">
+                                    <select id="anode" class="material-select">
+                                <option value="12%Si+Graphite" selected>12%Si+Graphite</option>
+                                <option value="Graphite">Graphite</option>
+                                <option value="Li-Metal">Li-Metal</option>
+                                <option value="LTO">LTO</option>
+                            </select>
+                                    <div class="ratio-input-group">
+                                        <input type="number" id="anodeRatio" class="ratio-input" placeholder="30" value="30" min="1" max="100" step="0.1">
+                                        <span class="ratio-unit">%</span>
+                        </div>
+                                </div>
+                            </div>
+                            <div class="material-group-with-ratio">
+                                <label class="material-label">Base electrolyte</label>
+                                <div class="material-input-row">
+                                    <select id="electrolyte" class="material-select">
+                                <option value="Carbonate(EC/EMC/DEC)" selected>Carbonate(EC/EMC/DEC)</option>
+                                <option value="Carbonate(EC/DMC)">Carbonate(EC/DMC)</option>
+                                <option value="Carbonate(EC/PC)">Carbonate(EC/PC)</option>
+                                <option value="Ether">Ether</option>
+                            </select>
+                                    <div class="ratio-input-group">
+                                        <input type="number" id="electrolyteRatio" class="ratio-input" placeholder="20" value="20" min="1" max="100" step="0.1">
+                                        <span class="ratio-unit">%</span>
+                        </div>
+                        </div>
+                            </div>
+                        </div>
+                        <div class="material-row">
+                            <div class="material-group">
+                                <label class="material-label">Additive (SMILES) *</label>
+                                <input type="text" id="additive" class="material-select" placeholder="O=C(OC(C)(C)C)O" value="O=C(OC(C)(C)C)O" oninput="showCompoundInfo(this.value)">
+                            </div>
+                                                </div>
+
+                        <!-- Compound Information Display -->
+                        <div id="compoundInfo" class="compound-info" style="display: none;">
+                            <div class="compound-info-header">
+                                <h4>Molecule Information</h4>
+                                <button class="close-compound-info" onclick="hideCompoundInfo()">×</button>
+                            </div>
+                            <div class="compound-info-content">
+                                <div class="compound-structure">
+                                    <div class="structure-image">
+                                        <img id="moleculeStructure" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8Y2lyY2xlIGN4PSIzMCIgY3k9IjMwIiByPSIyNSIgZmlsbD0iI2Y4ZmFmYyIgc3Ryb2tlPSIjM2I4MmY2IiBzdHJva2Utd2lkdGg9IjEiLz4KICA8dGV4dCB4PSIzMCIgeT0iMzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiMzYjgyZjYiIGZvbnQtc2l6ZT0iOCIgZm9udC1mYW1pbHk9IkFyaWFsIj5Nb2xlY3VsZTwvdGV4dD4KICA8dGV4dCB4PSIzMCIgeT0iNDUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiMzYjgyZjYiIGZvbnQtc2l6ZT0iNiIgZm9udC1mYW1pbHk9IkFyaWFsIj5TdHJ1Y3R1cmU8L3RleHQ+Cjwvc3ZnPgo=" alt="Molecular Structure" />
+                                    </div>
+                                </div>
+                                <div class="compound-properties">
+                                    <div class="properties-grid">
+                                        <div class="property-item">
+                                            <span class="property-label">SMILES:</span>
+                                            <span class="property-value" id="compoundSmiles">-</span>
+                                        </div>
+                                        <div class="property-item">
+                                            <span class="property-label">Mol Weight:</span>
+                                            <span class="property-value" id="compoundMolWeight">-</span>
+                                        </div>
+                                        <div class="property-item">
+                                            <span class="property-label">UMAP X:</span>
+                                            <span class="property-value" id="compoundUmapX">-</span>
+                                        </div>
+                                        <div class="property-item">
+                                            <span class="property-label">UMAP Y:</span>
+                                            <span class="property-value" id="compoundUmapY">-</span>
+                                        </div>
+                                        <div class="property-item">
+                                            <span class="property-label">HOMO:</span>
+                                            <span class="property-value" id="compoundHomo">-</span>
+                                        </div>
+                                        <div class="property-item">
+                                            <span class="property-label">LUMO:</span>
+                                            <span class="property-value" id="compoundLumo">-</span>
+                                        </div>
+                                        <div class="property-item">
+                                            <span class="property-label">ESP Max:</span>
+                                            <span class="property-value" id="compoundEspMax">-</span>
+                                        </div>
+                                    </div>
+                                    <div class="properties-grid">
+                                        <div class="property-item">
+                                            <span class="property-label">ESP Min:</span>
+                                            <span class="property-value" id="compoundEspMin">-</span>
+                                        </div>
+                                        <div class="property-item">
+                                            <span class="property-label">Predicted MP:</span>
+                                            <span class="property-value" id="compoundMp">-</span>
+                                        </div>
+                                        <div class="property-item">
+                                            <span class="property-label">Predicted BP:</span>
+                                            <span class="property-value" id="compoundBp">-</span>
+                                        </div>
+                                        <div class="property-item">
+                                            <span class="property-label">Predicted FP:</span>
+                                            <span class="property-value" id="compoundFp">-</span>
+                                        </div>
+                                        <div class="property-item">
+                                            <span class="property-label">Combustion Enthalpy:</span>
+                                            <span class="property-value" id="compoundCombustion">-</span>
+                                        </div>
+                                        <div class="property-item">
+                                            <span class="property-label">Commercial Viability:</span>
+                                            <span class="property-value" id="compoundViability">-</span>
+                                        </div>
+                                    </div>
+                                </div>
+                    </div>
+                </div>
+
+                        <!-- SMILES Hint Display -->
+                        <div id="smilesHint" class="smiles-hint" style="display: none;">
+                            <div class="hint-header">
+                                <h4>SMILES Not Found</h4>
+                                <button class="close-hint" onclick="hideSmilesHint()">×</button>
+                            </div>
+                            <div class="hint-content">
+                                <div class="hint-text">
+                                    <p>The SMILES string you entered is not found in our database.</p>
+                                    <p>Please re-enter a valid SMILES string or try this example:</p>
+                                    <ul>
+                                        <li><code>O=c1occo1</code> - ethylene carbonate</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Calculate Button Inside Card -->
+                <div class="calculate-button-container">
+                    <button class="calculate-button" onclick="calculatePerformance()">
+                        Calculate
+                    </button>
+                    </div>
+                </div>
+
+
+                        
+                <!-- Cell Performance Prediction Title -->
+                <h3 class="performance-prediction-title" id="performancePredictionTitle" style="display: none;">Cell Performance Prediction</h3>
+                
+                <!-- 性能预测结果 -->
+                <div class="performance-prediction" id="performanceResults" style="display: none;">
+                    
+                    <!-- Temperature Switch -->
+                    <div class="temperature-switch-container">
+                        <div class="temperature-switch">
+                            <button class="switch-option active" onclick="switchTemperatureTab('25C')" data-temp="25C">
+                            25°C Performance
+                        </button>
+                            <button class="switch-option" onclick="switchTemperatureTab('45C')" data-temp="45C">
+                            45°C Performance
+                        </button>
+                            <div class="switch-slider"></div>
+                        </div>
+                    </div>
+
+                    <!-- 25°C Performance Content -->
+                    <div class="performance-content" id="performance25C">
+                        <div class="performance-grid performance-grid-two">
+                            <div class="performance-card">
+                                <div class="performance-card-title">Cycling test - CE</div>
+                                <div class="performance-result">
+                                    <div class="result-indicator result-positive">
+                                        <svg class="result-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                        Positive
+                                    </div>
+                                </div>
+                                <div class="confidence-section">
+                                    <div class="confidence-label">Confidence</div>
+                                    <div class="confidence-value" id="ceValue25C">98.5%</div>
+                                </div>
+                            </div>
+                            <div class="performance-card">
+                                <div class="performance-card-title">Cycling test - Cycling life</div>
+                                <div class="performance-result">
+                                    <div class="result-indicator result-negative">
+                                        <svg class="result-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                        </svg>
+                                        Negative
+                                    </div>
+                                </div>
+                                <div class="confidence-section">
+                                    <div class="confidence-label">Confidence</div>
+                                    <div class="confidence-value" id="cycleValue25C">95.2%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 45°C Performance Content -->
+                    <div class="performance-content" id="performance45C" style="display: none;">
+                        <div class="performance-grid">
+                            <div class="performance-card">
+                                <div class="performance-card-title">Cycling test - CE</div>
+                                <div class="performance-result">
+                                    <div class="result-indicator result-positive">
+                                        <svg class="result-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                        Positive
+                                    </div>
+                                </div>
+                                <div class="confidence-section">
+                                    <div class="confidence-label">Confidence</div>
+                                    <div class="confidence-value" id="ceValue45C">96.8%</div>
+                                </div>
+                            </div>
+                            <div class="performance-card">
+                                <div class="performance-card-title">Cycling test - Cycling life</div>
+                                <div class="performance-result">
+                                    <div class="result-indicator result-negative">
+                                        <svg class="result-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                        </svg>
+                                        Negative
+                                    </div>
+                                </div>
+                                <div class="confidence-section">
+                                    <div class="confidence-label">Confidence</div>
+                                    <div class="confidence-value" id="cycleValue45C">92.1%</div>
+                                </div>
+                            </div>
+                            <div class="performance-card">
+                                <div class="performance-card-title">Rate test — 5C capacity retention</div>
+                                <div class="performance-result">
+                                    <div class="result-indicator result-negative">
+                                        <svg class="result-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                        </svg>
+                                        Negative
+                                    </div>
+                                </div>
+                                <div class="confidence-section">
+                                    <div class="confidence-label">Confidence</div>
+                                    <div class="confidence-value" id="rateValue45C">94.3%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <!-- LLM Analysis Button Inside Card -->
+                <div class="llm-analysis-button-container" id="llmAnalysisButtonContainer" style="display: none;">
+                    <button class="llm-analysis-btn" id="llmAnalysisBtn" onclick="showLLMAnalysis()">
+                        LLM Analysis
+                    </button>
+                    </div>
+
+                </div>
+                    
+                <!-- LLM Analysis Title -->
+                <h3 class="llm-analysis-title" id="llmAnalysisTitle" style="display: none;">LLM Analysis</h3>
+                
+                <!-- LLM分析 -->
+                <div class="llm-analysis" id="llmAnalysis" style="display: none;">
+                    <div class="llm-body">
+                        <div class="llm-content" id="llmContent">
+                            <div class="llm-item">
+                                <span class="llm-number">1. Nickel Dehydrogenation Optimization</span><br>
+                                • The dimethyl dicarbonate-based molecule (SMILES: O=C(OC(C)(C)C)O) acts as a conductor in nickel-catalyzed denitrogenation products. This reaction can improve CE degradation under voltage. During the CE optimization process, when generating this structure with electrical nickel, it is essential to maintain good CE settings, cycle reversal CE display enhancement, and optimize aging CE display improvement patterns.
+                            </div>
+                            <div class="llm-item">
+                                <span class="llm-number">2. 4°C Cycling Optimization</span><br>
+                                The rolling disc approach involves enhanced material comparison and LiFe distribution optimization for secondary reactions. This biochemical nickel enhancement process addresses charge-discharge cycles under nickel conditions, improving efficiency through systematic laboratory validation at 4°C conditions with simplified testing protocols.
+                            </div>
+                            <div class="llm-item">
+                                <span class="llm-number">3. Comprehensive Recommendations</span><br>
+                                • Optimal reduction positioning at 2% to 4°C conditions is essential for effective CE and cycling performance. Multiple verification cycles using EC/EMC/DEC/LiFe with UC/LiPF6 low-grade electrolyte systems are recommended for material state optimization.
+                            </div>
+                            <div class="llm-reference">
+                                References [1] Ling-Fei Zhao et al. Hard Carbon Anodes: Fundamental Understanding and Commercial Perspectives for Na-ion Batteries beyond Li-ion and K-ion Counterparts, Advanced Energy Materials, 2002[04, 2020. <a href="https://doi.org/10.1002/aenm.202002704" class="llm-link" target="_blank" rel="noopener noreferrer">https://doi.org/10.1002/aenm.202002704</a><br>
+                                [2] Xiaonan Zhang et al. Lithium dendrite-free and fast-charging for high voltage nickel-rich lithium metal batteries enabled by bifunctional sulfone-containing electrolyte additives, Journal of Power Sources, 452/227833, 2020. <a href="https://doi.org/10.1016/j.jpowsour.2020.227833" class="llm-link" target="_blank" rel="noopener noreferrer">https://doi.org/10.1016/j.jpowsour.2020.227833</a><br>
+                                [3] Simeng Zhang et al. Low-temperature molten salt as a versatile Electrolyte Additive towards LiNi0.8Co0.1Mn0.1O2/Graphite Batteries Working in a Wide-Temperature Range, ACS Applied Materials & Interfaces, 10 (35):29628-29518, 2018. <a href="https://doi.org/10.1021/acsami.8b04743" class="llm-link" target="_blank" rel="noopener noreferrer">https://doi.org/10.1021/acsami.8b04743</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+                
+            <!-- 右侧：预测记录 -->
+            <div class="prediction-records-container">
+                <div class="prediction-records-header">
+                    <h2 class="prediction-records-title">Prediction Records</h2>
+                    <div class="prediction-records-actions">
+                        <button class="prediction-filter-btn" onclick="toggleFilter()">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.414A1 1 0 013 6.707V4z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="prediction-add-section">
+                    <div class="prediction-add-btn" onclick="showAddPredictionForm()">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        New Prediction
+                    </div>
+                </div>
+                <div class="prediction-records-body">
+                    <div id="historyList">
+                        <!-- 预测记录将在这里动态生成 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 结果模态框 -->
+    <div class="modal" id="resultModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Calculation Results</h3>
+                <button class="modal-close" onclick="closeResultModal()">×</button>
+            </div>
+            <div class="modal-body" id="resultBody">
+                <!-- 结果内容将在这里动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let batteryHistory = [];
+
+        // 电池性能表征工具函数
+        function decreaseAmount() {
+            const input = document.getElementById('additive-amount');
+            const currentValue = parseFloat(input.value);
+            if (currentValue > 0) {
+                input.value = (currentValue - 0.1).toFixed(1);
+            }
+        }
+
+        function increaseAmount() {
+            const input = document.getElementById('additive-amount');
+            const currentValue = parseFloat(input.value);
+            if (currentValue < 10) {
+                input.value = (currentValue + 0.1).toFixed(1);
+            }
+        }
+
+        function calculateBatteryPerformance() {
+            const cathode = document.getElementById('cathode').value;
+            const anode = document.getElementById('anode').value;
+            const electrolyte = document.getElementById('electrolyte').value;
+            const additive = document.getElementById('additive').value;
+            const additiveAmount = document.getElementById('additive-amount').value;
+            const temperature = document.getElementById('temperature').value;
+
+            if (!additive.trim()) {
+                alert('请输入添加剂SMILES结构式');
+                return;
+            }
+
+            // 显示加载状态
+            const calculateBtn = document.querySelector('.calculate-btn');
+            const originalText = calculateBtn.innerHTML;
+            calculateBtn.innerHTML = `
+                <svg class="animate-spin" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                </svg>
+                计算中...
+            `;
+            calculateBtn.disabled = true;
+            calculateBtn.classList.add('loading');
+
+            // 模拟计算过程
+            setTimeout(() => {
+                // 生成模拟结果
+                const result = generateMockResult(cathode, anode, electrolyte, additive, additiveAmount, temperature);
+                
+                // 显示结果
+                showResult(result);
+                
+                // 添加到历史记录
+                addToHistory(result);
+                
+                // 恢复按钮状态
+                calculateBtn.innerHTML = originalText;
+                calculateBtn.disabled = false;
+                calculateBtn.classList.remove('loading');
+            }, 2000);
+        }
+
+        function generateMockResult(cathode, anode, electrolyte, additive, additiveAmount, temperature) {
+            return {
+                id: Date.now(),
+                timestamp: new Date().toLocaleString('zh-CN'),
+                materials: {
+                    cathode: cathode,
+                    anode: anode,
+                    electrolyte: electrolyte,
+                    additive: additive,
+                    additiveAmount: additiveAmount,
+                    temperature: temperature
+                },
+                performance: {
+                    cycleLife: Math.floor(Math.random() * 500) + 300,
+                    capacityRetention: (Math.random() * 20 + 80).toFixed(1),
+                    coulombicEfficiency: (Math.random() * 5 + 95).toFixed(2),
+                    energyDensity: (Math.random() * 50 + 200).toFixed(1),
+                    powerDensity: (Math.random() * 1000 + 2000).toFixed(0)
+                }
+            };
+        }
+
+        function showResult(result) {
+            const modal = document.getElementById('resultModal');
+            const resultBody = document.getElementById('resultBody');
+            
+            resultBody.innerHTML = `
+                <div class="result-section">
+                    <h4 class="result-title">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                        </svg>
+                        Material Configuration
+                    </h4>
+                    <div class="material-item">
+                        <span class="material-label">Cathode Material</span>
+                        <span class="material-value">${result.materials.cathode}</span>
+                    </div>
+                    <div class="material-item">
+                        <span class="material-label">Anode Material</span>
+                        <span class="material-value">${result.materials.anode}</span>
+                    </div>
+                    <div class="material-item">
+                        <span class="material-label">Base Electrolyte</span>
+                        <span class="material-value">${result.materials.electrolyte}</span>
+                    </div>
+                    <div class="material-item">
+                        <span class="material-label">Additive</span>
+                        <span class="material-value">${result.materials.additive}</span>
+                    </div>
+                    <div class="material-item">
+                        <span class="material-label">Additive Content</span>
+                        <span class="material-value">${result.materials.additiveAmount} wt%</span>
+                    </div>
+                    <div class="material-item">
+                        <span class="material-label">Cycling Temperature</span>
+                        <span class="material-value">${result.materials.temperature} °C</span>
+                    </div>
+                </div>
+                
+                <div class="result-section">
+                    <h4 class="result-title">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                        Cell Performance Prediction
+                    </h4>
+                    <div class="result-grid">
+                        <div class="result-item">
+                            <div class="result-label">Cycle Life</div>
+                            <div class="result-value">${result.performance.cycleLife} cycles</div>
+                    </div>
+                        <div class="result-item">
+                            <div class="result-label">Capacity Retention</div>
+                            <div class="result-value">${result.performance.capacityRetention}%</div>
+                    </div>
+                        <div class="result-item">
+                            <div class="result-label">Coulombic Efficiency</div>
+                            <div class="result-value">${result.performance.coulombicEfficiency}%</div>
+                    </div>
+                        <div class="result-item">
+                            <div class="result-label">Energy Density</div>
+                            <div class="result-value">${result.performance.energyDensity} Wh/kg</div>
+                    </div>
+                        <div class="result-item">
+                            <div class="result-label">Power Density</div>
+                            <div class="result-value">${result.performance.powerDensity} W/kg</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            modal.classList.add('show');
+        }
+
+        function closeResultModal() {
+            const modal = document.getElementById('resultModal');
+            modal.classList.remove('show');
+        }
+
+        // 预测记录相关函数
+        function addToHistory(result) {
+            const historyItem = {
+                id: result.id,
+                timestamp: result.timestamp,
+                materials: result.materials,
+                performance: result.performance
+            };
+            
+            batteryHistory.unshift(historyItem);
+            updateHistoryDisplay();
+            saveHistoryToStorage();
+        }
+
+        function updateHistoryDisplay() {
+            const historyList = document.getElementById('historyList');
+            if (!historyList) {
+                return;
+            }
+            
+            historyList.innerHTML = '';
+
+            if (batteryHistory.length === 0) {
+                historyList.innerHTML = '<div class="empty-history">No prediction records</div>';
+                return;
+            }
+
+            batteryHistory.forEach((item, index) => {
+                // 计算总体性能评分
+                const overallScore = calculateOverallScore(item);
+                
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                historyItem.innerHTML = `
+                    <div class="history-item-header">
+                        <span class="history-time">${item.timestamp}</span>
+                        <span class="history-status 完成">Completed</span>
+                    </div>
+                    <div class="history-item-content">
+                        <div class="history-main-info">
+                            <div class="additive-primary">
+                                <span class="additive-smiles">${item.materials.additive}</span>
+                                <span class="additive-amount">(${item.materials.additiveAmount}%)</span>
+                            </div>
+                        </div>
+                        <div class="history-secondary-info">
+                            <div class="performance-overview">
+                                <span class="performance-indicator ${getPerformanceClass(item.performance25C)}">
+                                    25°C: ${getPerformanceSummary(item.performance25C)}
+                                </span>
+                                <span class="performance-indicator ${getPerformanceClass(item.performance45C)}">
+                                    45°C: ${getPerformanceSummary(item.performance45C)}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="history-item-actions">
+                        <button class="view-result-btn" onclick="viewHistoryResult(${item.id})">View Details</button>
+                        <button class="delete-history-btn" onclick="deleteHistoryItem(${item.id})">Delete</button>
+                    </div>
+                `;
+                historyList.appendChild(historyItem);
+            });
+        }
+
+        function calculateOverallScore(item) {
+            let positiveCount = 0;
+            let totalCount = 0;
+            
+            // 统计25°C性能
+            Object.values(item.performance25C).forEach(test => {
+                totalCount++;
+                if (test.result === 'Positive') positiveCount++;
+            });
+            
+            // 统计45°C性能
+            Object.values(item.performance45C).forEach(test => {
+                totalCount++;
+                if (test.result === 'Positive') positiveCount++;
+            });
+            
+            return (positiveCount / totalCount) * 100;
+        }
+
+        function getPerformanceClass(performance) {
+            const positiveCount = Object.values(performance).filter(test => test.result === 'Positive').length;
+            const totalCount = Object.values(performance).length;
+            const ratio = positiveCount / totalCount;
+            
+            if (ratio >= 0.8) return 'excellent';
+            if (ratio >= 0.6) return 'good';
+            if (ratio >= 0.4) return 'fair';
+            return 'poor';
+        }
+
+        function getPerformanceSummary(performance) {
+            const positiveCount = Object.values(performance).filter(test => test.result === 'Positive').length;
+            const totalCount = Object.values(performance).length;
+            return `${positiveCount}/${totalCount} Positive`;
+        }
+
+        function viewHistoryResult(id) {
+            const item = batteryHistory.find(h => h.id === id);
+            if (item) {
+                const result = {
+                    materials: item.materials,
+                    performance25C: item.performance25C,
+                    performance45C: item.performance45C
+                };
+                showHistoryResult(result);
+            }
+        }
+
+        function showHistoryResult(result) {
+            const modal = document.getElementById('resultModal');
+            const resultBody = document.getElementById('resultBody');
+            
+            resultBody.innerHTML = `
+                <!-- 功能区第一部分：材料选择 -->
+                <div class="result-section">
+                    <h4 class="result-title">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                        </svg>
+                        Material Configuration
+                    </h4>
+                    <div class="material-config-compact">
+                        <div class="material-config-row">
+                            <div class="material-config-item">
+                                <span class="material-config-label">Cathode</span>
+                                <span class="material-config-value">${result.materials.cathode} ${result.materials.cathodeRatio}%</span>
+                            </div>
+                            <div class="material-config-item">
+                                <span class="material-config-label">Anode</span>
+                                <span class="material-config-value">${result.materials.anode} ${result.materials.anodeRatio}%</span>
+                            </div>
+                            <div class="material-config-item">
+                                <span class="material-config-label">Electrolyte</span>
+                                <span class="material-config-value">${result.materials.electrolyte} ${result.materials.electrolyteRatio}%</span>
+                            </div>
+                        </div>
+                        <div class="material-config-row">
+                            <div class="material-config-item">
+                                <span class="material-config-label">Additive</span>
+                                <span class="material-config-value">${result.materials.additive}</span>
+                            </div>
+                            <div class="material-config-item">
+                                <span class="material-config-label">Content</span>
+                                <span class="material-config-value">${result.materials.additiveAmount} wt%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 功能区第二部分：性能预测 -->
+                <div class="result-section">
+                    <h4 class="result-title">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                        Performance Prediction
+                    </h4>
+                    
+                    <!-- 温度切换标签 -->
+                    <div class="history-temp-tabs">
+                        <button class="history-temp-tab active" onclick="switchHistoryTempTab('25C')" data-temp="25C">
+                            25°C Performance
+                        </button>
+                        <button class="history-temp-tab" onclick="switchHistoryTempTab('45C')" data-temp="45C">
+                            45°C Performance
+                        </button>
+                    </div>
+                    
+                    <!-- 25°C性能结果 -->
+                    <div class="history-perf-content" id="historyPerformance25C">
+                        <div class="history-perf-grid">
+                            <div class="history-perf-item">
+                                <div class="history-perf-header">
+                                    <span class="history-perf-name">CE Test</span>
+                                    <div class="history-perf-result ${result.performance25C.ce.result === 'Positive' ? 'positive' : 'negative'}">
+                                        ${result.performance25C.ce.result}
+                                    </div>
+                                </div>
+                                <div class="history-perf-confidence">Confidence: ${result.performance25C.ce.confidence}</div>
+                            </div>
+                            <div class="history-perf-item">
+                                <div class="history-perf-header">
+                                    <span class="history-perf-name">Cycling Life</span>
+                                    <div class="history-perf-result ${result.performance25C.cyclingLife.result === 'Positive' ? 'positive' : 'negative'}">
+                                        ${result.performance25C.cyclingLife.result}
+                                    </div>
+                                </div>
+                                <div class="history-perf-confidence">Confidence: ${result.performance25C.cyclingLife.confidence}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 45°C性能结果 -->
+                    <div class="history-perf-content" id="historyPerformance45C" style="display: none;">
+                        <div class="history-perf-grid">
+                            <div class="history-perf-item">
+                                <div class="history-perf-header">
+                                    <span class="history-perf-name">CE Test</span>
+                                    <div class="history-perf-result ${result.performance45C.ce.result === 'Positive' ? 'positive' : 'negative'}">
+                                        ${result.performance45C.ce.result}
+                                    </div>
+                                </div>
+                                <div class="history-perf-confidence">Confidence: ${result.performance45C.ce.confidence}</div>
+                            </div>
+                            <div class="history-perf-item">
+                                <div class="history-perf-header">
+                                    <span class="history-perf-name">Cycling Life</span>
+                                    <div class="history-perf-result ${result.performance45C.cyclingLife.result === 'Positive' ? 'positive' : 'negative'}">
+                                        ${result.performance45C.cyclingLife.result}
+                                    </div>
+                                </div>
+                                <div class="history-perf-confidence">Confidence: ${result.performance45C.cyclingLife.confidence}</div>
+                            </div>
+                            <div class="history-perf-item">
+                                <div class="history-perf-header">
+                                    <span class="history-perf-name">Rate Test</span>
+                                    <div class="history-perf-result ${result.performance45C.rateTest.result === 'Positive' ? 'positive' : 'negative'}">
+                                        ${result.performance45C.rateTest.result}
+                                    </div>
+                                </div>
+                                <div class="history-perf-confidence">Confidence: ${result.performance45C.rateTest.confidence}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 功能区第三部分：LLM分析 -->
+                <div class="result-section">
+                    <h4 class="result-title">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                        </svg>
+                        LLM Analysis
+                    </h4>
+                    <div class="llm-analysis-content">
+                        <div class="llm-item">
+                            <span class="llm-number">1. Nickel Dehydrogenation Optimization</span><br>
+                            • The dimethyl dicarbonate-based molecule (SMILES: ${result.materials.additive}) acts as a conductor in nickel-catalyzed denitrogenation products. This reaction can improve CE degradation under voltage. During the CE optimization process, when generating this structure with electrical nickel, it is essential to maintain good CE settings, cycle reversal CE display enhancement, and optimize aging CE display improvement patterns.
+                        </div>
+                        <div class="llm-item">
+                            <span class="llm-number">2. 4°C Cycling Optimization</span><br>
+                            The rolling disc approach involves enhanced material comparison and LiFe distribution optimization for secondary reactions. This biochemical nickel enhancement process addresses charge-discharge cycles under nickel conditions, improving efficiency through systematic laboratory validation at 4°C conditions with simplified testing protocols.
+                        </div>
+                        <div class="llm-item">
+                            <span class="llm-number">3. Comprehensive Recommendations</span><br>
+                            • Optimal reduction positioning at 2% to 4°C conditions is essential for effective CE and cycling performance. Multiple verification cycles using EC/EMC/DEC/LiFe with UC/LiPF6 low-grade electrolyte systems are recommended for material state optimization.
+                        </div>
+                        <div class="llm-reference">
+                            References [1] Ling-Fei Zhao et al. Hard Carbon Anodes: Fundamental Understanding and Commercial Perspectives for Na-ion Batteries beyond Li-ion and K-ion Counterparts, Advanced Energy Materials, 2002[04, 2020. <a href="https://doi.org/10.1002/aenm.202002704" class="llm-link" target="_blank" rel="noopener noreferrer">https://doi.org/10.1002/aenm.202002704</a><br>
+                            [2] Xiaonan Zhang et al. Lithium dendrite-free and fast-charging for high voltage nickel-rich lithium metal batteries enabled by bifunctional sulfone-containing electrolyte additives, Journal of Power Sources, 452/227833, 2020. <a href="https://doi.org/10.1016/j.jpowsour.2020.227833" class="llm-link" target="_blank" rel="noopener noreferrer">https://doi.org/10.1016/j.jpowsour.2020.227833</a><br>
+                            [3] Simeng Zhang et al. Low-temperature molten salt as a versatile Electrolyte Additive towards LiNi0.8Co0.1Mn0.1O2/Graphite Batteries Working in a Wide-Temperature Range, ACS Applied Materials & Interfaces, 10 (35):29628-29518, 2018. <a href="https://doi.org/10.1021/acsami.8b04743" class="llm-link" target="_blank" rel="noopener noreferrer">https://doi.org/10.1021/acsami.8b04743</a>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            modal.classList.add('show');
+        }
+
+        function switchHistoryTempTab(temperature) {
+            // Remove active class from all performance tabs
+            document.querySelectorAll('.history-temp-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Add active class to clicked tab
+            document.querySelector(`.history-temp-tab[data-temp="${temperature}"]`).classList.add('active');
+            
+            // Hide all performance content
+            document.querySelectorAll('.history-perf-content').forEach(content => {
+                content.style.display = 'none';
+            });
+            
+            // Show selected temperature content
+            document.getElementById(`historyPerformance${temperature}`).style.display = 'block';
+        }
+
+        function deleteHistoryItem(id) {
+            batteryHistory = batteryHistory.filter(h => h.id !== id);
+            updateHistoryDisplay();
+            saveHistoryToStorage();
+        }
+
+        function clearHistory() {
+            if (confirm('Are you sure you want to clear all prediction records?')) {
+                batteryHistory = [];
+                updateHistoryDisplay();
+                saveHistoryToStorage();
+            }
+        }
+
+        function toggleFilter() {
+            // 暂时不实现过滤功能
+            console.log('Filter function to be implemented');
+        }
+
+        function showAddPredictionForm() {
+            // Reset the function area
+            resetFunctionArea();
+            
+            // Generate a new prediction with random parameters
+            createNewPrediction();
+        }
+
+        function resetFunctionArea() {
+            // Reset all form fields to default values
+            document.getElementById('cathode').value = 'NCM811';
+            document.getElementById('anode').value = '12%Si+Graphite';
+            document.getElementById('electrolyte').value = 'Carbonate(EC/EMC/DEC)';
+            document.getElementById('additive').value = 'O=C(OC(C)(C)C)O';
+            document.getElementById('cathodeRatio').value = '50';
+            document.getElementById('anodeRatio').value = '30';
+            document.getElementById('electrolyteRatio').value = '20';
+            
+            // Hide performance results, LLM analysis button, and LLM analysis
+            document.getElementById('performancePredictionTitle').style.display = 'none';
+            document.getElementById('performanceResults').style.display = 'none';
+            document.getElementById('llmAnalysisButtonContainer').style.display = 'none';
+            document.getElementById('llmAnalysisTitle').style.display = 'none';
+            document.getElementById('llmAnalysis').style.display = 'none';
+            
+            // Reset calculate button
+            const calculateButton = document.querySelector('.calculate-button');
+            calculateButton.disabled = false;
+            calculateButton.textContent = 'Calculate';
+            
+            // Reset LLM analysis button
+            const llmBtn = document.getElementById('llmAnalysisBtn');
+            if (llmBtn) {
+                llmBtn.disabled = false;
+                llmBtn.innerHTML = `
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                    </svg>
+                    LLM Analysis
+                `;
+            }
+            
+            // Scroll to material selection
+            document.querySelector('.material-selection').scrollIntoView({ 
+                behavior: 'smooth' 
+            });
+        }
+
+        function createNewPrediction() {
+            // Array of possible material combinations
+            const materialCombinations = [
+                {
+                    cathode: 'NCM811',
+                    anode: 'Graphite',
+                    electrolyte: 'Carbonate(EC/DMC)',
+                    additive: 'CCOCC',
+                    cathodeRatio: '45',
+                    anodeRatio: '35',
+                    electrolyteRatio: '20'
+                },
+                {
+                    cathode: 'LFP',
+                    anode: '12%Si+Graphite',
+                    electrolyte: 'Carbonate(EC/EMC/DEC)',
+                    additive: 'CC(C)(C)OCCOC(C)(C)C',
+                    cathodeRatio: '50',
+                    anodeRatio: '30',
+                    electrolyteRatio: '20'
+                },
+                {
+                    cathode: 'NCM622',
+                    anode: 'Li-Metal',
+                    electrolyte: 'Ether',
+                    additive: 'O=C(OC(C)(C)C)O',
+                    cathodeRatio: '40',
+                    anodeRatio: '40',
+                    electrolyteRatio: '20'
+                },
+                {
+                    cathode: 'NCM523',
+                    anode: 'LTO',
+                    electrolyte: 'Carbonate(EC/PC)',
+                    additive: 'CCOCCOCCOC',
+                    cathodeRatio: '55',
+                    anodeRatio: '25',
+                    electrolyteRatio: '20'
+                }
+            ];
+
+            // Select a random combination
+            const randomCombination = materialCombinations[Math.floor(Math.random() * materialCombinations.length)];
+            
+            // Generate performance result
+            const result = generatePerformanceResult(
+                randomCombination.cathode,
+                randomCombination.anode,
+                randomCombination.electrolyte,
+                randomCombination.additive,
+                randomCombination.cathodeRatio,
+                randomCombination.anodeRatio,
+                randomCombination.electrolyteRatio
+            );
+            
+            // Add to history
+            addToHistory(result);
+        }
+
+
+
+        // Compound database for demo purposes
+        const compoundDatabase = {
+            'O=C(OC(C)(C)C)O': {
+                smiles: 'O=C(OC(C)(C)C)O',
+                molWeight: '118.1300 g/mol',
+                umapX: '-8.4500',
+                umapY: '12.2300',
+                homo: '-8.1200 eV',
+                lumo: '-0.4500 eV',
+                espMax: '1.2300 eV',
+                espMin: '-1.1800 eV',
+                mp: '45.6700 °C',
+                bp: '185.3400 °C',
+                fp: '135.8900 °C',
+                combustion: '-12.8900 eV',
+                viability: 'Commercially available'
+            },
+            'O=c1occo1': {
+                smiles: 'O=c1occo1',
+                molWeight: '86.0500 g/mol',
+                umapX: '-10.1100',
+                umapY: '10.4400',
+                homo: '-7.1600 eV',
+                lumo: '-0.2300 eV',
+                espMax: '1.5000 eV',
+                espMin: '-1.4700 eV',
+                mp: '25.5800 °C',
+                bp: '169.5100 °C',
+                fp: '121.7400 °C',
+                combustion: '-13.4400 eV',
+                viability: 'Commercially available'
+            },
+            'CC(C)(C)OCCOC(C)(C)C': {
+                smiles: 'CC(C)(C)OCCOC(C)(C)C',
+                molWeight: '162.2800 g/mol',
+                umapX: '-9.2300',
+                umapY: '11.6700',
+                homo: '-7.8900 eV',
+                lumo: '-0.3400 eV',
+                espMax: '1.1200 eV',
+                espMin: '-1.2300 eV',
+                mp: '32.4500 °C',
+                bp: '198.7600 °C',
+                fp: '145.2300 °C',
+                combustion: '-14.1200 eV',
+                viability: 'Commercially available'
+            }
+        };
+
+        function showCompoundInfo(smiles) {
+            const compoundInfo = document.getElementById('compoundInfo');
+            const smilesHint = document.getElementById('smilesHint');
+            const compound = compoundDatabase[smiles];
+            
+            // Hide both displays initially
+            compoundInfo.style.display = 'none';
+            smilesHint.style.display = 'none';
+            
+            if (!smiles.trim()) {
+                // Empty input - hide both displays
+                return;
+            }
+            
+            if (compound) {
+                // Compound found in database - show molecular information
+                document.getElementById('compoundSmiles').textContent = compound.smiles;
+                document.getElementById('compoundMolWeight').textContent = compound.molWeight;
+                document.getElementById('compoundUmapX').textContent = compound.umapX;
+                document.getElementById('compoundUmapY').textContent = compound.umapY;
+                document.getElementById('compoundHomo').textContent = compound.homo;
+                document.getElementById('compoundLumo').textContent = compound.lumo;
+                document.getElementById('compoundEspMax').textContent = compound.espMax;
+                document.getElementById('compoundEspMin').textContent = compound.espMin;
+                document.getElementById('compoundMp').textContent = compound.mp;
+                document.getElementById('compoundBp').textContent = compound.bp;
+                document.getElementById('compoundFp').textContent = compound.fp;
+                document.getElementById('compoundCombustion').textContent = compound.combustion;
+                document.getElementById('compoundViability').textContent = compound.viability;
+                
+                // Update molecular structure image
+                updateMolecularStructure(smiles);
+                
+                // Show the compound info
+                compoundInfo.style.display = 'block';
+            } else {
+                // Compound not found in database - show hint
+                smilesHint.style.display = 'block';
+            }
+        }
+
+        function updateMolecularStructure(smiles) {
+            const structureImg = document.getElementById('moleculeStructure');
+            
+            // Generate different structure images based on SMILES
+            let structureSVG = '';
+            
+            if (smiles === 'O=c1occo1') {
+                // Ethylene carbonate - 5-membered ring structure
+                structureSVG = `<svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="40" cy="40" r="25" fill="#f0f9ff" stroke="#fbbf24" stroke-width="1.5"/>
+                    <circle cx="40" cy="25" r="4" fill="#ef4444"/>
+                    <circle cx="40" cy="55" r="4" fill="#ef4444"/>
+                    <circle cx="25" cy="40" r="4" fill="#fbbf24"/>
+                    <circle cx="55" cy="40" r="4" fill="#fbbf24"/>
+                    <line x1="40" y1="25" x2="40" y2="55" stroke="#374151" stroke-width="1.5"/>
+                    <line x1="25" y1="40" x2="55" y2="40" stroke="#374151" stroke-width="1.5"/>
+                    <text x="40" y="75" text-anchor="middle" fill="#6b7280" font-size="8" font-family="Arial">C₃H₄O₃</text>
+                </svg>`;
+            } else if (smiles === 'O=C(OC(C)(C)C)O') {
+                // tert-butyl acetate
+                structureSVG = `<svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="40" cy="40" r="25" fill="#f0f9ff" stroke="#fbbf24" stroke-width="1.5"/>
+                    <circle cx="40" cy="30" r="4" fill="#ef4444"/>
+                    <circle cx="40" cy="50" r="4" fill="#fbbf24"/>
+                    <circle cx="30" cy="40" r="4" fill="#fbbf24"/>
+                    <circle cx="50" cy="40" r="4" fill="#fbbf24"/>
+                    <line x1="40" y1="30" x2="40" y2="50" stroke="#374151" stroke-width="1.5"/>
+                    <line x1="30" y1="40" x2="50" y2="40" stroke="#374151" stroke-width="1.5"/>
+                    <text x="40" y="75" text-anchor="middle" fill="#6b7280" font-size="8" font-family="Arial">C₆H₁₂O₂</text>
+                </svg>`;
+            } else if (smiles === 'CC(C)(C)OCCOC(C)(C)C') {
+                // di-tert-butyl ether
+                structureSVG = `<svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="40" cy="40" r="25" fill="#f0f9ff" stroke="#fbbf24" stroke-width="1.5"/>
+                    <circle cx="25" cy="40" r="4" fill="#fbbf24"/>
+                    <circle cx="55" cy="40" r="4" fill="#fbbf24"/>
+                    <circle cx="40" cy="30" r="4" fill="#fbbf24"/>
+                    <circle cx="40" cy="50" r="4" fill="#fbbf24"/>
+                    <line x1="25" y1="40" x2="55" y2="40" stroke="#374151" stroke-width="1.5"/>
+                    <line x1="40" y1="30" x2="40" y2="50" stroke="#374151" stroke-width="1.5"/>
+                    <text x="40" y="75" text-anchor="middle" fill="#6b7280" font-size="8" font-family="Arial">C₁₀H₂₂O</text>
+                </svg>`;
+            } else {
+                // Default structure
+                structureSVG = `<svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="40" cy="40" r="25" fill="#f8fafc" stroke="#fbbf24" stroke-width="1.5"/>
+                    <text x="40" y="45" text-anchor="middle" fill="#fbbf24" font-size="10" font-family="Arial">Molecule</text>
+                    <text x="40" y="58" text-anchor="middle" fill="#fbbf24" font-size="8" font-family="Arial">Structure</text>
+                </svg>`;
+            }
+            
+            // Convert SVG to data URL and update image
+            const svgBlob = new Blob([structureSVG], {type: 'image/svg+xml'});
+            const url = URL.createObjectURL(svgBlob);
+            structureImg.src = url;
+        }
+
+        function hideCompoundInfo() {
+            document.getElementById('compoundInfo').style.display = 'none';
+        }
+
+        function hideSmilesHint() {
+            document.getElementById('smilesHint').style.display = 'none';
+        }
+
+        function calculatePerformance() {
+            const cathode = document.getElementById('cathode').value;
+            const anode = document.getElementById('anode').value;
+            const electrolyte = document.getElementById('electrolyte').value;
+            const additive = document.getElementById('additive').value;
+            const cathodeRatio = document.getElementById('cathodeRatio').value;
+            const anodeRatio = document.getElementById('anodeRatio').value;
+            const electrolyteRatio = document.getElementById('electrolyteRatio').value;
+
+            if (!additive.trim()) {
+                alert('Please enter the SMILES molecular structure of the additive');
+                return;
+            }
+
+            // Validate ratio inputs
+            if (!cathodeRatio || !anodeRatio || !electrolyteRatio) {
+                alert('Please enter all material ratios');
+                return;
+            }
+
+            // Check if ratios sum to 100%
+            const totalRatio = parseFloat(cathodeRatio) + parseFloat(anodeRatio) + parseFloat(electrolyteRatio);
+            if (Math.abs(totalRatio - 100) > 0.1) {
+                alert(`Material ratios should sum to 100%, current total is ${totalRatio.toFixed(1)}%`);
+                return;
+            }
+
+            // 更新按钮状态为"计算中"
+            const calculateButton = document.querySelector('.calculate-button');
+            calculateButton.disabled = true;
+            calculateButton.textContent = 'Calculating...';
+            calculateButton.style.opacity = '0.7';
+            calculateButton.style.cursor = 'not-allowed';
+
+            setTimeout(() => {
+                // 生成预测结果
+                const result = generatePerformanceResult(cathode, anode, electrolyte, additive, cathodeRatio, anodeRatio, electrolyteRatio);
+                
+                // 显示结果
+                showPerformanceResults(result);
+                
+                // 添加到历史记录
+                addToHistory(result);
+            }, 2000);
+        }
+
+        function generatePerformanceResult(cathode, anode, electrolyte, additive, cathodeRatio, anodeRatio, electrolyteRatio) {
+            // 模拟性能预测结果，考虑材料比例影响
+            const ratioFactor = (parseFloat(cathodeRatio) + parseFloat(anodeRatio) + parseFloat(electrolyteRatio)) / 100;
+            const basePerformance = ratioFactor * 0.95 + 0.05; // 比例影响基础性能
+
+            const results = {
+                ce: (98.5 * basePerformance + Math.random() * 1.5).toFixed(1) + '%',
+                cycle: (97.0 * basePerformance + Math.random() * 3.0).toFixed(1) + '%',
+                rate: (95.0 * basePerformance + Math.random() * 5.0).toFixed(1) + '%'
+            };
+
+            return {
+                id: Date.now(),
+                timestamp: new Date().toLocaleString('zh-CN'),
+                materials: { 
+                    cathode, 
+                    anode, 
+                    electrolyte, 
+                    additive,
+                    cathodeRatio: cathodeRatio + '%',
+                    anodeRatio: anodeRatio + '%',
+                    electrolyteRatio: electrolyteRatio + '%'
+                },
+                performance: {
+                    cycleLife: Math.floor((200 + Math.random() * 200) * basePerformance),
+                    capacityRetention: parseFloat(results.cycle),
+                    ce: parseFloat(results.ce),
+                    rate: parseFloat(results.rate)
+                },
+                results
+            };
+        }
+
+        function showPerformanceResults(result) {
+            // 显示性能预测标题和结果
+            document.getElementById('performancePredictionTitle').style.display = 'block';
+            document.getElementById('performanceResults').style.display = 'block';
+            
+
+            
+            // 显示LLM分析按钮
+            document.getElementById('llmAnalysisButtonContainer').style.display = 'flex';
+            
+            // 更新按钮状态为"已计算"
+            const calculateButton = document.querySelector('.calculate-button');
+            calculateButton.textContent = 'Calculated';
+            calculateButton.style.opacity = '0.5';
+            calculateButton.style.cursor = 'not-allowed';
+            calculateButton.style.background = 'linear-gradient(90deg, #6b7280, #4b5563)';
+            
+            // Update 25°C values
+            document.getElementById('ceValue25C').textContent = result.results.ce;
+            document.getElementById('cycleValue25C').textContent = result.results.cycle;
+            document.getElementById('rateValue25C').textContent = result.results.rate;
+            
+            // Update 45°C values (slightly lower for higher temperature)
+            const ce45C = (parseFloat(result.results.ce) - 1.7).toFixed(1) + '%';
+            const cycle45C = (parseFloat(result.results.cycle) - 3.1).toFixed(1) + '%';
+            const rate45C = (parseFloat(result.results.rate) - 2.8).toFixed(1) + '%';
+            
+            document.getElementById('ceValue45C').textContent = ce45C;
+            document.getElementById('cycleValue45C').textContent = cycle45C;
+            document.getElementById('rateValue45C').textContent = rate45C;
+        }
+
+        function switchTemperatureTab(temperature) {
+            // Remove active class from all switch options
+            document.querySelectorAll('.switch-option').forEach(option => {
+                option.classList.remove('active');
+            });
+            
+            // Add active class to clicked option
+            document.querySelector(`[data-temp="${temperature}"]`).classList.add('active');
+            
+            // Hide all performance content
+            document.querySelectorAll('.performance-content').forEach(content => {
+                content.style.display = 'none';
+            });
+            
+            // Show selected temperature content
+            document.getElementById(`performance${temperature}`).style.display = 'block';
+        }
+
+        function showLLMAnalysis() {
+            // 显示LLM分析标题和模块
+            document.getElementById('llmAnalysisTitle').style.display = 'block';
+            document.getElementById('llmAnalysis').style.display = 'block';
+            
+            // 禁用LLM分析按钮
+            const llmBtn = document.getElementById('llmAnalysisBtn');
+            llmBtn.disabled = true;
+            llmBtn.style.opacity = '0.5';
+            llmBtn.style.cursor = 'not-allowed';
+            llmBtn.style.background = 'linear-gradient(90deg, #6b7280, #4b5563)';
+            llmBtn.textContent = 'Analysis Complete';
+        }
+
+        function saveHistoryToStorage() {
+            localStorage.setItem('batteryHistory', JSON.stringify(batteryHistory));
+        }
+
+        function loadHistoryFromStorage() {
+            const saved = localStorage.getItem('batteryHistory');
+            if (saved) {
+                batteryHistory = JSON.parse(saved);
+                updateHistoryDisplay();
+            }
+        }
+
+        // 添加虚拟历史记录
+        function addVirtualHistory() {
+            const virtualRecords = [
+                {
+                    id: Date.now() - 86400000,
+                    timestamp: new Date(Date.now() - 86400000).toLocaleString('zh-CN'),
+                    materials: {
+                        cathode: 'NCM811',
+                        cathodeRatio: '50',
+                        anode: '12%Si+Graphite',
+                        anodeRatio: '30',
+                        electrolyte: 'Carbonate(EC/EMC/DEC)',
+                        electrolyteRatio: '20',
+                        additive: 'CC(C)(C)OCCOC(C)(C)C',
+                        additiveAmount: '2.0',
+                        temperature: '25.0'
+                    },
+                    performance25C: {
+                        ce: { result: 'Positive', confidence: '98.5%' },
+                        cyclingLife: { result: 'Negative', confidence: '95.2%' }
+                    },
+                    performance45C: {
+                        ce: { result: 'Positive', confidence: '96.8%' },
+                        cyclingLife: { result: 'Negative', confidence: '92.1%' },
+                        rateTest: { result: 'Negative', confidence: '94.3%' }
+                    }
+                },
+                {
+                    id: Date.now() - 172800000,
+                    timestamp: new Date(Date.now() - 172800000).toLocaleString('zh-CN'),
+                    materials: {
+                        cathode: 'LFP',
+                        cathodeRatio: '60',
+                        anode: 'Graphite',
+                        anodeRatio: '25',
+                        electrolyte: 'Carbonate(EC/DMC)',
+                        electrolyteRatio: '15',
+                        additive: 'CCOCC',
+                        additiveAmount: '1.5',
+                        temperature: '45.0'
+                    },
+                    performance25C: {
+                        ce: { result: 'Positive', confidence: '97.8%' },
+                        cyclingLife: { result: 'Positive', confidence: '96.3%' }
+                    },
+                    performance45C: {
+                        ce: { result: 'Positive', confidence: '95.4%' },
+                        cyclingLife: { result: 'Positive', confidence: '93.7%' },
+                        rateTest: { result: 'Positive', confidence: '91.2%' }
+                    }
+                },
+                {
+                    id: Date.now() - 259200000,
+                    timestamp: new Date(Date.now() - 259200000).toLocaleString('zh-CN'),
+                    materials: {
+                        cathode: 'NCM622',
+                        cathodeRatio: '55',
+                        anode: 'Li-Metal',
+                        anodeRatio: '20',
+                        electrolyte: 'Carbonate(EC/PC)',
+                        electrolyteRatio: '25',
+                        additive: 'O=c1occo1',
+                        additiveAmount: '3.0',
+                        temperature: '25.0'
+                    },
+                    performance25C: {
+                        ce: { result: 'Negative', confidence: '89.2%' },
+                        cyclingLife: { result: 'Negative', confidence: '87.5%' }
+                    },
+                    performance45C: {
+                        ce: { result: 'Negative', confidence: '85.6%' },
+                        cyclingLife: { result: 'Negative', confidence: '83.2%' },
+                        rateTest: { result: 'Negative', confidence: '88.9%' }
+                    }
+                }
+            ];
+            
+            batteryHistory = virtualRecords;
+            updateHistoryDisplay();
+            saveHistoryToStorage();
+        }
+
+        // 立即添加虚拟历史记录
+        setTimeout(() => {
+            addVirtualHistory();
+        }, 100);
+
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 确保虚拟历史记录已加载
+            if (batteryHistory.length === 0) {
+                addVirtualHistory();
+            }
+
+            // 初始化菜单功能
+            initializeMenu();
+        });
+
+        // 菜单功能初始化
+        function initializeMenu() {
+            // 用户头像下拉菜单
+            const userAvatar = document.getElementById('userAvatar');
+            const userDropdown = document.getElementById('userDropdown');
+            
+            if (userAvatar && userDropdown) {
+                userAvatar.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    userDropdown.classList.toggle('show');
+                });
+
+                // 点击外部关闭下拉菜单
+                document.addEventListener('click', function(e) {
+                    if (!userAvatar.contains(e.target) && !userDropdown.contains(e.target)) {
+                        userDropdown.classList.remove('show');
+                    }
+                });
+            }
+
+            // 导航下拉菜单
+            const predictionDropdown = document.querySelector('.nav-item.dropdown');
+            if (predictionDropdown) {
+                const dropdownMenu = predictionDropdown.querySelector('.dropdown-menu');
+                
+                predictionDropdown.addEventListener('mouseenter', function() {
+                    dropdownMenu.style.display = 'block';
+                });
+                
+                predictionDropdown.addEventListener('mouseleave', function() {
+                    dropdownMenu.style.display = 'none';
+                });
+            }
+
+            // 反馈按钮
+            const feedbackButton = document.getElementById('feedbackButton');
+            if (feedbackButton) {
+                feedbackButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    alert('Thank you for your feedback! We will seriously consider your suggestions.');
+                });
+            }
+
+            // 退出登录按钮
+            const logoutButton = document.getElementById('logoutButton');
+            if (logoutButton) {
+                logoutButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (confirm('Are you sure you want to logout?')) {
+                        // 这里可以添加退出登录的逻辑
+                        alert('Logged out successfully');
+                    }
+                });
+            }
+        }
+
+        // 点击模态框外部关闭
+        document.getElementById('resultModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeResultModal();
+            }
+        });
+
+        // 添加键盘事件支持
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeResultModal();
+            }
+        });
+    </script>
+</body>
+</html> 

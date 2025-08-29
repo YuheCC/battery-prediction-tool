@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Layout Test</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/responsive-optimizations.css">
+    <style>
+        body {
+            padding: 20px;
+            background: #f8fafc;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .test-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #1f2937;
+        }
+        .test-info {
+            background: #f3f4f6;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1 class="test-title">新布局测试</h1>
+        <div class="test-info">
+            测试新的输入框布局，参考图片中的设计。
+        </div>
+        
+        <div class="chat-input-container">
+            <div class="chat-input-wrapper">
+                <textarea id="chat-input" placeholder="询问一个科学问题" rows="3"></textarea>
+            </div>
+            <div class="chat-controls-row">
+                <div class="controls-left">
+                    <div class="input-mode-switch">
+                        <button class="mode-btn active" data-mode="regular">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+                            </svg>
+                            <span>简洁</span>
+                        </button>
+                        <button class="mode-btn" data-mode="deep-space">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a6.062 6.062 0 01-1.5 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.517 0c.85.493 1.509 1.333 1.509 2.316V18" />
+                            </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+                            </svg>
+                            <span>...</span>
+                            <span class="beta-badge">Beta</span>
+                        </button>
+                    </div>
+                    <button class="source-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+                        </svg>
+                        <span>源</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="12" height="12">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="controls-right">
+                    <button class="action-btn add-btn" title="添加">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                    </button>
+                    <button class="action-btn research-btn" title="深度研究">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 15.75V18l-7.5-4.5v-6.75L15.75 6v2.25m0 13.5l-3-3m3 3l3-3m3-13.5l-3 3m3-3l3 3" />
+                        </svg>
+                        <span>深度研究 OFF</span>
+                    </button>
+                    <button id="send-btn" class="send-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 19.5V4.5M12 4.5L6 10.5M12 4.5L18 10.5" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="mode-tooltip" id="modeTooltip">
+                <div class="tooltip-content">
+                    <div class="tooltip-header">
+                        <span class="tooltip-title">深度研究模式</span>
+                        <button class="tooltip-close" id="tooltipClose">×</button>
+                    </div>
+                    <p class="tooltip-description">A team of LLM agents that analyze your battery question, scour the literature and our molecule database, then collaborate to craft a research‑grade answer. Expect response times between 10-20 minutes.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/mode-switcher.js"></script>
+    <script>
+        // 初始化模式切换器
+        const modeSwitcher = new ModeSwitcher();
+        
+        // 发送按钮点击事件
+        document.getElementById('send-btn').addEventListener('click', () => {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            if (message) {
+                alert(`发送消息: "${message}"\n模式: ${modeSwitcher.getCurrentMode()}`);
+                input.value = '';
+            }
+        });
+
+        // 添加按钮点击事件
+        document.querySelector('.add-btn').addEventListener('click', () => {
+            alert('添加功能');
+        });
+
+        // 深度研究按钮点击事件
+        document.querySelector('.research-btn').addEventListener('click', () => {
+            const btn = document.querySelector('.research-btn');
+            const span = btn.querySelector('span');
+            if (span.textContent === '深度研究 OFF') {
+                span.textContent = '深度研究 ON';
+                btn.style.background = '#56B26A';
+                btn.style.color = 'white';
+                btn.style.borderColor = '#56B26A';
+            } else {
+                span.textContent = '深度研究 OFF';
+                btn.style.background = '#ffffff';
+                btn.style.color = '#6b7280';
+                btn.style.borderColor = '#e5e7eb';
+            }
+        });
+
+        // 源按钮点击事件
+        document.querySelector('.source-btn').addEventListener('click', () => {
+            alert('源选择功能');
+        });
+    </script>
+</body>
+</html> 

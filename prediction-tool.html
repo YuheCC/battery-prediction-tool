@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prediction · 早期生命预测工具 Beta</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- 导航菜单 -->
+  <header class="main-header">
+    <div class="logo-container">
+      <img src="logo.png" alt="SES Logo" class="logo-img">
+    </div>
+    <nav class="main-nav">
+      <a href="map.html" class="nav-item">Map</a>
+      <a href="chat.html" class="nav-item">Ask</a>
+      <a href="#" class="nav-item">Search</a>
+      <a href="#" class="nav-item">Filter</a>
+      <a href="#" class="nav-item">Favorites</a>
+      <div class="nav-item dropdown active">
+        <a href="#" class="nav-item">Prediction</a>
+        <div class="dropdown-menu">
+          <a href="battery-prediction.html" class="dropdown-item">电池性能表征</a>
+          <a href="prediction-tool.html" class="dropdown-item active">电池早期生命预测工具 <span class="beta-badge">Beta</span></a>
+        </div>
+      </div>
+    </nav>
+    <div class="user-actions">
+      <a href="about.html" class="nav-item" target="_blank" rel="noopener noreferrer">About ↗</a>
+      <div class="user-avatar-container">
+        <a href="#" class="action-icon user-avatar" id="userAvatar">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24px" height="24px">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+          </svg>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 页面标题区域 -->
+  <div class="page-title-bar" style="background: #ffffff; padding: 16px 24px; position: relative; z-index: 1;">
+    <h1 style="margin: 0; font-size: 24px; font-weight: 600; color: #1f2937; display: flex; align-items: center; gap: 8px; margin-left: 35px; margin-top: 10px;">
+      电池早期生命预测工具
+      <span class="beta-badge" style="background: #e8f5e8; color: #56B26A; font-size: 10px; font-weight: 500; padding: 2px 6px; border-radius: 8px; text-transform: uppercase; letter-spacing: 0.3px; line-height: 1; border: 1px solid #d1e7d1; display: inline-block;">Beta</span>
+    </h1>
+  </div>
+  
+  <!-- iframe容器 -->
+  <div style="height: calc(100vh - 200px); position: relative; width: 100%;">
+    <iframe id="predictionIframe" src="early-life-tool/index.html?embed=1&noSampleData=1&disableSample=true" title="早期生命预测工具 Beta" style="position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #fff; display: block;"></iframe>
+  </div>
+  
+  <!-- 数据上传说明区域 -->
+  <div style="margin: 12px 24px; padding: 12px;">
+         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+       <div style="display: flex; align-items: center; font-weight: 600; color: #1e293b; font-size: 13px;">
+         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: inline-block; margin-right: 6px; vertical-align: middle;">
+           <path d="M13 16H7V18H13V16Z" fill="#1a1a1a"/>
+           <path d="M17 12H7V14H17V12Z" fill="#1a1a1a"/>
+           <path d="M7 8H17V10H7V8Z" fill="#1a1a1a"/>
+           <path d="M3 3H21V21H3V3ZM5 5V19H19V5H5Z" fill="#1a1a1a"/>
+         </svg>
+         <span>数据格式要求</span>
+         <span style="margin-left: 8px; font-size: 12px; color: #56B26A; cursor: pointer; text-decoration: underline;" onclick="downloadSampleData()">样例数据</span>
+       </div>
+
+     </div>
+    <div style="display: flex; flex-direction: column; gap: 6px;">
+      <div style="display: flex; align-items: flex-start; gap: 6px; font-size: 12px; line-height: 1.4; color: #475569;">
+        <strong style="color: #1e293b; font-weight: 600; min-width: 60px; flex-shrink: 0;">必需字段：</strong>
+        <span>barcode, cycle_id, current (A), voltage (V), time (s)</span>
+      </div>
+      <div style="display: flex; align-items: flex-start; gap: 6px; font-size: 12px; line-height: 1.4; color: #475569;">
+        <strong style="color: #1e293b; font-weight: 600; min-width: 60px; flex-shrink: 0;">电流方向：</strong>
+        <span>+为充电，-为放电</span>
+      </div>
+      <div style="display: flex; align-items: flex-start; gap: 6px; font-size: 12px; line-height: 1.4; color: #475569;">
+        <strong style="color: #1e293b; font-weight: 600; min-width: 60px; flex-shrink: 0;">单位要求：</strong>
+        <span>电流单位A，电压单位V，时间单位s</span>
+      </div>
+      <div style="display: flex; align-items: flex-start; gap: 6px; font-size: 12px; line-height: 1.4; color: #475569;">
+        <strong style="color: #1e293b; font-weight: 600; min-width: 60px; flex-shrink: 0;">数据要求：</strong>
+        <span>上传数据≥100圈，数据需按时间顺序排列</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 模态框覆盖层 -->
+  <div id="modalOverlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 999999; display: none; pointer-events: none;"></div>
+
+  <!-- 引入必要的脚本 -->
+  <script src="js/base.js"></script>
+  <script src="js/settings-modal.js"></script>
+  <script src="iframe-interceptor.js"></script>
+  
+     <script>
+     // 简单的解决方案：当用户点击查看详情时显示覆盖层
+     let overlayTimeout;
+     
+     // 下载样例数据函数
+     function downloadSampleData() {
+       // 创建样例数据
+       const sampleData = [
+         {
+           barcode: 'BAT001',
+           cycle_id: '1',
+           current: '2.5',
+           voltage: '3.65',
+           time: '120'
+         },
+         {
+           barcode: 'BAT001',
+           cycle_id: '1',
+           current: '2.3',
+           voltage: '3.62',
+           time: '125'
+         },
+         {
+           barcode: 'BAT001',
+           cycle_id: '1',
+           current: '2.1',
+           voltage: '3.58',
+           time: '130'
+         },
+         {
+           barcode: 'BAT002',
+           cycle_id: '2',
+           current: '2.4',
+           voltage: '3.64',
+           time: '118'
+         },
+         {
+           barcode: 'BAT002',
+           cycle_id: '2',
+           current: '2.2',
+           voltage: '3.60',
+           time: '122'
+         }
+       ];
+       
+       // 转换为CSV格式
+       const headers = ['barcode', 'cycle_id', 'current', 'voltage', 'time'];
+       const csvContent = [
+         headers.join(','),
+         ...sampleData.map(row => headers.map(header => row[header]).join(','))
+       ].join('\n');
+       
+       // 创建下载链接
+       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+       const link = document.createElement('a');
+       const url = URL.createObjectURL(blob);
+       link.setAttribute('href', url);
+       link.setAttribute('download', 'sample_battery_data.csv');
+       link.style.visibility = 'hidden';
+       document.body.appendChild(link);
+       link.click();
+       document.body.removeChild(link);
+     }
+     
+     // 监听 iframe 内的点击事件
+     document.querySelector('iframe').addEventListener('load', function() {
+       // 监听 iframe 内的点击
+       this.contentWindow.document.addEventListener('click', function(e) {
+         // 检查是否点击了查看详情按钮
+         if (e.target.textContent && e.target.textContent.includes('查看详情')) {
+           const overlay = document.getElementById('modalOverlay');
+           overlay.style.display = 'block';
+           
+           // 3秒后自动隐藏覆盖层
+           clearTimeout(overlayTimeout);
+           overlayTimeout = setTimeout(() => {
+             overlay.style.display = 'none';
+           }, 3000);
+         }
+       });
+     });
+     
+     // 点击覆盖层时隐藏
+     document.getElementById('modalOverlay').addEventListener('click', function() {
+       this.style.display = 'none';
+     });
+   </script>
+</body>
+</html>
+
+

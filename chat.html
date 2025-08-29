@@ -3,22 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ask - Molecular Universe</title>
+    <title>Ask优化-待评审</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="css/settings-modal.css">
+    <link rel="stylesheet" href="css/responsive-optimizations.css">
 </head>
 <body>
     <header class="main-header">
         <div class="logo-container">
             <img src="logo.png" alt="SES Logo" class="logo-img">
         </div>
-        <nav class="main-nav">
-            <a href="map.html" class="nav-item">Map</a>
-            <a href="chat.html" class="nav-item active">Ask</a>
-            <a href="#" class="nav-item">Search</a>
-            <a href="#" class="nav-item">Filter</a>
-            <a href="#" class="nav-item">Favourites</a>
-        </nav>
+                    <nav class="main-nav">
+                <a href="map.html" class="nav-item">Map</a>
+                <a href="chat.html" class="nav-item active">Ask</a>
+                <a href="#" class="nav-item">Search</a>
+                <a href="#" class="nav-item">Filter</a>
+                <a href="#" class="nav-item">Favorites</a>
+                <div class="nav-item dropdown">
+                    <a href="#" class="nav-item">Prediction</a>
+                    <div class="dropdown-menu">
+
+                        <a href="battery-prediction.html" class="dropdown-item">
+                            电池性能表征
+                        </a>
+                        <a href="prediction-tool.html" class="dropdown-item">
+                            电池早期生命预测工具 <span class="beta-badge">Beta</span>
+                        </a>
+                    </div>
+                </div>
+            </nav>
         <div class="user-actions">
             <a href="about.html" class="nav-item" target="_blank" rel="noopener noreferrer">About ↗</a>
             <div class="user-avatar-container">
@@ -44,6 +57,10 @@
                     <a href="#" class="dropdown-item">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="item-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.438.995s.145.755.438.995l1.003.827c.48.398.668 1.03.26 1.431l-1.296 2.247a1.125 1.125 0 01-1.37.49l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.063-.374-.313-.686-.645-.87a6.52 6.52 0 01-.22-.127c-.324-.196-.72-.257-1.075-.124l-1.217.456a1.125 1.125 0 01-1.37-.49l-1.296-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.437-.995s-.145-.755-.437-.995l-1.004-.827a1.125 1.125 0 01-.26-1.431l1.296-2.247a1.125 1.125 0 011.37-.49l1.217.456c.355.133.75.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                         账号设置
+                    </a>
+                    <a href="#" class="dropdown-item" id="feedbackButton">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="item-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" /></svg>
+                        意见与反馈
                     </a>
                     <a href="#" class="dropdown-item" id="logoutButton">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="item-icon"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" /></svg>
@@ -100,8 +117,12 @@
                 </div>
             </div>
             <nav class="history-nav">
-                <p class="history-title">Recent</p>
+                <p class="history-title">历史对话</p>
                 <ul>
+                    <li>
+                        <a href="#" class="recent-chat" data-chat-id="7">LiFePO4石墨电池电解质推荐</a>
+                        <button class="chat-menu-btn" data-chat-id="7">⋯</button>
+                    </li>
                     <li>
                         <a href="#" class="recent-chat" data-chat-id="1">电解质溶剂稳定性预测分析</a>
                         <button class="chat-menu-btn" data-chat-id="1">⋯</button>
@@ -127,8 +148,56 @@
                         <button class="chat-menu-btn" data-chat-id="6">⋯</button>
                     </li>
                     <li>
-                        <a href="#" class="recent-chat" data-chat-id="7">LiFePO4石墨电池电解质推荐</a>
-                        <button class="chat-menu-btn" data-chat-id="7">⋯</button>
+                        <a href="#" class="recent-chat" data-chat-id="8">磷酸铁锂正极材料改性研究</a>
+                        <button class="chat-menu-btn" data-chat-id="8">⋯</button>
+                    </li>
+                    <li>
+                        <a href="#" class="recent-chat" data-chat-id="9">钠离子电池电解质设计</a>
+                        <button class="chat-menu-btn" data-chat-id="9">⋯</button>
+                    </li>
+                    <li>
+                        <a href="#" class="recent-chat" data-chat-id="10">锂硫电池正极材料优化</a>
+                        <button class="chat-menu-btn" data-chat-id="10">⋯</button>
+                    </li>
+                    <li>
+                        <a href="#" class="recent-chat" data-chat-id="11">固态电池界面工程研究</a>
+                        <button class="chat-menu-btn" data-chat-id="11">⋯</button>
+                    </li>
+                    <li>
+                        <a href="#" class="recent-chat" data-chat-id="12">电池循环寿命预测模型</a>
+                        <button class="chat-menu-btn" data-chat-id="12">⋯</button>
+                    </li>
+                    <li>
+                        <a href="#" class="recent-chat" data-chat-id="13">快充技术对电池性能影响</a>
+                        <button class="chat-menu-btn" data-chat-id="13">⋯</button>
+                    </li>
+                    <li>
+                        <a href="#" class="recent-chat" data-chat-id="14">电池安全性能评估方法</a>
+                        <button class="chat-menu-btn" data-chat-id="14">⋯</button>
+                    </li>
+                    <li>
+                        <a href="#" class="recent-chat" data-chat-id="15">锂离子电池容量衰减机理</a>
+                        <button class="chat-menu-btn" data-chat-id="15">⋯</button>
+                    </li>
+                    <li>
+                        <a href="#" class="recent-chat" data-chat-id="16">电池管理系统算法优化</a>
+                        <button class="chat-menu-btn" data-chat-id="16">⋯</button>
+                    </li>
+                    <li>
+                        <a href="#" class="recent-chat" data-chat-id="17">新型电解质添加剂研究</a>
+                        <button class="chat-menu-btn" data-chat-id="17">⋯</button>
+                    </li>
+                    <li>
+                        <a href="#" class="recent-chat" data-chat-id="18">电池材料表征技术进展</a>
+                        <button class="chat-menu-btn" data-chat-id="18">⋯</button>
+                    </li>
+                    <li>
+                        <a href="#" class="recent-chat" data-chat-id="19">电池回收技术发展趋势</a>
+                        <button class="chat-menu-btn" data-chat-id="19">⋯</button>
+                    </li>
+                    <li>
+                        <a href="#" class="recent-chat" data-chat-id="20">电池制造工艺优化方案</a>
+                        <button class="chat-menu-btn" data-chat-id="20">⋯</button>
                     </li>
                 </ul>
             </nav>
@@ -139,26 +208,75 @@
             </div>
             <div class="chat-input-container">
                 <div class="chat-input-wrapper">
-                    <textarea id="chat-input" placeholder="Ask me anything, as long as it's about batteries, battery chemistry, or related topics." rows="1"></textarea>
-                    <button id="send-btn" class="send-btn">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5L21 3M21 3L13.5 21L11.25 13.5M21 3L11.25 13.5" />
-                        </svg>
-                    </button>
-                </div>
-                <div class="deep-space-checkbox">
-                    <label>
-                        <input type="checkbox" id="deep-space-toggle">
-                        <span class="checkbox-text">Enter Deep Space (BETA)</span>
-                        <span class="tooltip-icon" data-tooltip="A team of LLM agents that analyze your battery question, scour the literature and our molecule database, then collaborate to craft a research‑grade answer. Expect response times between 10-20 minutes.">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
+                    <textarea id="chat-input" placeholder="Ask me anything, as long as it's about batteries, battery chemistry, or related topics." rows="3"></textarea>
+                    <div class="chat-controls-row">
+                        <button id="send-btn" class="send-btn" disabled>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 19.5V4.5M12 4.5L6 10.5M12 4.5L18 10.5" />
                             </svg>
-                        </span>
-                    </label>
+                        </button>
+                    </div>
                 </div>
+
             </div>
         </main>
+    </div>
+
+    <!-- 反馈弹窗 -->
+    <div class="feedback-modal modal" id="feedbackModal">
+        <div class="feedback-modal-content">
+            <div class="feedback-modal-header">
+                <div class="feedback-modal-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                    </svg>
+                    <span>提交反馈</span>
+                </div>
+                <button class="feedback-modal-close" id="feedbackModalClose">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="feedback-modal-body">
+                <form id="feedbackForm">
+                    <div class="feedback-form-group">
+                        <label for="feedbackType" class="feedback-label">
+                            反馈类型 <span class="required">*</span>
+                        </label>
+                        <select id="feedbackType" class="feedback-select" required>
+                            <option value="功能建议">功能建议</option>
+                            <option value="Bug报告">Bug报告</option>
+                            <option value="其他">其他</option>
+                        </select>
+                    </div>
+                    
+                    <div class="feedback-form-group">
+                        <label for="feedbackDescription" class="feedback-label">
+                            请描述您的建议或问题 <span class="required">*</span>
+                        </label>
+                        <textarea id="feedbackDescription" class="feedback-textarea" placeholder="请提供详细描述..." required></textarea>
+                    </div>
+                    
+                    <div class="feedback-form-group">
+                        <label class="feedback-label">上传截图</label>
+                        <div class="feedback-upload-area" id="feedbackUploadArea">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="24" height="24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                            </svg>
+                            <span>JPG/PNG 格式，最大 5MB</span>
+                            <input type="file" id="feedbackScreenshot" accept="image/jpeg,image/png" style="display: none;">
+                        </div>
+                    </div>
+                    
+
+                </form>
+            </div>
+            <div class="feedback-modal-footer">
+                <button type="button" class="feedback-btn feedback-btn-secondary" id="feedbackCancelBtn">取消</button>
+                <button type="submit" class="feedback-btn feedback-btn-primary" id="feedbackSubmitBtn">提交反馈</button>
+            </div>
+        </div>
     </div>
 
     <div class="settings-modal modal" id="settingsModal">
@@ -334,12 +452,16 @@
         </div>
     </div>
 
+    <script src="js/performance-utils.js"></script>
     <script src="js/settings-modal.js"></script>
     <script src="js/base.js"></script>
     <script src="js/sidebar.js"></script>
     <script src="js/chat.js"></script>
     <script src="js/molecule-panel.js"></script>
     <script src="js/search-modal.js"></script>
+    <script src="js/chat-enhancements.js"></script>
+    <script src="js/mode-switcher.js"></script>
+    <script src="js/feedback-modal.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html> 

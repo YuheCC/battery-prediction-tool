@@ -179,4 +179,26 @@ const PageConfigs = {
         </div>
     </div>`
     }
+    ,
+    predictionTool: {
+        title: 'Prediction · 早期生命预测工具 Beta',
+        currentPage: 'prediction',
+        bodyClass: 'prediction-tool-page',
+        additionalCSS: [],
+        additionalJS: [],
+        content: `
+    <div class="page-content" style="padding:0; margin:0; height:100vh; display:flex; flex-direction:column;">
+      <!-- 自定义标题区域 -->
+      <div class="custom-title-bar" style="background: #ffffff; border-bottom: 1px solid #e5e7eb; padding: 16px 24px; z-index: 1000; position: relative;">
+        <h1 style="margin: 0; font-size: 24px; font-weight: 600; color: #1f2937; display: flex; align-items: center; gap: 8px;">
+          电池早期生命预测工具
+          <span class="beta-badge" style="background: #e8f5e8; color: #56B26A; font-size: 10px; font-weight: 500; padding: 2px 6px; border-radius: 8px; text-transform: uppercase; letter-spacing: 0.3px; line-height: 1; border: 1px solid #d1e7d1; display: inline-block;">Beta</span>
+        </h1>
+      </div>
+      <!-- iframe容器 -->
+      <div style="flex:1; position:relative; width:100%; min-height:0; margin-top: -1px;">
+        <iframe src="early-life-tool/index.html?embed=1" title="早期生命预测工具 Beta" style="position:absolute; inset:0; width:100%; height:100%; border:0; background:#fff; display:block;"></iframe>
+      </div>
+    </div>`
+    }
 }; 

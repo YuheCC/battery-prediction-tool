@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Chat Layout Test</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/responsive-optimizations.css">
+    <style>
+        body {
+            padding: 20px;
+            background: #f8fafc;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .test-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #1f2937;
+        }
+        .test-info {
+            background: #f3f4f6;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1 class="test-title">新聊天界面测试</h1>
+        <div class="test-info">
+            测试新聊天界面的输入框布局，包含模式切换和发送按钮。
+        </div>
+        
+        <div class="new-chat-interface">
+            <div class="new-chat-content">
+                <div class="new-chat-logo">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="48" height="48">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423L16.5 15.75l.394 1.183a2.25 2.25 0 001.423 1.423L19.5 18.75l-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
+                    </svg>
+                </div>
+                <h2 class="new-chat-title">新聊天</h2>
+                <p class="new-chat-subtitle">开始一段新的对话，探索分子宇宙的奥秘</p>
+                <div class="new-chat-input-container">
+                    <div class="new-chat-input-wrapper">
+                        <textarea id="new-chat-input" placeholder="Ask me anything, as long as it's about batteries, battery chemistry, or related topics." rows="3"></textarea>
+                        <div class="new-chat-input-controls">
+                            <div class="new-chat-mode-switch">
+                                <button class="new-mode-btn active" data-mode="regular">
+                                    <span>Regular Ask</span>
+                                </button>
+                                <button class="new-mode-btn" data-mode="deep-space">
+                                    <span>Deep Space</span>
+                                    <span class="beta-badge">Beta</span>
+                                </button>
+                            </div>
+                            <button id="new-chat-send-btn" class="new-chat-send-btn" disabled>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 19.5V4.5M12 4.5L6 10.5M12 4.5L18 10.5" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 获取元素
+        const newChatInput = document.getElementById('new-chat-input');
+        const newChatSendBtn = document.getElementById('new-chat-send-btn');
+        const modeButtons = document.querySelectorAll('.new-mode-btn');
+        
+        // 更新发送按钮状态
+        function updateSendButtonState() {
+            if (newChatInput.value.trim().length > 0) {
+                newChatSendBtn.disabled = false;
+                newChatSendBtn.style.opacity = '1';
+            } else {
+                newChatSendBtn.disabled = true;
+                newChatSendBtn.style.opacity = '0.6';
+            }
+        }
+        
+        // 输入框事件
+        newChatInput.addEventListener('input', updateSendButtonState);
+        newChatInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+        
+        // 发送按钮事件
+        newChatSendBtn.addEventListener('click', sendMessage);
+        
+        // 模式切换事件
+        modeButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // 更新按钮状态
+                modeButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                // 更新占位符
+                const mode = button.dataset.mode;
+                const placeholders = {
+                    'regular': 'Ask me anything, as long as it\'s about batteries, battery chemistry, or related topics.',
+                    'deep-space': 'Enter your research question for deep analysis. This will take 10-20 minutes to process.'
+                };
+                newChatInput.placeholder = placeholders[mode] || placeholders.regular;
+                
+                console.log(`Switched to ${mode} mode`);
+            });
+        });
+        
+        // 发送消息
+        function sendMessage() {
+            const message = newChatInput.value.trim();
+            if (message) {
+                const activeMode = document.querySelector('.new-mode-btn.active').dataset.mode;
+                alert(`发送消息: "${message}"\n模式: ${activeMode}`);
+                newChatInput.value = '';
+                updateSendButtonState();
+            }
+        }
+        
+        // 初始化
+        updateSendButtonState();
+    </script>
+</body>
+</html> 

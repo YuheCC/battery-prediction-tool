@@ -10,6 +10,10 @@
     const userDropdown = document.getElementById('userDropdown');
     // 兼容所有页面：为文本内容为"账号设置"的下拉项绑定弹窗
     dropdownItems.forEach(item => {
+      // 排除反馈按钮
+      if (item.id === 'feedbackButton') {
+        return;
+      }
       if (item.textContent.replace(/\s/g, '').includes('账号设置')) {
         item.addEventListener('click', (event) => {
           event.preventDefault();

@@ -10,6 +10,35 @@ class Chat {
         this.chatMessages = document.getElementById('chat-messages');
         this.deepSpaceToggle = document.getElementById('deep-space-toggle');
         
+        // 推荐问题集合
+        this.questionSets = [
+            // 第一组问题
+            [
+                "锂离子电池的电解质溶剂选择有哪些关键考虑因素？",
+                "固态电解质在下一代电池技术中的优势和应用前景如何？",
+                "SEI层的形成机制及其对电池性能的影响是什么？",
+                "高镍正极材料的稳定性问题及解决方案有哪些？",
+                "锂枝晶的形成原因及抑制方法有哪些？"
+            ],
+            // 第二组问题
+            [
+                "磷酸铁锂电池与三元锂电池的性能对比如何？",
+                "钠离子电池作为锂离子电池替代品的可行性如何？",
+                "电池热管理系统对电池寿命的影响有哪些？",
+                "快充技术对电池性能和安全性的影响是什么？",
+                "电池回收技术的最新进展有哪些？"
+            ],
+            // 第三组问题
+            [
+                "石墨烯在电池材料中的应用前景如何？",
+                "硅基负极材料的发展现状和挑战有哪些？",
+                "固态电池的商业化进程和关键技术是什么？",
+                "电池管理系统(BMS)的核心功能有哪些？",
+                "电池安全测试的标准和方法有哪些？"
+            ]
+        ];
+        this.currentQuestionSetIndex = 0;
+        
         this.init();
     }
 
@@ -17,6 +46,12 @@ class Chat {
         this.bindEvents();
         this.updateBtnState();
         this.insertWelcomeMessage();
+        
+        // 确保发送按钮初始状态为禁用
+        if (this.sendBtn) {
+            this.sendBtn.disabled = true;
+            this.sendBtn.style.opacity = '0.6';
+        }
     }
 
     bindEvents() {
@@ -47,11 +82,11 @@ class Chat {
         if (!this.input || !this.sendBtn) return;
         
         if (this.input.value.trim().length > 0) {
-            this.sendBtn.classList.add('enabled');
             this.sendBtn.disabled = false;
+            this.sendBtn.style.opacity = '1';
         } else {
-            this.sendBtn.classList.remove('enabled');
             this.sendBtn.disabled = true;
+            this.sendBtn.style.opacity = '0.6';
         }
     }
 
@@ -86,11 +121,25 @@ class Chat {
         msg.textContent = text;
         msgContainer.appendChild(msg);
         
-        // 创建编辑按钮容器（只在已发送的消息上显示）
-        const editBtnContainer = document.createElement('div');
-        editBtnContainer.className = 'edit-btn-container';
+        // 创建操作按钮容器（复制功能和编辑功能）
+        const actionButtons = document.createElement('div');
+        actionButtons.className = 'message-actions';
         
-        // 创建编辑按钮
+        // 复制按钮（放在左侧）
+        const copyBtn = document.createElement('button');
+        copyBtn.className = 'action-btn copy-btn';
+        copyBtn.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <rect x="4" y="4" width="12" height="16" rx="2" stroke="currentColor" fill="none"/>
+                <rect x="8" y="8" width="12" height="16" rx="2" stroke="currentColor" fill="none"/>
+            </svg>
+        `;
+        copyBtn.title = '复制';
+        
+        copyBtn.addEventListener('click', () => this.copyMessage(text, copyBtn));
+        actionButtons.appendChild(copyBtn);
+        
+        // 编辑按钮（放在右侧）
         const editBtn = document.createElement('button');
         editBtn.className = 'edit-btn';
         editBtn.innerHTML = `
@@ -103,9 +152,10 @@ class Chat {
         // 添加编辑按钮点击事件
         editBtn.addEventListener('click', () => this.editUserMessage(msg, text));
         
-        editBtnContainer.appendChild(editBtn);
+        actionButtons.appendChild(editBtn);
+        
         wrapper.appendChild(msgContainer);
-        wrapper.appendChild(editBtnContainer);
+        wrapper.appendChild(actionButtons);
         this.chatMessages.appendChild(wrapper);
     }
 
@@ -115,8 +165,10 @@ class Chat {
         const msg = document.createElement('div');
         msg.className = 'message';
         
-        // 处理化学分子，使其可点击
-        const processedText = text.replace(/(LiPF6|LiFSI|EC|DEC|DMC|EMC|VC|FEC|LiF|Li2CO3|Li2O|Al2O3|ZrO2|HF)/g, '<span class="chemical-molecule" data-molecule="$1">$1</span>');
+        // 处理化学分子，使其可点击，并将换行符转换为HTML换行
+        const processedText = text
+            .replace(/\n/g, '<br>') // 将换行符转换为HTML换行
+            .replace(/(LiPF6|LiFSI|EC|DEC|DMC|EMC|VC|FEC|LiF|Li2CO3|Li2O|Al2O3|ZrO2|HF)/g, '<span class="chemical-molecule" data-molecule="$1">$1</span>');
         msg.innerHTML = processedText;
         
         // 为化学分子添加点击事件
@@ -257,113 +309,116 @@ class Chat {
         const editInput = document.createElement('textarea');
         editInput.className = 'edit-input';
         editInput.value = originalText;
-                        editInput.style.cssText = `
-                    flex: 1;
-                    min-height: 60px;
-                    padding: 12px 16px;
-                    border: 1px solid #56B26A;
-                    border-radius: 12px;
-                    font-size: 14px;
-                    font-family: inherit;
-                    resize: none;
-                    outline: none;
-                    background: white;
-                    color: #333;
-                    box-sizing: border-box;
-                `;
+        editInput.style.cssText = `
+            flex: 1;
+            min-height: 60px;
+            padding: 12px 16px;
+            border: 1px solid #56B26A;
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: none;
+            outline: none;
+            background: white;
+            color: #333;
+            box-sizing: border-box;
+        `;
         
-                        // 创建按钮容器
-                const buttonContainer = document.createElement('div');
-                buttonContainer.className = 'edit-buttons';
-                buttonContainer.style.cssText = `
-                    display: flex;
-                    flex-direction: row;
-                    gap: 8px;
-                    align-items: center;
-                    justify-content: space-between;
-                    width: 100%;
-                `;
+        // 创建按钮容器
+        const buttonContainer = document.createElement('div');
+        buttonContainer.className = 'edit-buttons';
+        buttonContainer.style.cssText = `
+            display: flex;
+            flex-direction: row;
+            gap: 8px;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        `;
         
-                        // 保存按钮
-                const saveBtn = document.createElement('button');
-                saveBtn.className = 'edit-save-btn';
-                saveBtn.innerHTML = `
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5L21 3M21 3L13.5 21L11.25 13.5M21 3L11.25 13.5" />
-                    </svg>
-                `;
-                saveBtn.style.cssText = `
-                    padding: 8px;
-                    background-color: #56B26A;
-                    color: white;
-                    border: none;
-                    border-radius: 50%;
-                    cursor: pointer;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    transition: all 0.2s ease;
-                    width: 40px;
-                    height: 40px;
-                    flex-shrink: 0;
-                `;
+        // 保存按钮
+        const saveBtn = document.createElement('button');
+        saveBtn.className = 'edit-save-btn';
+        saveBtn.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5L21 3M21 3L13.5 21L11.25 13.5M21 3L11.25 13.5" />
+            </svg>
+        `;
+        saveBtn.style.cssText = `
+            padding: 8px;
+            background-color: #56B26A;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+        `;
         
-                        // 取消按钮
-                const cancelBtn = document.createElement('button');
-                cancelBtn.className = 'edit-cancel-btn';
-                cancelBtn.innerHTML = `
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                `;
-                cancelBtn.style.cssText = `
-                    padding: 8px;
-                    background: none;
-                    color: #6b7280;
-                    border: none;
-                    cursor: pointer;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    transition: all 0.2s ease;
-                    width: 40px;
-                    height: 40px;
-                    flex-shrink: 0;
-                `;
+        // 取消按钮
+        const cancelBtn = document.createElement('button');
+        cancelBtn.className = 'edit-cancel-btn';
+        cancelBtn.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        `;
+        cancelBtn.style.cssText = `
+            padding: 8px;
+            background: none;
+            color: #6b7280;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+        `;
         
-                        // 添加悬停效果
-                saveBtn.addEventListener('mouseenter', () => {
-                    saveBtn.style.backgroundColor = '#4a9d5a';
-                });
-                saveBtn.addEventListener('mouseleave', () => {
-                    saveBtn.style.backgroundColor = '#56B26A';
-                });
+        // 添加悬停效果
+        saveBtn.addEventListener('mouseenter', () => {
+            saveBtn.style.backgroundColor = '#4a9d5a';
+        });
+        saveBtn.addEventListener('mouseleave', () => {
+            saveBtn.style.backgroundColor = '#56B26A';
+        });
         
-                        cancelBtn.addEventListener('mouseenter', () => {
-                    cancelBtn.style.color = '#374151';
-                });
-                cancelBtn.addEventListener('mouseleave', () => {
-                    cancelBtn.style.color = '#6b7280';
-                });
+        cancelBtn.addEventListener('mouseenter', () => {
+            cancelBtn.style.color = '#374151';
+        });
+        cancelBtn.addEventListener('mouseleave', () => {
+            cancelBtn.style.color = '#6b7280';
+        });
         
-                        // 替换消息内容为编辑模式
-                const messageContainer = messageElement.parentElement;
-                const originalMessage = messageElement.cloneNode(true);
-                
-                // 创建编辑容器
-                const editContainer = document.createElement('div');
-                editContainer.style.cssText = `
-                    display: flex;
-                    align-items: center;
-                    gap: 12px;
-                    width: 100%;
-                `;
-                
-                messageContainer.innerHTML = '';
-                editContainer.appendChild(cancelBtn);
-                editContainer.appendChild(editInput);
-                editContainer.appendChild(saveBtn);
-                messageContainer.appendChild(editContainer);
+        // 获取正确的容器结构
+        const messageContainer = messageElement.parentElement; // message-container
+        const messageWrapper = messageContainer.parentElement; // message-wrapper
+        const originalMessage = messageElement.cloneNode(true);
+        
+        // 清空整个消息包装器，包括编辑按钮容器
+        messageWrapper.innerHTML = '';
+        
+        // 创建编辑容器
+        const editContainer = document.createElement('div');
+        editContainer.style.cssText = `
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+        `;
+        
+        editContainer.appendChild(cancelBtn);
+        editContainer.appendChild(editInput);
+        editContainer.appendChild(saveBtn);
+        messageWrapper.appendChild(editContainer);
         
         // 聚焦到输入框
         editInput.focus();
@@ -375,13 +430,33 @@ class Chat {
             if (newText && newText !== originalText) {
                 // 更新消息内容
                 originalMessage.textContent = newText;
-                messageContainer.innerHTML = '';
-                messageContainer.appendChild(originalMessage);
                 
-                // 重新添加编辑按钮容器和按钮
-                const newEditBtnContainer = document.createElement('div');
-                newEditBtnContainer.className = 'edit-btn-container';
+                // 重建消息结构
+                messageWrapper.innerHTML = '';
                 
+                // 重新创建消息容器
+                const newMessageContainer = document.createElement('div');
+                newMessageContainer.className = 'message-container';
+                newMessageContainer.appendChild(originalMessage);
+                
+                // 重新创建操作按钮容器（复制功能和编辑功能）
+                const newActionButtons = document.createElement('div');
+                newActionButtons.className = 'message-actions';
+                
+                // 复制按钮（放在左侧）
+                const newCopyBtn = document.createElement('button');
+                newCopyBtn.className = 'action-btn copy-btn';
+                newCopyBtn.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <rect x="4" y="4" width="12" height="16" rx="2" stroke="currentColor" fill="none"/>
+                        <rect x="8" y="8" width="12" height="16" rx="2" stroke="currentColor" fill="none"/>
+                    </svg>
+                `;
+                newCopyBtn.title = '复制';
+                newCopyBtn.addEventListener('click', () => this.copyMessage(newText, newCopyBtn));
+                newActionButtons.appendChild(newCopyBtn);
+                
+                // 编辑按钮（放在右侧）
                 const newEditBtn = document.createElement('button');
                 newEditBtn.className = 'edit-btn';
                 newEditBtn.innerHTML = `
@@ -391,8 +466,11 @@ class Chat {
                 `;
                 newEditBtn.title = '编辑问题';
                 newEditBtn.addEventListener('click', () => this.editUserMessage(originalMessage, newText));
-                newEditBtnContainer.appendChild(newEditBtn);
-                messageContainer.appendChild(newEditBtnContainer);
+                newActionButtons.appendChild(newEditBtn);
+                
+                // 组装消息结构
+                messageWrapper.appendChild(newMessageContainer);
+                messageWrapper.appendChild(newActionButtons);
                 
                 console.log('Message updated:', newText);
             }
@@ -400,13 +478,32 @@ class Chat {
         
         // 取消按钮事件
         cancelBtn.addEventListener('click', () => {
-            messageContainer.innerHTML = '';
-            messageContainer.appendChild(originalMessage);
+            // 重建消息结构
+            messageWrapper.innerHTML = '';
             
-            // 重新添加编辑按钮容器和按钮
-            const newEditBtnContainer = document.createElement('div');
-            newEditBtnContainer.className = 'edit-btn-container';
+            // 重新创建消息容器
+            const newMessageContainer = document.createElement('div');
+            newMessageContainer.className = 'message-container';
+            newMessageContainer.appendChild(originalMessage);
             
+            // 重新创建操作按钮容器（复制功能和编辑功能）
+            const newActionButtons = document.createElement('div');
+            newActionButtons.className = 'message-actions';
+            
+            // 复制按钮（放在左侧）
+            const newCopyBtn = document.createElement('button');
+            newCopyBtn.className = 'action-btn copy-btn';
+            newCopyBtn.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <rect x="4" y="4" width="12" height="16" rx="2" stroke="currentColor" fill="none"/>
+                    <rect x="8" y="8" width="12" height="16" rx="2" stroke="currentColor" fill="none"/>
+                </svg>
+            `;
+            newCopyBtn.title = '复制';
+            newCopyBtn.addEventListener('click', () => this.copyMessage(originalText, newCopyBtn));
+            newActionButtons.appendChild(newCopyBtn);
+            
+            // 编辑按钮（放在右侧）
             const newEditBtn = document.createElement('button');
             newEditBtn.className = 'edit-btn';
             newEditBtn.innerHTML = `
@@ -416,8 +513,11 @@ class Chat {
             `;
             newEditBtn.title = '编辑问题';
             newEditBtn.addEventListener('click', () => this.editUserMessage(originalMessage, originalText));
-            newEditBtnContainer.appendChild(newEditBtn);
-            messageContainer.appendChild(newEditBtnContainer);
+            newActionButtons.appendChild(newEditBtn);
+            
+            // 组装消息结构
+            messageWrapper.appendChild(newMessageContainer);
+            messageWrapper.appendChild(newActionButtons);
         });
         
         // 回车键保存，ESC键取消
@@ -440,25 +540,80 @@ class Chat {
 
     loadChatHistory(chatId) {
         console.log('Loading chat history for ID:', chatId);
-        // 这里可以加载聊天历史
-        // 示例数据
-        const chatData = {
-            title: `Chat ${chatId}`,
-            messages: [
-                { type: 'user', content: '用户消息示例' },
-                { type: 'bot', content: '机器人回复示例' }
-            ]
+        
+        // 对话历史数据
+        const chatHistory = {
+            1: {
+                title: "电解质溶剂稳定性预测分析",
+                messages: [
+                    { type: 'user', content: '如何预测电解质溶剂的稳定性？' },
+                    { type: 'bot', content: '电解质溶剂稳定性可以通过分子动力学模拟和量子化学计算来预测。主要考虑因素包括：\n\n1. 溶剂分子的分解电位\n2. 与电极材料的相容性\n3. 温度稳定性\n4. 氧化还原稳定性\n\n建议使用DFT计算溶剂分子的HOMO-LUMO能隙来评估其电化学稳定性。' }
+                ]
+            },
+            2: {
+                title: "锂枝晶形成原因及抑制方法",
+                messages: [
+                    { type: 'user', content: '锂枝晶形成的主要原因是什么？' },
+                    { type: 'bot', content: '锂枝晶形成的主要原因包括：\n\n1. 不均匀的锂离子沉积\n2. 电解质浓度梯度\n3. 界面阻抗不均匀\n4. 温度分布不均\n\n抑制方法：\n- 使用固态电解质\n- 优化电解质配方\n- 添加成核剂\n- 控制充放电倍率' }
+                ]
+            },
+            3: {
+                title: "SEI层组成成分研究",
+                messages: [
+                    { type: 'user', content: 'SEI层主要由哪些成分组成？' },
+                    { type: 'bot', content: 'SEI（固体电解质界面）层主要由以下成分组成：\n\n1. 无机成分：\n   - LiF, Li2CO3, Li2O\n   - 碳酸锂盐类\n\n2. 有机成分：\n   - 聚碳酸酯\n   - 烷基碳酸锂\n   - 醚类化合物\n\nSEI层的组成直接影响电池的循环性能和安全性。' }
+                ]
+            },
+            4: {
+                title: "高镍正极材料性能优化",
+                messages: [
+                    { type: 'user', content: '如何优化高镍正极材料的性能？' },
+                    { type: 'bot', content: '高镍正极材料性能优化策略：\n\n1. 表面包覆：\n   - Al2O3, ZrO2等氧化物包覆\n   - 导电聚合物包覆\n\n2. 元素掺杂：\n   - Co, Mn, Al等元素掺杂\n   - 改善结构稳定性\n\n3. 形貌控制：\n   - 控制颗粒大小和形貌\n   - 提高振实密度' }
+                ]
+            },
+            5: {
+                title: "固态电解质界面稳定性",
+                messages: [
+                    { type: 'user', content: '固态电解质界面稳定性如何评估？' },
+                    { type: 'bot', content: '固态电解质界面稳定性评估方法：\n\n1. 电化学测试：\n   - 循环伏安法\n   - 电化学阻抗谱\n\n2. 物理表征：\n   - SEM观察界面形貌\n   - XRD分析相结构\n   - XPS分析化学组成\n\n3. 理论计算：\n   - 界面能计算\n   - 扩散系数预测' }
+                ]
+            },
+            6: {
+                title: "电池热管理系统设计",
+                messages: [
+                    { type: 'user', content: '电池热管理系统的设计要点有哪些？' },
+                    { type: 'bot', content: '电池热管理系统设计要点：\n\n1. 温度控制：\n   - 工作温度范围：15-35°C\n   - 温度均匀性控制\n\n2. 散热设计：\n   - 风冷/液冷系统\n   - 热管技术应用\n\n3. 安全保护：\n   - 过温保护\n   - 热失控预防\n\n4. 能效优化：\n   - 降低系统功耗\n   - 提高散热效率' }
+                ]
+            },
+            7: {
+                title: "LiFePO4石墨电池电解质推荐",
+                messages: [
+                    { type: 'user', content: '为LiFePO4和石墨电池推荐一种电解质' },
+                    { type: 'bot', content: '对于 LiFePO4 和石墨电池，推荐使用六氟磷酸锂 - 碳酸酯电解液，其主要由六氟磷酸锂（LiPF6）、碳酸酯类有机溶剂和添加剂组成。具体介绍如下：\n\n锂盐：LiPF6 是最常用的电解质锂盐，它具有溶解性好、离子传导能力高、离子解离度高等优点，能为电池提供大量可在正负极之间穿梭的锂离子，保证电池的充放电性能。但其热稳定性差，易水解生成 HF，会导致电池性能衰减，因此在使用和储存过程中需注意保持干燥。\n\n有机溶剂：常用的有碳酸乙烯酯（EC）、碳酸二乙酯（DEC）、碳酸二甲酯（DMC）、碳酸甲乙酯（EMC）等。通常会使用多种碳酸酯混合作为溶剂，如 EC 与一种链状碳酸酯的混合溶剂，如 EC+DMC、EC+DEC 等，可在石墨负极表面形成稳定的固体电解质界面（SEI）膜，有助于提高电池的循环性能。\n\n添加剂：添加剂种类繁多，作用各异。例如，碳酸亚乙烯酯（VC）可在放电过程中生成大分子网络状聚合物参与 SEI 层的形成，降低锂离子电池首次容量损失，改善高温下 SEI 层的稳定性，提高循环寿命；氟代碳酸亚乙酯（FEC）能改善电池低温性能，增强电极材料的稳定性，是实现高安全、高倍率和长循环寿命的重要添加剂。\n\n此外，也可考虑将双亚胺锂（LiFSI）与 LiPF6 混合使用的电解液。LiFSI 具有比 LiPF6 更好的热稳定性、导离子能力及更高的锂离子迁移数，将其作为辅助锂盐与 LiPF6 混合，能充分发挥二者优势，提高电解液的电导率和锂离子迁移数，有助于降低电极表面膜阻抗，形成稳定的、导离子性较好的钝化膜，更适用于高功率锂离子电池。' }
+                ]
+            }
         };
+        
+        const chatData = chatHistory[chatId];
+        if (!chatData) {
+            console.log('Chat data not found for ID:', chatId);
+            return;
+        }
         
         this.chatMessages.innerHTML = '';
         
         // 显示底部输入框
         this.showBottomInput();
         
+        // 首先插入欢迎语
+        this.insertBotMessage('Welcome to the Molecular Universe. How can I help you today?', false);
+        
+        // 然后加载历史消息
         chatData.messages.forEach((msg, index) => {
             if (msg.type === 'user') {
                 this.insertUserMessage(msg.content);
             } else {
+                // 只有最后一条机器人消息显示重新生成按钮
                 const isLastBotMessage = index === chatData.messages.length - 1;
                 this.insertBotMessage(msg.content, isLastBotMessage);
             }
@@ -490,33 +645,61 @@ class Chat {
         newChatContainer.className = 'new-chat-interface';
         newChatContainer.innerHTML = `
             <div class="new-chat-content">
-                <div class="new-chat-logo">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="48" height="48">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423L16.5 15.75l.394 1.183a2.25 2.25 0 001.423 1.423L19.5 18.75l-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
-                    </svg>
-                </div>
                 <h2 class="new-chat-title">新聊天</h2>
                 <p class="new-chat-subtitle">开始一段新的对话，探索分子宇宙的奥秘</p>
                 <div class="new-chat-input-container">
                     <div class="new-chat-input-wrapper">
                         <textarea id="new-chat-input" placeholder="Ask me anything, as long as it's about batteries, battery chemistry, or related topics." rows="3"></textarea>
-                        <button id="new-chat-send-btn" class="new-chat-send-btn">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5L21 3M21 3L13.5 21L11.25 13.5M21 3L11.25 13.5" />
-                            </svg>
-                        </button>
-                    </div>
-                    <div class="new-chat-deep-space-checkbox">
-                        <label>
-                            <input type="checkbox" id="new-chat-deep-space-toggle">
-                            <span class="checkbox-text">Enter Deep Space (BETA)</span>
-                            <span class="tooltip-icon" data-tooltip="A team of LLM agents that analyze your battery question, scour the literature and our molecule database, then collaborate to craft a research‑grade answer. Expect response times between 10-20 minutes.">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
+                        <div class="new-chat-input-controls">
+                            <div class="new-chat-mode-switch">
+                                <button class="new-mode-btn active" data-mode="regular">
+                                    <span>Regular Ask</span>
+                                </button>
+                                <button class="new-mode-btn" data-mode="deep-space">
+                                    <span>Deep Space</span>
+                                    <span class="beta-badge">Beta</span>
+                                </button>
+                            </div>
+                            <button id="new-chat-send-btn" class="new-chat-send-btn" disabled>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 19.5V4.5M12 4.5L6 10.5M12 4.5L18 10.5" />
                                 </svg>
-                            </span>
-                        </label>
+                            </button>
+                        </div>
                     </div>
+                </div>
+                
+                <!-- 推荐问题区域 -->
+                <div class="recommended-questions">
+                    <div class="recommended-question" data-question="锂离子电池的电解质溶剂选择有哪些关键考虑因素？">
+                        <span class="question-text">锂离子电池的电解质溶剂选择有哪些关键考虑因素？</span>
+                    </div>
+                    
+                    <div class="recommended-question" data-question="固态电解质在下一代电池技术中的优势和应用前景如何？">
+                        <span class="question-text">固态电解质在下一代电池技术中的优势和应用前景如何？</span>
+                    </div>
+                    
+                    <div class="recommended-question" data-question="SEI层的形成机制及其对电池性能的影响是什么？">
+                        <span class="question-text">SEI层的形成机制及其对电池性能的影响是什么？</span>
+                    </div>
+                    
+                    <div class="recommended-question" data-question="高镍正极材料的稳定性问题及解决方案有哪些？">
+                        <span class="question-text">高镍正极材料的稳定性问题及解决方案有哪些？</span>
+                    </div>
+                    
+                    <div class="recommended-question" data-question="锂枝晶的形成原因及抑制方法有哪些？">
+                        <span class="question-text">锂枝晶的形成原因及抑制方法有哪些？</span>
+                    </div>
+                </div>
+                
+                <!-- 换一换标签 -->
+                <div class="refresh-questions">
+                    <button class="refresh-questions-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="16" height="16">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                        </svg>
+                        <span>换一换</span>
+                    </button>
                 </div>
             </div>
         `;
@@ -533,7 +716,7 @@ class Chat {
     bindNewChatEvents() {
         const newChatInput = document.getElementById('new-chat-input');
         const newChatSendBtn = document.getElementById('new-chat-send-btn');
-        const newChatDeepSpaceToggle = document.getElementById('new-chat-deep-space-toggle');
+        const newChatModeButtons = document.querySelectorAll('.new-mode-btn');
         
         if (newChatInput) {
             newChatInput.addEventListener('input', () => this.updateNewChatBtnState());
@@ -549,13 +732,44 @@ class Chat {
             newChatSendBtn.addEventListener('click', () => this.sendNewChatMessage());
         }
         
-        if (newChatDeepSpaceToggle) {
-            newChatDeepSpaceToggle.addEventListener('change', () => {
-                // 同步到主输入框的Deep Space状态
-                if (this.deepSpaceToggle) {
-                    this.deepSpaceToggle.checked = newChatDeepSpaceToggle.checked;
+        // 新聊天界面的模式切换事件
+        if (newChatModeButtons.length > 0) {
+            newChatModeButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const mode = button.dataset.mode;
+                    this.switchNewChatMode(mode);
+                });
+                
+                // 添加hover事件
+                button.addEventListener('mouseenter', (e) => {
+                    this.showModeTooltip(e.target, button.dataset.mode);
+                });
+                
+                button.addEventListener('mouseleave', () => {
+                    this.hideModeTooltip();
+                });
+            });
+        }
+        
+        // 推荐问题点击事件
+        const recommendedQuestions = document.querySelectorAll('.recommended-question');
+        recommendedQuestions.forEach(question => {
+            question.addEventListener('click', () => {
+                const questionText = question.dataset.question;
+                if (newChatInput) {
+                    newChatInput.value = questionText;
+                    this.updateNewChatBtnState();
+                    // 直接发送问题
+                    this.sendNewChatMessage();
                 }
             });
+        });
+        
+        // 换一换按钮点击事件
+        const refreshBtn = document.querySelector('.refresh-questions-btn');
+        if (refreshBtn) {
+            refreshBtn.addEventListener('click', () => this.refreshQuestions());
         }
     }
 
@@ -571,6 +785,55 @@ class Chat {
         } else {
             newChatSendBtn.classList.remove('enabled');
             newChatSendBtn.disabled = true;
+        }
+    }
+
+    switchNewChatMode(mode) {
+        const newChatModeButtons = document.querySelectorAll('.new-mode-btn');
+        const newChatInput = document.getElementById('new-chat-input');
+        
+        if (!newChatModeButtons.length || !newChatInput) return;
+
+        // 更新按钮状态
+        newChatModeButtons.forEach(button => {
+            if (button.dataset.mode === mode) {
+                button.classList.add('active');
+            } else {
+                button.classList.remove('active');
+            }
+        });
+
+        // 更新输入框占位符
+        const placeholders = {
+            'regular': 'Ask me anything, as long as it\'s about batteries, battery chemistry, or related topics.',
+            'deep-space': 'Enter your research question for deep analysis. This will take 10-20 minutes to process.'
+        };
+
+        newChatInput.placeholder = placeholders[mode] || placeholders.regular;
+
+        // 添加切换动画
+        const activeButton = document.querySelector(`.new-mode-btn[data-mode="${mode}"]`);
+        if (activeButton) {
+            activeButton.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                activeButton.style.transform = '';
+            }, 150);
+        }
+
+        console.log(`New chat switched to ${mode} mode`);
+    }
+
+    showNewChatTooltip() {
+        const tooltip = document.getElementById('newChatModeTooltip');
+        if (tooltip) {
+            tooltip.classList.add('show');
+        }
+    }
+
+    hideNewChatTooltip() {
+        const tooltip = document.getElementById('newChatModeTooltip');
+        if (tooltip) {
+            tooltip.classList.remove('show');
         }
     }
 
@@ -630,6 +893,121 @@ class Chat {
     // 公共方法：添加机器人消息
     addBotMessage(text, showRegenerate = false) {
         this.insertBotMessage(text, showRegenerate);
+    }
+    
+    refreshQuestions() {
+        // 切换到下一组问题
+        this.currentQuestionSetIndex = (this.currentQuestionSetIndex + 1) % this.questionSets.length;
+        const newQuestions = this.questionSets[this.currentQuestionSetIndex];
+        
+        // 获取推荐问题容器
+        const questionsContainer = document.querySelector('.recommended-questions');
+        if (!questionsContainer) return;
+        
+        // 清空现有问题
+        questionsContainer.innerHTML = '';
+        
+        // 添加新问题
+        newQuestions.forEach(question => {
+            const questionElement = document.createElement('div');
+            questionElement.className = 'recommended-question';
+            questionElement.dataset.question = question;
+            questionElement.innerHTML = `<span class="question-text">${question}</span>`;
+            
+            // 重新绑定点击事件
+            questionElement.addEventListener('click', () => {
+                const newChatInput = document.getElementById('new-chat-input');
+                if (newChatInput) {
+                    newChatInput.value = question;
+                    this.updateNewChatBtnState();
+                    this.sendNewChatMessage();
+                }
+            });
+            
+            questionsContainer.appendChild(questionElement);
+        });
+        
+        // 添加旋转动画效果
+        const refreshBtn = document.querySelector('.refresh-questions-btn svg');
+        if (refreshBtn) {
+            refreshBtn.style.transform = 'rotate(360deg)';
+            refreshBtn.style.transition = 'transform 0.5s ease';
+            setTimeout(() => {
+                refreshBtn.style.transform = 'rotate(0deg)';
+            }, 500);
+        }
+    }
+    
+    showModeTooltip(element, mode) {
+        // 移除现有的tooltip
+        this.hideModeTooltip();
+        
+        // 创建tooltip内容
+        const tooltipContent = this.getModeTooltipContent(mode);
+        
+        // 创建tooltip元素
+        const tooltip = document.createElement('div');
+        tooltip.className = 'mode-tooltip';
+        tooltip.innerHTML = tooltipContent;
+        
+        // 强制设置最高z-index
+        tooltip.style.zIndex = '2147483647';
+        tooltip.style.position = 'absolute';
+        tooltip.style.background = 'white';
+        
+        // 添加到新聊天界面容器内
+        const newChatInterface = document.querySelector('.new-chat-interface');
+        if (newChatInterface) {
+            newChatInterface.appendChild(tooltip);
+            
+            // 计算位置（相对于新聊天界面容器）
+            const containerRect = newChatInterface.getBoundingClientRect();
+            const rect = element.getBoundingClientRect();
+            
+            // 设置位置（在按钮下方居中）
+            const left = rect.left - containerRect.left + rect.width / 2 - 140; // 140是tooltip宽度的一半
+            const top = rect.bottom - containerRect.top + 12; // 增加间距，给箭头留出空间
+            
+            tooltip.style.left = `${left}px`;
+            tooltip.style.top = `${top}px`;
+            
+            // 显示动画
+            setTimeout(() => {
+                tooltip.classList.add('show');
+            }, 10);
+        }
+    }
+    
+    hideModeTooltip() {
+        const existingTooltip = document.querySelector('.mode-tooltip');
+        if (existingTooltip) {
+            existingTooltip.remove();
+        }
+    }
+    
+    getModeTooltipContent(mode) {
+        if (mode === 'regular') {
+            return `
+                <div class="tooltip-header">
+                    <h4>Regular Ask</h4>
+                    <span class="tooltip-remaining">今日剩余: 100次</span>
+                </div>
+                <div class="tooltip-description">
+                    基础问答模式，适合日常电池相关问题咨询。提供准确、简洁的回答。
+                </div>
+            `;
+        } else if (mode === 'deep-space') {
+            return `
+                <div class="tooltip-header">
+                    <h4>Deep Space</h4>
+                    <span class="tooltip-remaining">本月剩余: 20次</span>
+                </div>
+                <div class="tooltip-description">
+                    由大型语言模型智能体团队分析您的电池问题，搜索文献和我们的分子数据库，然后协作制作研究级答案。预计响应时间为10-20分钟。
+                </div>
+            `;
+        }
+        return '';
     }
 }
 

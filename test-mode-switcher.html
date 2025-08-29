@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mode Switcher Test</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/responsive-optimizations.css">
+    <style>
+        body {
+            padding: 20px;
+            background: #f8fafc;
+        }
+        .test-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .test-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #1f2937;
+        }
+        .test-info {
+            background: #f3f4f6;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1 class="test-title">Mode Switcher 测试</h1>
+        <div class="test-info">
+            测试输入框的模式切换功能。点击 "Regular Ask" 和 "Deep Space" 按钮来切换模式。
+        </div>
+        
+        <div class="chat-input-container">
+            <div class="chat-input-wrapper">
+                <div class="input-mode-switch">
+                    <button class="mode-btn active" data-mode="regular">
+                        <span>Regular Ask</span>
+                    </button>
+                    <button class="mode-btn" data-mode="deep-space">
+                        <span>Deep Space</span>
+                        <span class="beta-badge">Beta</span>
+                    </button>
+                </div>
+                <textarea id="chat-input" placeholder="Ask me anything, as long as it's about batteries, battery chemistry, or related topics." rows="1"></textarea>
+                <button id="send-btn" class="send-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 19.5V4.5M12 4.5L6 10.5M12 4.5L18 10.5" />
+                    </svg>
+                </button>
+            </div>
+            <div class="mode-tooltip" id="modeTooltip">
+                <div class="tooltip-content">
+                    <div class="tooltip-header">
+                        <span class="tooltip-title">Deep Space Mode</span>
+                        <button class="tooltip-close" id="tooltipClose">×</button>
+                    </div>
+                    <p class="tooltip-description">A team of LLM agents that analyze your battery question, scour the literature and our molecule database, then collaborate to craft a research‑grade answer. Expect response times between 10-20 minutes.</p>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top: 20px; padding: 12px; background: #f9fafb; border-radius: 8px;">
+            <h3>当前状态:</h3>
+            <p>模式: <span id="currentMode">Regular Ask</span></p>
+            <p>占位符: <span id="currentPlaceholder">Ask me anything, as long as it's about batteries, battery chemistry, or related topics.</span></p>
+        </div>
+    </div>
+
+    <script src="js/mode-switcher.js"></script>
+    <script>
+        // 初始化模式切换器
+        const modeSwitcher = new ModeSwitcher();
+        
+        // 监听模式变化事件
+        document.addEventListener('modeChanged', (e) => {
+            const mode = e.detail.mode;
+            const modeNames = {
+                'regular': 'Regular Ask',
+                'deep-space': 'Deep Space'
+            };
+            
+            document.getElementById('currentMode').textContent = modeNames[mode];
+            document.getElementById('currentPlaceholder').textContent = 
+                document.getElementById('chat-input').placeholder;
+        });
+
+        // 发送按钮点击事件
+        document.getElementById('send-btn').addEventListener('click', () => {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            if (message) {
+                alert(`发送消息: "${message}"\n模式: ${modeSwitcher.getCurrentMode()}`);
+                input.value = '';
+            }
+        });
+    </script>
+</body>
+</html> 

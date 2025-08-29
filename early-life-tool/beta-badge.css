@@ -1,0 +1,28 @@
+/* 隐藏iframe中的标题样式 */
+
+/* 隐藏包含"电池早期生命预测工具"文本的所有元素 */
+* {
+    display: none !important;
+}
+
+/* 恢复显示不包含标题的元素 */
+body,
+body *:not(:contains("电池早期生命预测工具")) {
+    display: revert !important;
+}
+
+/* 特别隐藏header元素 */
+header {
+    display: none !important;
+}
+
+/* 隐藏已标记的标题元素 */
+.iframe-title-hidden {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    overflow: hidden !important;
+    opacity: 0 !important;
+    position: absolute !important;
+    left: -9999px !important;
+}

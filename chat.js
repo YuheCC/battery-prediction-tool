@@ -16,8 +16,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const msg = document.createElement('div');
     msg.className = 'message';
     
-    // 处理化学分子，使其可点击
-    const processedText = text.replace(/(LiPF6|LiFSI|EC|DEC|DMC|EMC|VC|FEC|LiF|Li2CO3|Li2O|Al2O3|ZrO2|HF)/g, '<span class="chemical-molecule" data-molecule="$1">$1</span>');
+    // 处理化学分子，使其可点击，并将换行符转换为HTML换行
+    const processedText = text
+      .replace(/\n/g, '<br>') // 将换行符转换为HTML换行
+      .replace(/(LiPF6|LiFSI|EC|DEC|DMC|EMC|VC|FEC|LiF|Li2CO3|Li2O|Al2O3|ZrO2|HF)/g, '<span class="chemical-molecule" data-molecule="$1">$1</span>');
     msg.innerHTML = processedText;
     
     // 为化学分子添加点击事件
@@ -385,10 +387,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // 清空当前对话
     chatMessages.innerHTML = '';
     
-    // 首先插入欢迎语
-    insertBotMessage('Welcome to the Molecular Universe. How can I help you today?', false);
-    
-    // 加载历史消息
+    // 直接加载历史消息，不显示欢迎语
     chatData.messages.forEach((msg, index) => {
       if (msg.type === 'user') {
         insertUserMessage(msg.content);
@@ -651,4 +650,6 @@ document.addEventListener('DOMContentLoaded', function() {
       showSearchChatModal();
     });
   }
+
+
 }); 

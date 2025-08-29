@@ -22,25 +22,59 @@ class App {
         console.log('Initializing application modules...');
 
         try {
+            // 初始化性能优化工具
+            this.modules.performanceUtils = new PerformanceUtils();
+            
             // 初始化各个模块
             this.modules.sidebar = new Sidebar();
             this.modules.chat = new Chat();
             this.modules.moleculePanel = new MoleculePanel();
             this.modules.searchModal = new SearchModal();
+            this.modules.chatEnhancements = new ChatEnhancements();
+            this.modules.modeSwitcher = new ModeSwitcher();
+            this.modules.feedbackModal = new FeedbackModal();
 
             // 设置全局实例引用（供模块间调用）
+            window.performanceUtilsInstance = this.modules.performanceUtils;
             window.sidebarInstance = this.modules.sidebar;
             window.chatInstance = this.modules.chat;
             window.moleculePanelInstance = this.modules.moleculePanel;
             window.searchModalInstance = this.modules.searchModal;
+            window.chatEnhancementsInstance = this.modules.chatEnhancements;
+            window.modeSwitcherInstance = this.modules.modeSwitcher;
+            window.feedbackModalInstance = this.modules.feedbackModal;
 
             // 设置模块间的通信
             this.setupModuleCommunication();
+
+            // 初始化性能优化
+            this.initializePerformanceOptimizations();
 
             console.log('All modules initialized successfully');
         } catch (error) {
             console.error('Error initializing modules:', error);
         }
+    }
+
+    initializePerformanceOptimizations() {
+        // 懒加载图片
+        this.modules.performanceUtils.lazyLoadImages();
+        
+        // 预加载关键资源
+        this.modules.performanceUtils.preloadResources([
+            { url: 'logo.png', type: 'image' },
+            { url: 'molecule-structure.png', type: 'image' }
+        ]);
+
+        // 优化滚动性能
+        this.modules.performanceUtils.optimizeScroll(() => {
+            // 滚动时的性能优化逻辑
+        });
+
+        // 优化窗口大小变化
+        this.modules.performanceUtils.optimizeResize(() => {
+            // 窗口大小变化时的优化逻辑
+        });
     }
 
     setupModuleCommunication() {

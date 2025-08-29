@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>样例数据功能测试</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: #1e293b;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .test-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+        }
+        
+        .test-section h2 {
+            color: #374151;
+            margin-top: 0;
+        }
+        
+        .test-links {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .test-link {
+            display: inline-block;
+            padding: 12px 20px;
+            background: #56B26A;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .test-link:hover {
+            background: #4f9a5a;
+            transform: translateY(-1px);
+        }
+        
+        .feature-list {
+            background: #f9fafb;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        .feature-list h3 {
+            color: #374151;
+            margin-top: 0;
+        }
+        
+        .feature-list ul {
+            color: #6b7280;
+            line-height: 1.6;
+        }
+        
+        .feature-list li {
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔋 样例数据功能测试</h1>
+        
+        <div class="test-section">
+            <h2>📄 测试页面</h2>
+            <div class="test-links">
+                <a href="prediction-tool.html" class="test-link" target="_blank">
+                    电池早期生命预测工具 (Beta)
+                </a>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>✨ 新增功能</h2>
+            <div class="feature-list">
+                <h3>可点击的样例数据卡片</h3>
+                <ul>
+                    <li>🔋 <strong>电池循环数据</strong> - 包含15个电池样本的循环测试数据</li>
+                    <li>📈 <strong>性能表征数据</strong> - 电池容量、电压、温度等性能参数</li>
+                    <li>👆 <strong>点击预览</strong> - 查看详细的数据表格和统计信息</li>
+                    <li>⚡ <strong>一键使用</strong> - 直接加载样例数据进行预测</li>
+                    <li>📄 <strong>文件图标</strong> - 样例数据标题前添加了绿色文件图标</li>
+                    <li>🎨 <strong>主题色彩</strong> - 样例数据标题使用主题色绿色显示</li>
+                </ul>
+                
+                <h3>交互功能</h3>
+                <ul>
+                    <li>🎯 <strong>卡片悬停效果</strong> - 鼠标悬停时显示绿色边框和阴影</li>
+                    <li>📊 <strong>数据预览弹窗</strong> - 显示样本数量、数据行数、平均容量等信息</li>
+                    <li>📋 <strong>完整数据表格</strong> - 可滚动的数据表格展示所有样例数据</li>
+                    <li>🔄 <strong>无缝集成</strong> - 点击"使用"按钮直接加载到预测流程中</li>
+                </ul>
+                
+                <h3>用户体验优化</h3>
+                <ul>
+                    <li>🎨 <strong>现代化设计</strong> - 使用卡片式布局和渐变色彩</li>
+                    <li>📱 <strong>响应式布局</strong> - 适配不同屏幕尺寸</li>
+                    <li>⚡ <strong>快速响应</strong> - 即时预览和加载功能</li>
+                    <li>🔒 <strong>数据安全</strong> - 样例数据内置，无需外部依赖</li>
+                    <li>📍 <strong>合理布局</strong> - 样例数据位于上传区域之后，逻辑更清晰</li>
+                    <li>🎯 <strong>视觉突出</strong> - 绿色主题色和文件图标增强视觉识别</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>🧪 测试步骤</h2>
+            <div class="feature-list">
+                <ol>
+                    <li>点击上方链接打开测试页面</li>
+                    <li>在页面中找到"📄 样例数据"区域</li>
+                    <li>点击任意样例数据卡片</li>
+                    <li>尝试"预览"按钮查看数据详情</li>
+                    <li>尝试"使用"按钮直接加载数据</li>
+                    <li>验证数据是否正确加载到预测流程中</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

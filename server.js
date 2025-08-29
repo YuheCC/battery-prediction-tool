@@ -3,7 +3,11 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const app = express();
-const PORT = 3005;
+const PORT = 3111;
+
+// 项目信息
+const PROJECT_NAME = 'Prediction1';
+const PROJECT_VERSION = '1.0.0';
 
 // CORS 跨域中间件
 app.use((req, res, next) => {
@@ -18,7 +22,10 @@ app.use((req, res, next) => {
 
 // 静态文件服务
 app.use(express.static(path.join(__dirname)));
-app.use(bodyParser.json());
+
+// 增加请求体大小限制，支持大文件上传
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
 // 用户数据文件路径
 const USERS_FILE = path.join(__dirname, 'users.json');
@@ -191,6 +198,148 @@ app.put('/api/user/:email', (req, res) => {
     return res.json({ message: '用户信息更新成功' });
 });
 
+// 早期生命预测接口
+app.post('/api/early-life-prediction', (req, res) => {
+    const { data } = req.body;
+    
+    if (!data || !Array.isArray(data) || data.length === 0) {
+        return res.status(400).json({ message: '请提供有效的预测数据' });
+    }
+    
+    console.log(`收到预测请求，数据量: ${data.length} 条记录`);
+    
+    try {
+        // 对于大数据集，采用分批处理
+        const batchSize = 1000; // 每批处理1000条记录
+        const totalBatches = Math.ceil(data.length / batchSize);
+        
+        console.log(`将分 ${totalBatches} 批处理数据`);
+        
+        // 模拟预测处理时间
+        setTimeout(() => {
+            let allResults = [];
+            
+            // 分批处理数据
+            for (let i = 0; i < totalBatches; i++) {
+                const startIndex = i * batchSize;
+                const endIndex = Math.min(startIndex + batchSize, data.length);
+                const batchData = data.slice(startIndex, endIndex);
+                
+                console.log(`处理第 ${i + 1}/${totalBatches} 批，记录 ${startIndex + 1}-${endIndex}`);
+                const batchResults = performEarlyLifePrediction(batchData);
+                allResults = allResults.concat(batchResults);
+            }
+            
+            const summary = {
+                totalSamples: data.length,
+                averageCycleLife: Math.round(allResults.reduce((sum, r) => sum + r.cycleLife, 0) / allResults.length),
+                predictionTime: new Date().toISOString(),
+                processedBatches: totalBatches
+            };
+            
+            console.log(`预测完成，共处理 ${allResults.length} 条记录`);
+            
+            res.json({
+                success: true,
+                message: '预测完成',
+                results: allResults,
+                summary: summary
+            });
+        }, 2000); // 模拟2秒处理时间
+        
+    } catch (error) {
+        console.error('预测处理错误:', error);
+        res.status(500).json({ message: '预测处理失败', error: error.message });
+    }
+});
+
+// 执行早期生命预测算法
+function performEarlyLifePrediction(data) {
+    const results = [];
+    
+    data.forEach((row, index) => {
+        const barcode = row.barcode || row.Barcode || `BAT${String(index + 1).padStart(3, '0')}`;
+        
+        // 基于多个特征进行预测
+        let cycleLife = 300; // 基础预测值
+        let confidence = 0.7; // 置信度
+        let explanation = '基于早期循环数据预测';
+        
+        // 电流特征分析
+        if (row.current) {
+            const current = parseFloat(row.current);
+            if (current > 2.5) {
+                cycleLife -= 50;
+                explanation = '高电流充放电，加速电池衰减';
+            } else if (current > 2.0) {
+                cycleLife -= 20;
+                explanation = '中等电流充放电，性能稳定';
+            } else if (current > 1.5) {
+                cycleLife += 30;
+                explanation = '低电流充放电，有利于延长寿命';
+            }
+        }
+        
+        // 电压特征分析
+        if (row.voltage || row.Voltage) {
+            const voltage = parseFloat(row.voltage || row.Voltage);
+            if (voltage > 3.5) {
+                cycleLife += 30;
+                confidence += 0.1;
+                explanation = '电压稳定，电池性能良好';
+            } else if (voltage < 3.0) {
+                cycleLife -= 30;
+                confidence -= 0.1;
+                explanation = '电压偏低，需要关注电池状态';
+            }
+        }
+        
+        // 循环ID分析
+        if (row.cycle_id) {
+            const cycleId = parseInt(row.cycle_id);
+            if (cycleId > 100) {
+                cycleLife -= cycleId * 0.3;
+                explanation += '，已使用较多循环';
+            } else if (cycleId > 50) {
+                cycleLife -= cycleId * 0.2;
+                explanation += '，循环次数适中';
+            }
+        }
+        
+        // 时间特征分析
+        if (row.time) {
+            const time = parseFloat(row.time);
+            if (time > 200) {
+                cycleLife -= 40;
+                explanation += '，充放电时间较长';
+            } else if (time < 50) {
+                cycleLife += 20;
+                explanation += '，充放电效率较高';
+            }
+        }
+        
+        // 确保预测值在合理范围内
+        cycleLife = Math.max(100, Math.min(800, Math.round(cycleLife)));
+        confidence = Math.max(0.3, Math.min(0.95, confidence));
+        
+        results.push({
+            barcode: barcode,
+            cycleLife: cycleLife,
+            confidence: confidence,
+            explanation: explanation,
+            features: {
+                current: row.current || 'N/A',
+                voltage: row.voltage || row.Voltage || 'N/A',
+                cycle_id: row.cycle_id || 'N/A',
+                time: row.time || 'N/A'
+            }
+        });
+    });
+    
+    return results;
+}
+
 app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}`);
+  console.log(`🚀 ${PROJECT_NAME} v${PROJECT_VERSION}`);
+  console.log(`Server running at http://localhost:${PORT}`);
 }); 

@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>电池性能表征工具优化效果展示</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 2rem;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #030213, #0f3460);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .subtitle {
+            font-size: 1.125rem;
+            color: #64748b;
+            margin-bottom: 2rem;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .comparison-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+
+        .feature-icon {
+            width: 1.25rem;
+            height: 1.25rem;
+            color: #10b981;
+        }
+
+        .feature-icon.old {
+            color: #ef4444;
+        }
+
+        .demo-section {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+            margin-bottom: 2rem;
+        }
+
+        .demo-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 1rem;
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .demo-item {
+            background: #f8fafc;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        .demo-item h4 {
+            margin: 0 0 0.5rem 0;
+            color: #374151;
+            font-size: 1rem;
+        }
+
+        .demo-item p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+
+        .cta-section {
+            text-align: center;
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+        }
+
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, #030213, #0f3460);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 0.75rem;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        @media (max-width: 768px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">电池性能表征工具优化效果</h1>
+            <p class="subtitle">参照早期生命预测工具的设计风格，实现现代化UI升级</p>
+        </div>
+
+        <div class="comparison-grid">
+            <div class="comparison-card">
+                <h2 class="card-title">
+                    <svg class="feature-icon old" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                    </svg>
+                    优化前
+                </h2>
+                <ul class="feature-list">
+                    <li>
+                        <svg class="feature-icon old" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                        传统表单布局，缺乏视觉层次
+                    </li>
+                    <li>
+                        <svg class="feature-icon old" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                        单调的配色方案，缺乏现代感
+                    </li>
+                    <li>
+                        <svg class="feature-icon old" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                        基础的表单控件，交互体验一般
+                    </li>
+                    <li>
+                        <svg class="feature-icon old" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                        简单的模态框，信息展示不够清晰
+                    </li>
+                    <li>
+                        <svg class="feature-icon old" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                        缺乏响应式设计，移动端体验差
+                    </li>
+                </ul>
+            </div>
+
+            <div class="comparison-card">
+                <h2 class="card-title">
+                    <svg class="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    优化后
+                </h2>
+                <ul class="feature-list">
+                    <li>
+                        <svg class="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        卡片式布局，清晰的视觉层次
+                    </li>
+                    <li>
+                        <svg class="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        现代化配色方案，渐变效果
+                    </li>
+                    <li>
+                        <svg class="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        优化的表单控件，增强交互体验
+                    </li>
+                    <li>
+                        <svg class="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        精美的模态框，信息展示更清晰
+                    </li>
+                    <li>
+                        <svg class="feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        完全响应式设计，移动端友好
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h2 class="demo-title">主要优化特性</h2>
+            <div class="demo-grid">
+                <div class="demo-item">
+                    <h4>🎨 现代化设计语言</h4>
+                    <p>采用卡片式布局、渐变色彩、阴影效果等现代设计元素，提升视觉体验</p>
+                </div>
+                <div class="demo-item">
+                    <h4>📱 响应式布局</h4>
+                    <p>完全适配桌面端、平板和移动设备，确保在各种屏幕尺寸下都有良好的用户体验</p>
+                </div>
+                <div class="demo-item">
+                    <h4>⚡ 增强交互体验</h4>
+                    <p>优化的表单控件、加载状态、动画效果，提供流畅的用户交互体验</p>
+                </div>
+                <div class="demo-item">
+                    <h4>🎯 清晰信息架构</h4>
+                    <p>重新设计的信息展示方式，让用户更容易理解和操作</p>
+                </div>
+                <div class="demo-item">
+                    <h4>🔧 功能完整性</h4>
+                    <p>保持原有功能的同时，优化了界面布局和用户体验</p>
+                </div>
+                <div class="demo-item">
+                    <h4>🎪 一致性设计</h4>
+                    <p>与早期生命预测工具保持设计风格一致，形成统一的产品体验</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="cta-section">
+            <h2 style="margin-bottom: 1rem; color: #1e293b;">体验优化后的电池性能表征工具</h2>
+            <p style="margin-bottom: 2rem; color: #64748b;">点击下方按钮查看实际效果</p>
+            <a href="battery-prediction.html" class="cta-button">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                </svg>
+                查看优化效果
+            </a>
+        </div>
+    </div>
+</body>
+</html>
+
+

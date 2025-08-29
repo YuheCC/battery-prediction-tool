@@ -8,6 +8,10 @@ document.addEventListener('DOMContentLoaded', function() {
       userDropdown.classList.toggle('show');
     });
     document.addEventListener('click', function(event) {
+      // 如果点击的是反馈按钮，不关闭下拉菜单
+      if (event.target.closest('#feedbackButton')) {
+        return;
+      }
       if (!userAvatar.contains(event.target) && !userDropdown.contains(event.target)) {
         userDropdown.classList.remove('show');
       }

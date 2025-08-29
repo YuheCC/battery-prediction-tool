@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Chat Interface Test</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/responsive-optimizations.css">
+    <style>
+        body {
+            padding: 20px;
+            background: #f8fafc;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .test-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #1f2937;
+        }
+        .test-info {
+            background: #f3f4f6;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #6b7280;
+        }
+        .test-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+        .test-btn {
+            padding: 8px 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .test-btn:hover {
+            background: #f9fafb;
+            border-color: #9ca3af;
+        }
+        .test-btn.active {
+            background: #56B26A;
+            color: white;
+            border-color: #56B26A;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1 class="test-title">新聊天界面测试</h1>
+        <div class="test-info">
+            测试新聊天界面的模式切换功能。点击按钮切换不同的界面状态。
+        </div>
+        
+        <div class="test-buttons">
+            <button class="test-btn active" onclick="showNewChat()">新聊天界面</button>
+            <button class="test-btn" onclick="showMainChat()">主聊天界面</button>
+        </div>
+        
+        <div id="testArea">
+            <!-- 测试区域 -->
+        </div>
+    </div>
+
+    <script src="js/mode-switcher.js"></script>
+    <script>
+        // 模拟新聊天界面
+        function showNewChat() {
+            document.querySelectorAll('.test-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            const testArea = document.getElementById('testArea');
+            testArea.innerHTML = `
+                <div class="new-chat-interface">
+                    <div class="new-chat-content">
+                        <div class="new-chat-logo">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="48" height="48">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423L16.5 15.75l.394 1.183a2.25 2.25 0 001.423 1.423L19.5 18.75l-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
+                            </svg>
+                        </div>
+                        <h2 class="new-chat-title">新聊天</h2>
+                        <p class="new-chat-subtitle">开始一段新的对话，探索分子宇宙的奥秘</p>
+                        <div class="new-chat-input-container">
+                            <div class="new-chat-input-wrapper">
+                                <div class="input-mode-switch">
+                                    <button class="mode-btn active" data-mode="regular">
+                                        <span>Regular Ask</span>
+                                    </button>
+                                    <button class="mode-btn" data-mode="deep-space">
+                                        <span>Deep Space</span>
+                                        <span class="beta-badge">Beta</span>
+                                    </button>
+                                </div>
+                                <textarea id="new-chat-input" placeholder="Ask me anything, as long as it's about batteries, battery chemistry, or related topics." rows="3"></textarea>
+                                <button id="new-chat-send-btn" class="new-chat-send-btn">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 19.5V4.5M12 4.5L6 10.5M12 4.5L18 10.5" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="mode-tooltip" id="newChatModeTooltip">
+                                <div class="tooltip-content">
+                                    <div class="tooltip-header">
+                                        <span class="tooltip-title">Deep Space Mode</span>
+                                        <button class="tooltip-close" id="newChatTooltipClose">×</button>
+                                    </div>
+                                    <p class="tooltip-description">A team of LLM agents that analyze your battery question, scour the literature and our molecule database, then collaborate to craft a research‑grade answer. Expect response times between 10-20 minutes.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // 绑定新聊天界面的事件
+            bindNewChatTestEvents();
+        }
+
+        // 模拟主聊天界面
+        function showMainChat() {
+            document.querySelectorAll('.test-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            const testArea = document.getElementById('testArea');
+            testArea.innerHTML = `
+                <div style="border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px; margin-top: 20px;">
+                    <h3>主聊天界面</h3>
+                    <div class="chat-input-container">
+                        <div class="chat-input-wrapper">
+                            <div class="input-mode-switch">
+                                <button class="mode-btn active" data-mode="regular">
+                                    <span>Regular Ask</span>
+                                </button>
+                                <button class="mode-btn" data-mode="deep-space">
+                                    <span>Deep Space</span>
+                                    <span class="beta-badge">Beta</span>
+                                </button>
+                            </div>
+                            <textarea id="chat-input" placeholder="Ask me anything, as long as it's about batteries, battery chemistry, or related topics." rows="1"></textarea>
+                            <button id="send-btn" class="send-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 19.5V4.5M12 4.5L6 10.5M12 4.5L18 10.5" />
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="mode-tooltip" id="modeTooltip">
+                            <div class="tooltip-content">
+                                <div class="tooltip-header">
+                                    <span class="tooltip-title">Deep Space Mode</span>
+                                    <button class="tooltip-close" id="tooltipClose">×</button>
+                                </div>
+                                <p class="tooltip-description">A team of LLM agents that analyze your battery question, scour the literature and our molecule database, then collaborate to craft a research‑grade answer. Expect response times between 10-20 minutes.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // 绑定主聊天界面的事件
+            bindMainChatTestEvents();
+        }
+
+        // 绑定新聊天界面测试事件
+        function bindNewChatTestEvents() {
+            const newChatInput = document.getElementById('new-chat-input');
+            const newChatSendBtn = document.getElementById('new-chat-send-btn');
+            const newChatModeButtons = document.querySelectorAll('.new-chat-input-wrapper .mode-btn');
+            const newChatTooltip = document.getElementById('newChatModeTooltip');
+            const newChatTooltipClose = document.getElementById('newChatTooltipClose');
+            
+            if (newChatInput) {
+                newChatInput.addEventListener('input', () => {
+                    const hasText = newChatInput.value.trim().length > 0;
+                    if (newChatSendBtn) {
+                        newChatSendBtn.disabled = !hasText;
+                    }
+                });
+            }
+            
+            if (newChatSendBtn) {
+                newChatSendBtn.addEventListener('click', () => {
+                    const message = newChatInput.value.trim();
+                    if (message) {
+                        alert(`新聊天发送消息: "${message}"`);
+                        newChatInput.value = '';
+                        newChatSendBtn.disabled = true;
+                    }
+                });
+            }
+            
+            // 模式切换事件
+            if (newChatModeButtons.length > 0) {
+                newChatModeButtons.forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const mode = button.dataset.mode;
+                        switchNewChatTestMode(mode);
+                    });
+
+                    if (button.dataset.mode === 'deep-space') {
+                        button.addEventListener('mouseenter', () => {
+                            if (newChatTooltip) newChatTooltip.classList.add('show');
+                        });
+
+                        button.addEventListener('mouseleave', () => {
+                            setTimeout(() => {
+                                if (newChatTooltip && !newChatTooltip.matches(':hover')) {
+                                    newChatTooltip.classList.remove('show');
+                                }
+                            }, 200);
+                        });
+                    }
+                });
+            }
+
+            if (newChatTooltip) {
+                newChatTooltip.addEventListener('mouseleave', () => {
+                    newChatTooltip.classList.remove('show');
+                });
+            }
+
+            if (newChatTooltipClose) {
+                newChatTooltipClose.addEventListener('click', () => {
+                    if (newChatTooltip) newChatTooltip.classList.remove('show');
+                });
+            }
+        }
+
+        // 绑定主聊天界面测试事件
+        function bindMainChatTestEvents() {
+            const chatInput = document.getElementById('chat-input');
+            const sendBtn = document.getElementById('send-btn');
+            const modeButtons = document.querySelectorAll('.chat-input-wrapper .mode-btn');
+            const tooltip = document.getElementById('modeTooltip');
+            const tooltipClose = document.getElementById('tooltipClose');
+            
+            if (chatInput) {
+                chatInput.addEventListener('input', () => {
+                    const hasText = chatInput.value.trim().length > 0;
+                    if (sendBtn) {
+                        sendBtn.disabled = !hasText;
+                    }
+                });
+            }
+            
+            if (sendBtn) {
+                sendBtn.addEventListener('click', () => {
+                    const message = chatInput.value.trim();
+                    if (message) {
+                        alert(`主聊天发送消息: "${message}"`);
+                        chatInput.value = '';
+                        sendBtn.disabled = true;
+                    }
+                });
+            }
+            
+            // 模式切换事件
+            if (modeButtons.length > 0) {
+                modeButtons.forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const mode = button.dataset.mode;
+                        switchMainChatTestMode(mode);
+                    });
+
+                    if (button.dataset.mode === 'deep-space') {
+                        button.addEventListener('mouseenter', () => {
+                            if (tooltip) tooltip.classList.add('show');
+                        });
+
+                        button.addEventListener('mouseleave', () => {
+                            setTimeout(() => {
+                                if (tooltip && !tooltip.matches(':hover')) {
+                                    tooltip.classList.remove('show');
+                                }
+                            }, 200);
+                        });
+                    }
+                });
+            }
+
+            if (tooltip) {
+                tooltip.addEventListener('mouseleave', () => {
+                    tooltip.classList.remove('show');
+                });
+            }
+
+            if (tooltipClose) {
+                tooltipClose.addEventListener('click', () => {
+                    if (tooltip) tooltip.classList.remove('show');
+                });
+            }
+        }
+
+        // 新聊天界面模式切换
+        function switchNewChatTestMode(mode) {
+            const newChatModeButtons = document.querySelectorAll('.new-chat-input-wrapper .mode-btn');
+            const newChatInput = document.getElementById('new-chat-input');
+            
+            if (!newChatModeButtons.length || !newChatInput) return;
+
+            newChatModeButtons.forEach(button => {
+                if (button.dataset.mode === mode) {
+                    button.classList.add('active');
+                } else {
+                    button.classList.remove('active');
+                }
+            });
+
+            const placeholders = {
+                'regular': 'Ask me anything, as long as it\'s about batteries, battery chemistry, or related topics.',
+                'deep-space': 'Enter your research question for deep analysis. This will take 10-20 minutes to process.'
+            };
+
+            newChatInput.placeholder = placeholders[mode] || placeholders.regular;
+
+            const activeButton = document.querySelector(`.new-chat-input-wrapper .mode-btn[data-mode="${mode}"]`);
+            if (activeButton) {
+                activeButton.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    activeButton.style.transform = '';
+                }, 150);
+            }
+
+            console.log(`New chat test switched to ${mode} mode`);
+        }
+
+        // 主聊天界面模式切换
+        function switchMainChatTestMode(mode) {
+            const modeButtons = document.querySelectorAll('.chat-input-wrapper .mode-btn');
+            const chatInput = document.getElementById('chat-input');
+            
+            if (!modeButtons.length || !chatInput) return;
+
+            modeButtons.forEach(button => {
+                if (button.dataset.mode === mode) {
+                    button.classList.add('active');
+                } else {
+                    button.classList.remove('active');
+                }
+            });
+
+            const placeholders = {
+                'regular': 'Ask me anything, as long as it\'s about batteries, battery chemistry, or related topics.',
+                'deep-space': 'Enter your research question for deep analysis. This will take 10-20 minutes to process.'
+            };
+
+            chatInput.placeholder = placeholders[mode] || placeholders.regular;
+
+            const activeButton = document.querySelector(`.chat-input-wrapper .mode-btn[data-mode="${mode}"]`);
+            if (activeButton) {
+                activeButton.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    activeButton.style.transform = '';
+                }, 150);
+            }
+
+            console.log(`Main chat test switched to ${mode} mode`);
+        }
+
+        // 初始化显示新聊天界面
+        showNewChat();
+    </script>
+</body>
+</html> 

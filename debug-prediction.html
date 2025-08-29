@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>预测功能调试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .debug-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .test-btn {
+            padding: 10px 20px;
+            margin: 5px;
+            background: #56B26A;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .test-btn:hover {
+            background: #4a9c5a;
+        }
+        .error {
+            color: #ef4444;
+            background: #fef2f2;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .success {
+            color: #10b981;
+            background: #f0fdf4;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .log {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>预测功能调试页面</h1>
+    
+    <div class="debug-section">
+        <h2>1. 服务器状态检查</h2>
+        <button class="test-btn" onclick="checkServer()">检查服务器状态</button>
+        <div id="serverStatus"></div>
+    </div>
+    
+    <div class="debug-section">
+        <h2>2. API测试</h2>
+        <button class="test-btn" onclick="testAPI()">测试预测API</button>
+        <div id="apiResult"></div>
+    </div>
+    
+    <div class="debug-section">
+        <h2>3. 文件上传测试</h2>
+        <input type="file" id="testFile" accept=".csv" style="margin: 10px 0;">
+        <button class="test-btn" onclick="testFileUpload()">测试文件上传</button>
+        <div id="fileResult"></div>
+    </div>
+    
+    <div class="debug-section">
+        <h2>4. 完整流程测试</h2>
+        <button class="test-btn" onclick="testFullFlow()">测试完整流程</button>
+        <div id="fullFlowResult"></div>
+    </div>
+    
+    <div class="debug-section">
+        <h2>5. 调试日志</h2>
+        <button class="test-btn" onclick="clearLog()">清空日志</button>
+        <div id="debugLog" class="log"></div>
+    </div>
+
+    <script>
+        let logContent = '';
+        
+        function log(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            logContent += `[${timestamp}] ${message}\n`;
+            document.getElementById('debugLog').textContent = logContent;
+        }
+        
+        function clearLog() {
+            logContent = '';
+            document.getElementById('debugLog').textContent = '';
+        }
+        
+        async function checkServer() {
+            log('开始检查服务器状态...');
+            const statusDiv = document.getElementById('serverStatus');
+            
+            try {
+                const response = await fetch('/');
+                if (response.ok) {
+                    statusDiv.innerHTML = '<div class="success">✅ 服务器运行正常</div>';
+                    log('服务器状态检查成功');
+                } else {
+                    statusDiv.innerHTML = '<div class="error">❌ 服务器响应异常</div>';
+                    log('服务器响应异常');
+                }
+            } catch (error) {
+                statusDiv.innerHTML = '<div class="error">❌ 无法连接到服务器</div>';
+                log('服务器连接失败: ' + error.message);
+            }
+        }
+        
+        async function testAPI() {
+            log('开始测试预测API...');
+            const resultDiv = document.getElementById('apiResult');
+            
+            const testData = [{
+                Barcode: 'BAT001',
+                Cycle: '5',
+                Capacity: '0.985',
+                Voltage: '3.65',
+                Temperature: '25.2'
+            }];
+            
+            try {
+                const response = await fetch('/api/early-life-prediction', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        data: testData
+                    })
+                });
+                
+                log(`API响应状态: ${response.status} ${response.statusText}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const result = await response.json();
+                log('API返回数据: ' + JSON.stringify(result, null, 2));
+                
+                if (result.success) {
+                    resultDiv.innerHTML = '<div class="success">✅ API测试成功</div>';
+                    log('API测试成功');
+                } else {
+                    resultDiv.innerHTML = '<div class="error">❌ API返回失败</div>';
+                    log('API返回失败: ' + result.message);
+                }
+                
+            } catch (error) {
+                resultDiv.innerHTML = '<div class="error">❌ API测试失败</div>';
+                log('API测试失败: ' + error.message);
+            }
+        }
+        
+        function testFileUpload() {
+            log('开始测试文件上传...');
+            const fileInput = document.getElementById('testFile');
+            const resultDiv = document.getElementById('fileResult');
+            
+            if (!fileInput.files[0]) {
+                resultDiv.innerHTML = '<div class="error">❌ 请先选择文件</div>';
+                log('未选择文件');
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            log(`选择的文件: ${file.name} (${file.size} bytes)`);
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const csvText = e.target.result;
+                    const lines = csvText.split('\n');
+                    const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+                    const data = [];
+                    
+                    for (let i = 1; i < lines.length; i++) {
+                        if (lines[i].trim()) {
+                            const values = lines[i].split(',').map(v => v.trim().replace(/"/g, ''));
+                            const row = {};
+                            headers.forEach((header, index) => {
+                                row[header] = values[index] || '';
+                            });
+                            data.push(row);
+                        }
+                    }
+                    
+                    log(`文件解析成功，共 ${data.length} 条数据`);
+                    log('前3条数据: ' + JSON.stringify(data.slice(0, 3), null, 2));
+                    
+                    resultDiv.innerHTML = '<div class="success">✅ 文件上传测试成功</div>';
+                    
+                } catch (error) {
+                    resultDiv.innerHTML = '<div class="error">❌ 文件解析失败</div>';
+                    log('文件解析失败: ' + error.message);
+                }
+            };
+            
+            reader.onerror = function() {
+                resultDiv.innerHTML = '<div class="error">❌ 文件读取失败</div>';
+                log('文件读取失败');
+            };
+            
+            reader.readAsText(file, 'UTF-8');
+        }
+        
+        async function testFullFlow() {
+            log('开始测试完整流程...');
+            const resultDiv = document.getElementById('fullFlowResult');
+            
+            try {
+                // 1. 检查服务器
+                log('步骤1: 检查服务器状态');
+                const serverResponse = await fetch('/');
+                if (!serverResponse.ok) {
+                    throw new Error('服务器不可用');
+                }
+                
+                // 2. 测试API
+                log('步骤2: 测试预测API');
+                const testData = [{
+                    Barcode: 'BAT001',
+                    Cycle: '5',
+                    Capacity: '0.985',
+                    Voltage: '3.65',
+                    Temperature: '25.2'
+                }];
+                
+                const apiResponse = await fetch('/api/early-life-prediction', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        data: testData
+                    })
+                });
+                
+                if (!apiResponse.ok) {
+                    throw new Error(`API错误: ${apiResponse.status}`);
+                }
+                
+                const result = await apiResponse.json();
+                if (!result.success) {
+                    throw new Error('API返回失败');
+                }
+                
+                log('步骤3: 验证预测结果');
+                log(`预测结果: ${result.results.length} 个样本，平均寿命 ${result.summary.averageCycleLife} 次`);
+                
+                resultDiv.innerHTML = '<div class="success">✅ 完整流程测试成功</div>';
+                log('完整流程测试成功');
+                
+            } catch (error) {
+                resultDiv.innerHTML = '<div class="error">❌ 完整流程测试失败</div>';
+                log('完整流程测试失败: ' + error.message);
+            }
+        }
+        
+        // 页面加载时自动检查服务器状态
+        document.addEventListener('DOMContentLoaded', function() {
+            log('调试页面加载完成');
+            checkServer();
+        });
+    </script>
+</body>
+</html> 

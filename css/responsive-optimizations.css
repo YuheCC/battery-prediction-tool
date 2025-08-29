@@ -1,0 +1,591 @@
+/**
+ * Responsive Optimizations - 响应式设计优化
+ * 针对不同设备和屏幕尺寸的优化样式
+ */
+
+/* 移动端优化 (小于 768px) */
+@media (max-width: 767px) {
+    /* 头部导航优化 */
+    .main-header {
+        padding: 0 16px;
+        height: 56px;
+    }
+
+    .main-nav {
+        display: none; /* 移动端隐藏主导航 */
+    }
+
+    .logo-img {
+        height: 24px;
+    }
+
+    /* 聊天容器优化 */
+    .chat-container {
+        flex-direction: column;
+        height: calc(100vh - 56px);
+    }
+
+    .chat-sidebar {
+        width: 100%;
+        height: auto;
+        max-height: 200px;
+        border-right: none;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .chat-sidebar.mini-sidebar {
+        max-height: 60px;
+    }
+
+    .chat-main {
+        flex: 1;
+        height: calc(100vh - 256px);
+    }
+
+    /* 输入框优化 */
+    .chat-input-wrapper {
+        margin: 0;
+        border-radius: 8px;
+        padding: 2.5px 12px;
+        width: 100%;
+        max-width: none;
+        min-width: 250px;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+    }
+    
+    .chat-input-container {
+        background: transparent;
+        border-top: none;
+        padding: 0 12px 12px 12px;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+    }
+
+    .chat-controls-row {
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 0;
+    }
+
+    .controls-left {
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .controls-right {
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .input-mode-switch {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .mode-btn {
+        flex: 1;
+        justify-content: center;
+        padding: 10px 8px;
+        font-size: 12px;
+    }
+
+    .mode-btn svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    .source-btn {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+
+    .source-btn svg:first-child {
+        width: 14px;
+        height: 14px;
+    }
+
+    .action-btn {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+
+    .action-btn.add-btn {
+        width: 32px;
+        height: 32px;
+    }
+
+    .action-btn.add-btn svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .action-btn.research-btn svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    .chat-input-wrapper textarea {
+        font-size: 16px; /* 防止iOS缩放 */
+        line-height: 1.4;
+        min-height: 30px;
+        max-height: 50px;
+    }
+
+    .send-btn {
+        width: 24px;
+        height: 24px;
+    }
+
+    .send-btn svg {
+        width: 10px;
+        height: 10px;
+    }
+
+    /* 移动端提示框优化 */
+    .mode-tooltip {
+        left: 12px;
+        right: 12px;
+        transform: none;
+        max-width: none;
+        width: auto;
+    }
+
+    /* 新聊天界面移动端优化 */
+    .new-chat-input-wrapper {
+        flex-direction: column;
+        gap: 8px;
+        padding: 10px 16px;
+    }
+
+    .new-chat-input-wrapper .input-mode-switch {
+        width: 100%;
+        justify-content: flex-start;
+        margin-left: 4px;
+    }
+
+    .new-chat-input-wrapper .mode-btn {
+        flex: 1;
+        justify-content: center;
+        padding: 8px 6px;
+        font-size: 11px;
+    }
+
+    .new-chat-input-wrapper .beta-badge {
+        font-size: 8px;
+        padding: 1px 3px;
+        background: #56B26A; /* 主题色背景 */
+        color: #ffffff; /* 白色文字 */
+        margin-left: 3px;
+    }
+
+    .new-chat-input-wrapper textarea {
+        margin-left: 0;
+        width: 100%;
+        font-size: 16px;
+    }
+
+    .new-chat-send-btn {
+        align-self: flex-end;
+        width: 29px;
+        height: 29px;
+        margin-right: 4px;
+    }
+
+    .new-chat-send-btn svg {
+        width: 12px;
+        height: 12px;
+    }
+
+    /* 推荐问题移动端样式 */
+    .recommended-questions {
+        gap: 8px;
+        margin-top: 24px;
+        padding: 0 12px;
+    }
+
+    .recommended-question {
+        padding: 8px 12px;
+        max-width: 100%;
+        border-radius: 12px;
+    }
+
+    .question-text {
+    font-size: 13px;
+}
+
+.refresh-questions {
+    margin-top: 10px;
+}
+
+.refresh-questions-btn {
+    padding: 4px 8px;
+    font-size: 12px;
+}
+
+.refresh-questions-btn svg {
+    width: 12px;
+    height: 12px;
+}
+
+    /* 分子面板优化 */
+    .molecule-panel {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 10000;
+        border-radius: 0;
+        transform: translateX(100%);
+    }
+
+    .molecule-panel.show {
+        transform: translateX(0);
+    }
+
+    .molecule-panel-header {
+        padding: 16px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .molecule-panel-content {
+        padding: 16px;
+        height: calc(100vh - 80px);
+    }
+
+    /* 消息优化 */
+    .message {
+        padding: 12px 16px;
+        margin: 8px 12px;
+        border-radius: 16px;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .message-wrapper.user .message {
+        margin-left: 40px;
+    }
+
+    .message-wrapper.bot .message {
+        margin-right: 40px;
+    }
+
+    /* 侧边栏历史记录优化 */
+    .history-nav {
+        padding: 12px;
+    }
+
+    .history-nav li {
+        margin-bottom: 8px;
+    }
+
+    .history-nav li a {
+        padding: 8px 12px;
+        font-size: 14px;
+        border-radius: 8px;
+    }
+
+    /* 设置模态框优化 */
+    .settings-modal-content {
+        flex-direction: column;
+        width: 95%;
+        height: 90%;
+        margin: 5% auto;
+    }
+
+    .settings-modal-sidebar {
+        width: 100%;
+        height: auto;
+        flex-direction: row;
+        overflow-x: auto;
+        padding: 12px;
+    }
+
+    .settings-tab {
+        white-space: nowrap;
+        padding: 8px 16px;
+        margin-right: 8px;
+    }
+
+    .settings-modal-main {
+        flex: 1;
+        padding: 16px;
+    }
+}
+
+/* 平板优化 (768px - 1024px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .chat-sidebar {
+        width: 280px;
+    }
+
+    .chat-sidebar.mini-sidebar {
+        width: 60px;
+    }
+
+    .molecule-panel {
+        width: 40vw;
+        min-width: 300px;
+        max-width: 450px;
+    }
+
+    .molecule-panel.expanded {
+        width: 60vw;
+        min-width: 450px;
+        max-width: 600px;
+    }
+
+    .chat-container.molecule-panel-active .chat-main {
+        margin-right: 40vw;
+    }
+
+    .chat-container.molecule-panel-active.expanded .chat-main {
+        margin-right: 60vw;
+    }
+
+    /* 输入框优化 */
+    .chat-input-wrapper {
+        width: 100%;
+        max-width: none;
+        min-width: 400px;
+    }
+}
+
+/* 大屏幕优化 (大于 1024px) */
+@media (min-width: 1024px) {
+    .chat-container {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .chat-sidebar {
+        width: 320px;
+    }
+
+    .chat-sidebar.mini-sidebar {
+        width: 80px;
+    }
+
+    .molecule-panel {
+        width: 40vw;
+        min-width: 400px;
+        max-width: none;
+    }
+
+    .molecule-panel.expanded {
+        width: 60vw;
+        min-width: 600px;
+        max-width: none;
+    }
+
+    .chat-container.molecule-panel-active .chat-main {
+        margin-right: 40vw;
+    }
+
+    .chat-container.molecule-panel-active.expanded .chat-main {
+        margin-right: 60vw;
+    }
+
+    /* 输入框优化 */
+    .chat-input-wrapper {
+        width: 100%;
+        max-width: none;
+        min-width: 500px;
+    }
+}
+
+/* 超宽屏幕优化 (大于 1440px) */
+@media (min-width: 1440px) {
+    .chat-container {
+        max-width: 1600px;
+    }
+
+    .molecule-panel {
+        width: 35vw;
+        min-width: 450px;
+        max-width: none;
+    }
+
+    .molecule-panel.expanded {
+        width: 55vw;
+        min-width: 700px;
+        max-width: none;
+    }
+
+    .chat-container.molecule-panel-active .chat-main {
+        margin-right: 35vw;
+    }
+
+    .chat-container.molecule-panel-active.expanded .chat-main {
+        margin-right: 55vw;
+    }
+
+    /* 输入框优化 */
+    .chat-input-wrapper {
+        width: 100%;
+        max-width: none;
+        min-width: 600px;
+    }
+}
+
+
+
+/* 高分辨率屏幕优化 */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .logo-img {
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+    }
+
+    .molecule-structure img {
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+    }
+}
+
+/* 触摸设备优化 */
+@media (hover: none) and (pointer: coarse) {
+    /* 增大触摸目标 */
+    .nav-item {
+        padding: 16px 8px;
+        min-height: 44px;
+    }
+
+    .send-btn {
+        min-width: 44px;
+        min-height: 44px;
+    }
+
+    .action-btn {
+        min-width: 44px;
+        min-height: 44px;
+        padding: 12px;
+    }
+
+    .molecule-action-btn {
+        min-width: 44px;
+        min-height: 44px;
+        padding: 12px;
+    }
+
+    /* 优化滚动 */
+    .chat-messages {
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .molecule-panel-content {
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* 禁用悬停效果 */
+    .nav-item:hover,
+    .send-btn:hover,
+    .action-btn:hover,
+    .molecule-action-btn:hover {
+        transform: none;
+        box-shadow: none;
+    }
+}
+
+/* 打印样式优化 */
+@media print {
+    .main-header,
+    .chat-sidebar,
+    .chat-input-container,
+    .molecule-panel,
+    .settings-modal {
+        display: none !important;
+    }
+
+    .chat-container {
+        display: block !important;
+        height: auto !important;
+    }
+
+    .chat-main {
+        margin: 0 !important;
+        height: auto !important;
+    }
+
+    .chat-messages {
+        height: auto !important;
+        overflow: visible !important;
+    }
+
+    .message {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+}
+
+/* 减少动画偏好 */
+@media (prefers-reduced-motion: reduce) {
+    .chat-sidebar,
+    .molecule-panel,
+    .settings-modal,
+    .search-chat-modal {
+        transition: none !important;
+    }
+
+    .send-btn,
+    .action-btn,
+    .molecule-action-btn {
+        transition: none !important;
+    }
+
+    .send-btn:hover,
+    .action-btn:hover,
+    .molecule-action-btn:hover {
+        transform: none !important;
+    }
+
+    .typing-dot {
+        animation: none !important;
+    }
+}
+
+/* 高对比度模式 */
+@media (prefers-contrast: high) {
+    .chat-input-wrapper {
+        border: 2px solid #000;
+    }
+
+    .send-btn {
+        border: 2px solid #000;
+    }
+
+    .message {
+        border: 1px solid #000;
+    }
+
+    .nav-item.active {
+        border-bottom: 3px solid #000;
+    }
+}
+
+/* 深色模式支持 */
+@media (prefers-color-scheme: dark) {
+    /* 这里可以添加深色模式的样式 */
+    /* 目前项目使用浅色主题，所以暂时不实现 */
+}
+
+/* 可访问性优化 */
+@media (prefers-reduced-motion: no-preference) {
+    /* 为支持动画的用户提供更丰富的动画效果 */
+    .chat-input-wrapper:focus-within {
+        animation: inputFocus 0.3s ease-out;
+    }
+
+    @keyframes inputFocus {
+        0% {
+            transform: scale(0.98);
+        }
+        100% {
+            transform: scale(1);
+        }
+    }
+} 

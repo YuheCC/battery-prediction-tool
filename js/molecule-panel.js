@@ -32,12 +32,6 @@ class MoleculePanel {
             <div class="molecule-panel-header">
                 <div class="molecule-panel-title">
                     <span>分子详情</span>
-                    <button class="back-to-original-btn" id="backToOriginalBtn" onclick="window.moleculePanel.backToOriginalMolecule()" style="display: none;">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-                        </svg>
-                        <span>返回原分子</span>
-                    </button>
                 </div>
                 <button class="molecule-panel-close" onclick="window.moleculePanel.hide()">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -48,22 +42,6 @@ class MoleculePanel {
             <div class="molecule-panel-content">
                 <div class="molecule-panel-main" id="moleculePanelMain">
                     <!-- 分子卡片将在这里动态生成 -->
-                </div>
-                <div class="similar-molecules-panel" id="similarMoleculesPanel" style="display: none;">
-                    <div class="similar-molecules-comparison">
-                        <div class="original-molecule-section">
-                            <h3>原始分子</h3>
-                            <div class="original-molecule-content" id="originalMoleculeContent">
-                                <!-- 原分子内容将在这里动态生成 -->
-                            </div>
-                        </div>
-                        <div class="similar-molecules-section">
-                            <h3>相似分子 (5)</h3>
-                            <div class="similar-molecules-grid" id="similarMoleculesGrid">
-                                <!-- 相似分子卡片将在这里动态生成 -->
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         `;
@@ -106,6 +84,9 @@ class MoleculePanel {
         // 显示面板
         this.panel.style.display = 'block';
         this.adjustLayout(true);
+        
+        // 确保面板重置到单个分子宽度
+        this.collapsePanel();
         
         // 切换到mini模式
         this.switchToMiniMode();
@@ -181,9 +162,9 @@ class MoleculePanel {
 
         if (showPanel) {
             this.chatContainer.classList.add('molecule-panel-active');
-            // 确保主内容区域有足够空间
-            this.chatMain.style.marginRight = '460px';
-            this.chatMain.style.maxWidth = 'calc(100vw - 460px)';
+            // 确保主内容区域有足够空间，使用380px的分子面板宽度和50px的mini侧边栏宽度
+            this.chatMain.style.marginRight = '380px';
+            this.chatMain.style.maxWidth = 'calc(100vw - 380px - 50px)';
         } else {
             this.chatContainer.classList.remove('molecule-panel-active');
             // 恢复主内容区域
@@ -397,21 +378,65 @@ class MoleculePanel {
     addToFavorites(moleculeName) {
         console.log('Adding to favorites:', moleculeName);
         
-        // 显示成功通知
-        this.showNotification(`${moleculeName} 已添加到收藏夹`, 'success');
-        
-        // 这里可以添加实际的收藏逻辑
-        // 比如保存到localStorage或发送到服务器
+        // 获取收藏列表
         const favorites = JSON.parse(localStorage.getItem('moleculeFavorites') || '[]');
+        
         if (!favorites.includes(moleculeName)) {
+            // 添加到收藏
             favorites.push(moleculeName);
             localStorage.setItem('moleculeFavorites', JSON.stringify(favorites));
+        } else {
+            // 从收藏中移除
+            const index = favorites.indexOf(moleculeName);
+            favorites.splice(index, 1);
+            localStorage.setItem('moleculeFavorites', JSON.stringify(favorites));
         }
+        
+        // 更新按钮状态
+        this.updateFavoriteButtonState(moleculeName);
+    }
+    
+    // 检查分子是否已收藏
+    isFavorited(moleculeName) {
+        const favorites = JSON.parse(localStorage.getItem('moleculeFavorites') || '[]');
+        return favorites.includes(moleculeName);
+    }
+    
+    // 更新收藏按钮状态
+    updateFavoriteButtonState(moleculeName) {
+        const buttons = document.querySelectorAll(`[onclick*="addToFavorites('${moleculeName}')"]`);
+        buttons.forEach(button => {
+            if (this.isFavorited(moleculeName)) {
+                button.classList.add('favorited');
+            } else {
+                button.classList.remove('favorited');
+            }
+        });
+    }
+    
+    // 更新分子类型
+    updateMoleculeType(moleculeName, type) {
+        console.log('Updating molecule type:', moleculeName, 'to', type);
+        
+        // 保存分子类型到localStorage
+        const moleculeTypes = JSON.parse(localStorage.getItem('moleculeTypes') || '{}');
+        moleculeTypes[moleculeName] = type;
+        localStorage.setItem('moleculeTypes', JSON.stringify(moleculeTypes));
+    }
+    
+    // 获取分子类型
+    getMoleculeType(moleculeName) {
+        const moleculeTypes = JSON.parse(localStorage.getItem('moleculeTypes') || '{}');
+        return moleculeTypes[moleculeName] || 'all'; // 默认为所有类型
     }
 
     // 查找相似分子功能
     findSimilarMolecules(moleculeName) {
         console.log('Finding similar molecules for:', moleculeName);
+        
+        // 获取当前选择的分子类型
+        const moleculeType = this.getMoleculeType(moleculeName);
+        console.log('Molecule type for search:', moleculeType);
         
         // 显示加载状态
         this.panel.classList.add('loading');
@@ -419,8 +444,8 @@ class MoleculePanel {
         setTimeout(() => {
             this.panel.classList.remove('loading');
             
-            // 获取相似分子数据
-            const similarMolecules = this.getSimilarMolecules(moleculeName);
+            // 获取相似分子数据（基于分子类型）
+            const similarMolecules = this.getSimilarMolecules(moleculeName, moleculeType);
             
             // 创建两列布局
             const mainPanel = document.getElementById('moleculePanelMain');
@@ -448,12 +473,6 @@ class MoleculePanel {
             
             // 绑定相似分子事件
             this.bindSimilarMoleculesEvents();
-            
-            // 显示返回原分子按钮
-            const backBtn = document.getElementById('backToOriginalBtn');
-            if (backBtn) {
-                backBtn.style.display = 'flex';
-            }
             
             // 扩展面板
             this.expandPanel();
@@ -497,10 +516,10 @@ class MoleculePanel {
         if (this.panel) {
             this.panel.classList.add('expanded');
             this.chatContainer.classList.add('expanded');
-            // 调整主内容区域以适应扩展的面板
+            // 调整主内容区域以适应扩展的面板，使用730px的分子面板宽度和50px的mini侧边栏宽度
             if (this.chatMain) {
-                this.chatMain.style.marginRight = '880px';
-                this.chatMain.style.maxWidth = 'calc(100vw - 880px)';
+                this.chatMain.style.marginRight = '730px';
+                this.chatMain.style.maxWidth = 'calc(100vw - 730px - 50px)';
             }
         }
     }
@@ -509,73 +528,17 @@ class MoleculePanel {
         if (this.panel) {
             this.panel.classList.remove('expanded');
             this.chatContainer.classList.remove('expanded');
-            // 恢复主内容区域
+            // 恢复主内容区域，使用380px的分子面板宽度和50px的mini侧边栏宽度
             if (this.chatMain) {
-                this.chatMain.style.marginRight = '460px';
-                this.chatMain.style.maxWidth = 'calc(100vw - 460px)';
+                this.chatMain.style.marginRight = '380px';
+                this.chatMain.style.maxWidth = 'calc(100vw - 380px - 50px)';
             }
         }
     }
 
-    // 返回原分子
-    backToOriginalMolecule() {
-        // 重新显示原始分子卡片
-        const mainPanel = document.getElementById('moleculePanelMain');
-        if (!mainPanel) return;
-        
-        // 获取当前显示的分子名称（从面板标题或其他地方获取）
-        const panelTitle = document.querySelector('.molecule-panel-title');
-        const moleculeName = panelTitle ? panelTitle.textContent.replace('分子详情', '').trim() : 'TMSPi';
-        
-        // 重新创建原始分子卡片
-        const originalMoleculeData = this.getMoleculeData(moleculeName);
-        const originalCardHTML = this.createMoleculeCard(moleculeName, originalMoleculeData);
-        
-        mainPanel.innerHTML = originalCardHTML;
-        
-        // 重新绑定事件
-        this.bindCardEvents(moleculeName);
-        
-        // 隐藏返回原分子按钮
-        const backBtn = document.getElementById('backToOriginalBtn');
-        if (backBtn) {
-            backBtn.style.display = 'none';
-        }
-        
-        // 收起面板
-        this.collapsePanel();
-    }
 
-    // 加载相似分子
-    loadSimilarMolecules(originalMoleculeName) {
-        const similarMolecules = this.getSimilarMolecules(originalMoleculeName);
-        const grid = document.getElementById('similarMoleculesGrid');
-        const originalContent = document.getElementById('originalMoleculeContent');
-        
-        // 保存并显示原分子信息
-        if (originalContent) {
-            const originalMoleculeData = this.getMoleculeData(originalMoleculeName);
-            originalContent.innerHTML = this.createOriginalMoleculeContent(originalMoleculeName, originalMoleculeData);
-        }
-        
-        if (grid) {
-            grid.innerHTML = '';
-            
-            similarMolecules.forEach(molecule => {
-                const card = this.createSimilarMoleculeCard(molecule);
-                grid.appendChild(card);
-            });
-        }
 
-        // 显示相似分子面板
-        const mainPanel = document.querySelector('.molecule-panel-main');
-        const similarPanel = document.getElementById('similarMoleculesPanel');
-        
-        if (mainPanel && similarPanel) {
-            mainPanel.style.display = 'none';
-            similarPanel.style.display = 'block';
-        }
-    }
+
 
     // 创建分子卡片（用于主面板显示）
     createMoleculeCard(moleculeName, moleculeData) {
@@ -584,6 +547,11 @@ class MoleculePanel {
             <div class="molecule-card">
                 <div class="molecule-card-header">
                     <h3 class="molecule-card-name">${moleculeName}</h3>
+                    <button class="molecule-card-favorite-btn ${this.isFavorited(moleculeName) ? 'favorited' : ''}" onclick="window.moleculePanel.addToFavorites('${moleculeName}')" title="${this.isFavorited(moleculeName) ? '取消收藏' : '收藏'}">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                        </svg>
+                    </button>
                 </div>
                 <div class="molecule-card-structure">
                     <div class="molecule-structure-diagram">
@@ -614,23 +582,23 @@ class MoleculePanel {
                         <span class="molecule-card-property-value">${properties.smiles || '-'}</span>
                     </div>
                     <div class="molecule-card-property-item">
-                        <span class="molecule-card-property-label">分子量:</span>
+                        <span class="molecule-card-property-label">Molecular Weight:</span>
                         <span class="molecule-card-property-value">${properties.molecularWeight || '-'}</span>
                     </div>
                     <div class="molecule-card-property-item">
-                        <span class="molecule-card-property-label">熔点:</span>
+                        <span class="molecule-card-property-label">Predicted Melting Point:</span>
                         <span class="molecule-card-property-value">${properties.meltingPoint || '-'}</span>
                     </div>
                     <div class="molecule-card-property-item">
-                        <span class="molecule-card-property-label">沸点:</span>
+                        <span class="molecule-card-property-label">Predicted Boiling Point:</span>
                         <span class="molecule-card-property-value">${properties.boilingPoint || '-'}</span>
                     </div>
                     <div class="molecule-card-property-item">
-                        <span class="molecule-card-property-label">闪点:</span>
+                        <span class="molecule-card-property-label">Predicted Flash Point:</span>
                         <span class="molecule-card-property-value">${properties.flashPoint || '-'}</span>
                     </div>
                     <div class="molecule-card-property-item">
-                        <span class="molecule-card-property-label">燃烧焓:</span>
+                        <span class="molecule-card-property-label">Combustion Enthalpy:</span>
                         <span class="molecule-card-property-value">${properties.combustionEnthalpy || '-'}</span>
                     </div>
                     <div class="molecule-card-property-item">
@@ -650,7 +618,7 @@ class MoleculePanel {
                         <span class="molecule-card-property-value">${properties.espMin || '-'}</span>
                     </div>
                     <div class="molecule-card-property-item commercial-viability">
-                        <span class="molecule-card-property-label">商业可用性:</span>
+                        <span class="molecule-card-property-label">Commercial Viability:</span>
                         <span class="molecule-card-property-value">${properties.commercialViability || '-'}</span>
                     </div>
                 </div>
@@ -670,12 +638,12 @@ class MoleculePanel {
                 </div>
                 
                 <div class="molecule-card-actions">
-                    <button class="molecule-card-btn add-to-favorites" onclick="window.moleculePanel.addToFavorites('${moleculeName}')">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-                        </svg>
-                        <span>收藏</span>
-                    </button>
+                    <select class="molecule-type-select" onchange="window.moleculePanel.updateMoleculeType('${moleculeName}', this.value)">
+                        <option value="all" ${this.getMoleculeType(moleculeName) === 'all' ? 'selected' : ''}>所有类型</option>
+                        <option value="solvent" ${this.getMoleculeType(moleculeName) === 'solvent' ? 'selected' : ''}>Solvent</option>
+                        <option value="diluent" ${this.getMoleculeType(moleculeName) === 'diluent' ? 'selected' : ''}>Diluent</option>
+                        <option value="additive" ${this.getMoleculeType(moleculeName) === 'additive' ? 'selected' : ''}>Additive</option>
+                    </select>
                     <button class="molecule-card-btn find-similar" onclick="window.moleculePanel.findSimilarMolecules('${moleculeName}')">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
@@ -892,59 +860,7 @@ class MoleculePanel {
         `;
     }
 
-    // 创建原分子内容
-    createOriginalMoleculeContent(moleculeName, moleculeData) {
-        return `
-            <div class="molecule-card">
-                <div class="molecule-card-header">
-                    <h3 class="molecule-card-name">${moleculeName}</h3>
-                </div>
-                <div class="molecule-card-structure">
-                    <img src="molecule-structure.svg" alt="${moleculeName} structure" />
-                </div>
-                <div class="molecule-card-properties">
-                    <div class="molecule-card-property-item">
-                        <span class="molecule-card-property-label">SMILES:</span>
-                        <span class="molecule-card-property-value">${moleculeData.smiles || '-'}</span>
-                    </div>
-                    <div class="molecule-card-property-item">
-                        <span class="molecule-card-property-label">分子量:</span>
-                        <span class="molecule-card-property-value">${moleculeData.molecularWeight || '-'}</span>
-                    </div>
-                    <div class="molecule-card-property-item">
-                        <span class="molecule-card-property-label">熔点:</span>
-                        <span class="molecule-card-property-value">${moleculeData.meltingPoint || '-'}</span>
-                    </div>
-                    <div class="molecule-card-property-item">
-                        <span class="molecule-card-property-label">沸点:</span>
-                        <span class="molecule-card-property-value">${moleculeData.boilingPoint || '-'}</span>
-                    </div>
-                    <div class="molecule-card-property-item">
-                        <span class="molecule-card-property-label">HOMO:</span>
-                        <span class="molecule-card-property-value">${moleculeData.homo || '-'}</span>
-                    </div>
-                    <div class="molecule-card-property-item">
-                        <span class="molecule-card-property-label">LUMO:</span>
-                        <span class="molecule-card-property-value">${moleculeData.lumo || '-'}</span>
-                    </div>
-                </div>
-                <div class="molecule-card-actions">
-                    <button class="molecule-card-btn add-to-favorites" onclick="window.moleculePanel.addToFavorites('${moleculeName}')">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-                        </svg>
-                        <span>收藏</span>
-                    </button>
-                    <button class="molecule-card-btn find-similar" onclick="window.moleculePanel.findSimilarMolecules('${moleculeName}')">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-                        </svg>
-                        <span>查找相似</span>
-                    </button>
-                </div>
-            </div>
-        `;
-    }
+
 
     // 创建相似分子卡片
     createSimilarMoleculeCard(molecule) {
@@ -953,7 +869,11 @@ class MoleculePanel {
             <div class="molecule-card">
                 <div class="molecule-card-header">
                     <h3 class="molecule-card-name">${molecule.name}</h3>
-                    <span class="molecule-card-similarity">${molecule.similarity}%</span>
+                    <button class="molecule-card-favorite-btn ${this.isFavorited(molecule.name) ? 'favorited' : ''}" onclick="event.stopPropagation(); window.moleculePanel.addToFavorites('${molecule.name}')" title="${this.isFavorited(molecule.name) ? '取消收藏' : '收藏'}">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                        </svg>
+                    </button>
                 </div>
                 <div class="molecule-card-structure">
                     <div class="molecule-structure-diagram">
@@ -984,23 +904,23 @@ class MoleculePanel {
                         <span class="molecule-card-property-value">${properties.smiles || '-'}</span>
                     </div>
                     <div class="molecule-card-property-item">
-                        <span class="molecule-card-property-label">分子量:</span>
+                        <span class="molecule-card-property-label">Molecular Weight:</span>
                         <span class="molecule-card-property-value">${properties.molecularWeight || '-'}</span>
                     </div>
                     <div class="molecule-card-property-item">
-                        <span class="molecule-card-property-label">熔点:</span>
+                        <span class="molecule-card-property-label">Predicted Melting Point:</span>
                         <span class="molecule-card-property-value">${properties.meltingPoint || '-'}</span>
                     </div>
                     <div class="molecule-card-property-item">
-                        <span class="molecule-card-property-label">沸点:</span>
+                        <span class="molecule-card-property-label">Predicted Boiling Point:</span>
                         <span class="molecule-card-property-value">${properties.boilingPoint || '-'}</span>
                     </div>
                     <div class="molecule-card-property-item">
-                        <span class="molecule-card-property-label">闪点:</span>
+                        <span class="molecule-card-property-label">Predicted Flash Point:</span>
                         <span class="molecule-card-property-value">${properties.flashPoint || '-'}</span>
                     </div>
                     <div class="molecule-card-property-item">
-                        <span class="molecule-card-property-label">燃烧焓:</span>
+                        <span class="molecule-card-property-label">Combustion Enthalpy:</span>
                         <span class="molecule-card-property-value">${properties.combustionEnthalpy || '-'}</span>
                     </div>
                     <div class="molecule-card-property-item">
@@ -1020,7 +940,7 @@ class MoleculePanel {
                         <span class="molecule-card-property-value">${properties.espMin || '-'}</span>
                     </div>
                     <div class="molecule-card-property-item commercial-viability">
-                        <span class="molecule-card-property-label">商业可用性:</span>
+                        <span class="molecule-card-property-label">Commercial Viability:</span>
                         <span class="molecule-card-property-value">${properties.commercialViability || '-'}</span>
                     </div>
                 </div>
@@ -1039,20 +959,7 @@ class MoleculePanel {
                     </div>
                 </div>
                 
-                <div class="molecule-card-actions">
-                    <button class="molecule-card-btn add-to-favorites" onclick="event.stopPropagation(); window.moleculePanel.addToFavorites('${molecule.name}')">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-                        </svg>
-                        <span>收藏</span>
-                    </button>
-                    <button class="molecule-card-btn find-similar" onclick="event.stopPropagation(); window.moleculePanel.findSimilarMolecules('${molecule.name}')">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-                        </svg>
-                        <span>查找相似</span>
-                    </button>
-                </div>
+
             </div>
         `;
     }
@@ -1060,14 +967,13 @@ class MoleculePanel {
     // 选择相似分子
     selectSimilarMolecule(molecule) {
         console.log('Selected similar molecule:', molecule.name);
-        this.showNotification(`已选择 ${molecule.name}`, 'success');
         
         // 加载选中分子的详细信息
         this.showPanel(molecule.name);
     }
 
     // 获取相似分子数据
-    getSimilarMolecules(originalMoleculeName) {
+    getSimilarMolecules(originalMoleculeName, moleculeType = 'all') {
         // 模拟相似分子数据 - 包含完整参数
         const similarMolecules = {
             'TMSPi': [
@@ -1333,7 +1239,8 @@ class MoleculePanel {
             ]
         };
 
-        return similarMolecules[originalMoleculeName] || [
+        // 获取基础相似分子数据
+        let baseSimilarMolecules = similarMolecules[originalMoleculeName] || [
             { 
                 name: 'Similar 1', 
                 similarity: 85, 
@@ -1420,25 +1327,23 @@ class MoleculePanel {
                 }
             }
         ];
+
+        // 根据分子类型过滤相似分子
+        if (moleculeType === 'all') {
+            // 返回所有类型的相似分子
+            return baseSimilarMolecules;
+        } else {
+            // 根据分子类型过滤（这里可以根据实际需求调整过滤逻辑）
+            // 目前返回所有分子，但可以根据分子类型添加不同的过滤条件
+            return baseSimilarMolecules.filter(molecule => {
+                // 这里可以添加基于分子类型的过滤逻辑
+                // 例如：根据分子的属性、结构特征等进行分类
+                return true; // 暂时返回所有分子
+            });
+        }
     }
 
-    // 显示通知
-    showNotification(message, type = 'info') {
-        // 创建通知元素
-        const notification = document.createElement('div');
-        notification.className = `molecule-notification molecule-notification-${type}`;
-        notification.textContent = message;
-        
-        // 添加到面板
-        this.panel.appendChild(notification);
-        
-        // 自动移除
-        setTimeout(() => {
-            if (notification.parentNode) {
-                notification.remove();
-            }
-        }, 3000);
-    }
+
 
     // 切换功能组信息栏
     toggleFunctionalGroups(event) {
