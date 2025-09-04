@@ -15,10 +15,12 @@ const Components = {
                 <div class="nav-item dropdown">
                     <a href="#" class="nav-item" data-page="prediction">Prediction</a>
                     <div class="dropdown-menu">
-                        <a href="battery-prediction.html" class="dropdown-item">电池性能表征</a>
-                        <a href="early-life-prediction.html" class="dropdown-item">早期生命预测</a>
-                        <a href="early-life-prediction2.html" class="dropdown-item">早期生命预测2</a>
-                        <a href="prediction-tool.html" class="dropdown-item">早期生命预测工具 <span class="beta-badge">Beta</span></a>
+                        <div class="dropdown-row">
+                            <a href="battery-prediction.html" class="dropdown-item">Battery System Selection</a>
+                            <a href="early-life-prediction.html" class="dropdown-item">早期生命预测</a>
+                            <a href="early-life-prediction2.html" class="dropdown-item">早期生命预测2</a>
+                            <a href="prediction-tool.html" class="dropdown-item">早期生命预测工具 <span class="beta-badge">Beta</span></a>
+                        </div>
                     </div>
                 </div>
             </nav>

@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cell Performance Prediction</title>
+    <title>Battery System Selection</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        /* 电池性能表征工具专用样式 */
+        /* Battery System Selection Tool专用样式 */
         :root {
             /* 主色调 - 黑色系 */
             --primary-color: #1a1a1a;
@@ -203,7 +203,7 @@
             gap: 2rem;
         }
 
-        /* Material Selection 样式 */
+        /* Battery System Selection 样式 */
         .material-selection-title {
             font-size: 18px;
             font-weight: 600;
@@ -244,8 +244,8 @@
         }
 
         .material-row {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            display: flex;
+            flex-direction: column;
             gap: 16px;
             margin-bottom: 16px;
         }
@@ -257,6 +257,17 @@
         .material-group {
             display: flex;
             flex-direction: column;
+            width: 100%;
+        }
+
+        /* Add a bit more vertical spacing before the Additive (SMILES) row */
+        .function-area .material-selection-body .material-row:nth-of-type(2) {
+            padding-top: 24px;
+        }
+
+        /* Direct spacing for additive row */
+        .additive-row {
+            margin-top: 24px;
         }
 
         .material-label {
@@ -274,6 +285,40 @@
             background: var(--bg-primary);
             color: var(--text-primary);
             cursor: pointer;
+            width: 100%;
+            min-width: 300px;
+            font-family: inherit;
+        }
+
+        .material-select option {
+            font-family: inherit;
+            font-size: 13px;
+        }
+
+        /* 设置选择框中选中选项的颜色 */
+        .material-select option[selected] {
+            color: #94a3b8;
+        }
+
+        .material-select option:first-child {
+            color: #94a3b8;
+        }
+
+        /* 统一占位符文本颜色 */
+        .material-select::placeholder {
+            color: #94a3b8;
+        }
+
+        .material-select::-webkit-input-placeholder {
+            color: #94a3b8;
+        }
+
+        .material-select::-moz-placeholder {
+            color: #94a3b8;
+        }
+
+        .material-select:-ms-input-placeholder {
+            color: #94a3b8;
         }
 
         .material-select:focus {
@@ -282,63 +327,136 @@
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
 
+        /* Battery System Information Card Styles */
+        .battery-system-info {
+            margin-top: 12px;
+        }
+
+        .info-card {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .info-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .info-header h4 {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .close-info {
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: #9ca3af;
+            cursor: pointer;
+            padding: 0;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            transition: color 0.2s ease;
+        }
+
+        .close-info:hover {
+            color: #6b7280;
+        }
+
+        .info-content {
+            padding: 16px;
+        }
+
+        .spec-item {
+            display: flex;
+            margin-bottom: 12px;
+            align-items: flex-start;
+        }
+
+        .spec-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .spec-label {
+            font-weight: 600;
+            color: #374151;
+            min-width: 140px;
+            margin-right: 12px;
+            font-size: 13px;
+        }
+
+        .spec-value {
+            color: #6b7280;
+            font-size: 13px;
+            line-height: 1.4;
+            flex: 1;
+        }
+
         /* Compound Information Display Styles */
         .compound-info {
             background: #ffffff;
             border: 1px solid #e5e7eb;
-            border-radius: 4px;
-            margin-top: 8px;
-            overflow: hidden;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            margin-top: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 
         .compound-info-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 4px 8px;
-            background: #f8fafc;
-            border-bottom: 1px solid #e5e7eb;
+            padding: 8px 12px;
+            border-bottom: 1px solid #f3f4f6;
         }
 
         .compound-info-header h4 {
             margin: 0;
             font-size: 14px;
             font-weight: 600;
-            color: #1f2937;
+            color: #374151;
         }
 
         .close-compound-info {
             background: none;
             border: none;
-            font-size: 12px;
-            color: #6b7280;
+            font-size: 18px;
+            color: #9ca3af;
             cursor: pointer;
             padding: 0;
-            width: 16px;
-            height: 16px;
+            width: 20px;
+            height: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 2px;
-            transition: all 0.2s ease;
+            border-radius: 4px;
+            transition: color 0.2s ease;
         }
 
         .close-compound-info:hover {
-            background: #e5e7eb;
-            color: #374151;
+            color: #6b7280;
         }
 
         .compound-info-content {
+            padding: 8px;
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-columns: 0.5fr 1.5fr;
             gap: 8px;
-            padding: 4px;
         }
 
         .compound-structure {
             width: 100%;
-            height: 300px;
+            height: 200px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -364,21 +482,23 @@
         }
 
         .compound-properties {
-            display: contents;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
         }
 
         .properties-grid {
             display: flex;
             flex-direction: column;
-            gap: 2px;
-            font-size: 13px;
+            gap: 4px;
+            font-size: 12px;
         }
 
         .property-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 2px 0;
+            padding: 4px 0;
             border-bottom: 1px solid #f1f5f9;
         }
 
@@ -654,13 +774,14 @@
         }
 
         .performance-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 0;
+            display: grid !important;
+            grid-template-columns: repeat(3, 1fr) !important;
+            gap: 0 !important;
+            flex-direction: row !important;
         }
 
         .performance-grid-two {
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(2, 1fr) !important;
         }
 
         .performance-card {
@@ -683,7 +804,7 @@
             margin-bottom: 16px;
             font-weight: 500;
             line-height: 1.4;
-            text-transform: uppercase;
+            text-transform: none;
             letter-spacing: 0.05em;
         }
 
@@ -1076,6 +1197,13 @@
         }
 
         .additive-primary {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .additive-secondary {
             display: flex;
             align-items: center;
             gap: 8px;
@@ -1821,10 +1949,10 @@
         .modal-content {
             background: #ffffff;
             border-radius: 12px;
-            border: 1px solid #e5e7eb;
+            border: none;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            max-width: 1600px;
-            width: 98%;
+            max-width: 1100px;
+            width: 95%;
             max-height: 90vh;
             overflow-y: auto;
             transform: scale(0.9);
@@ -1873,8 +2001,264 @@
         }
 
         .modal-body {
-            padding: 0;
+            padding: 24px 50px 24px 50px;
+            padding-top: 34px;
             background: #ffffff;
+        }
+
+        /* 强制移除所有可能的边框，但保留modal-header的边框 */
+        .modal * {
+            border: none !important;
+        }
+        
+        .modal .modal-header {
+            border-bottom: 1px solid #e5e7eb !important;
+        }
+
+        /* 弹窗内部分区样式 */
+        .modal-sections {
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+            width: 100%;
+        }
+
+        .modal-section {
+            margin-bottom: 24px;
+            border: none;
+            background: none;
+            border-bottom: none;
+        }
+
+        .section-title {
+            padding: 12px 0 12px 25px;
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+            color: #1f2937;
+            background: none;
+            border: none;
+        }
+
+        /* Make modal section titles more prominent while staying minimal */
+        .modal .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 6px;
+        }
+
+        .modal-section:nth-child(2) .section-title {
+            margin-top: -55px;
+            margin-bottom: 2px;
+        }
+        
+        .modal-section:nth-child(3) .section-title {
+            margin-top: -45px;
+            margin-bottom: 2px;
+        }
+
+        .section-content {
+            padding: 14px 30px 6px 30px;
+            min-height: 40px;
+            color: #6b7280;
+            font-style: normal;
+            border: none;
+            width: 100%;
+        }
+
+        /* Reduce spacing between LLM title and content */
+        .modal-section:nth-child(3) .section-content {
+            padding-top: 6px;
+        }
+
+        /* Reduce spacing between performance title and metrics */
+        .modal-section:nth-child(2) .section-content {
+            padding-top: 4px;
+        }
+
+        .material-content {
+            font-style: normal;
+            color: #1f2937;
+            font-size: 14px;
+            line-height: 1.2;
+            text-align: left;
+            padding: 0 0 0 5px;
+            margin-top: -20px;
+        }
+
+        .material-row {
+            display: flex;
+            justify-content: flex-start;
+            margin-bottom: 2px;
+            gap: 20px;
+        }
+
+        .material-row:last-child {
+            margin-bottom: 0;
+            margin-top: -8px;
+        }
+
+        .material-item {
+            flex: 1;
+            padding-left: 5px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            min-width: 0;
+        }
+
+        .material-label {
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 13px;
+            white-space: nowrap;
+            min-width: 160px;
+            flex-shrink: 0;
+        }
+
+        .material-value {
+            color: var(--text-primary);
+            font-size: 13px;
+            flex: 1;
+            word-wrap: break-word;
+            line-height: 1.4;
+            min-width: 0;
+            overflow-wrap: break-word;
+            white-space: normal;
+            word-break: break-all;
+        }
+
+        .material-item:first-child {
+            padding-left: 18px;
+        }
+
+        .material-selection-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        /* 性能预测样式 */
+        .performance-content {
+            padding-left: 25px;
+        }
+
+        .temp-section {
+            margin-bottom: 12px;
+        }
+
+        .temp-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .temp-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 6px;
+        }
+
+        /* 弹窗中的性能网格样式 */
+        .modal .performance-grid {
+            display: grid !important;
+            grid-template-columns: repeat(3, 1fr) !important;
+            gap: 0 !important;
+        }
+
+        .modal .performance-grid-two {
+            grid-template-columns: repeat(2, 1fr) !important;
+        }
+
+        /* 弹窗中指标卡片的简洁样式 */
+        .modal .performance-card {
+            padding: 12px 16px !important;
+            border-right: 1px solid var(--border-light) !important;
+            text-align: left !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: center !important;
+            align-items: flex-start !important;
+            min-height: 80px !important;
+            gap: 4px !important;
+        }
+
+        .modal .performance-card:last-child {
+            border-right: none !important;
+        }
+
+        .modal .performance-card-title {
+            font-size: 12px !important;
+            color: var(--text-secondary) !important;
+            margin-bottom: 0 !important;
+            font-weight: 500 !important;
+            line-height: 1.4 !important;
+            text-transform: none !important;
+            letter-spacing: 0.05em !important;
+            font-style: normal !important;
+        }
+
+        .modal .performance-result {
+            font-size: 14px !important;
+            font-weight: 600 !important;
+            color: var(--text-primary) !important;
+            font-style: normal !important;
+        }
+
+        .modal .confidence-value {
+            font-size: 16px !important;
+            font-weight: 600 !important;
+            color: var(--text-primary) !important;
+            line-height: 1 !important;
+            font-style: normal !important;
+        }
+
+        .performance-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 0;
+        }
+
+        .performance-label {
+            font-size: 14px;
+            color: #374151;
+            font-weight: 500;
+        }
+
+        .performance-value {
+            font-size: 14px;
+            color: #1f2937;
+            font-weight: 600;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        }
+
+        .material-selection-grid .material-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border: none;
+            background: transparent !important;
+        }
+
+        .material-selection-grid .material-item:last-child {
+            border: none;
+            background: transparent !important;
+        }
+
+        .material-selection-grid .material-label {
+            font-weight: 500;
+            color: #374151;
+            font-style: normal;
+        }
+
+        .material-selection-grid .material-value {
+            color: #1f2937;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            font-weight: 500;
+            font-style: normal;
         }
 
         /* 结果样式 */
@@ -1900,13 +2284,14 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1rem;
+            background: none;
         }
 
         .result-item {
             padding: 1rem;
-            background: var(--bg-secondary);
-            border-radius: var(--radius-md);
-            border: 1px solid var(--border-light);
+            background: transparent !important;
+            border-radius: 0;
+            border: none;
         }
 
         .result-label {
@@ -1926,11 +2311,13 @@
             justify-content: space-between;
             align-items: center;
             padding: 0.75rem 0;
-            border-bottom: 1px solid var(--border-light);
+            border: none;
+            background: transparent !important;
         }
 
         .material-item:last-child {
-            border-bottom: none;
+            border: none;
+            background: transparent !important;
         }
 
         .material-label {
@@ -1988,10 +2375,9 @@
         .llm-item {
             margin-bottom: 16px;
             padding: 16px;
-            background: #ffffff;
-            border-radius: 8px;
-            border: 1px solid #e5e7eb;
-            border-left: 3px solid #fbbf24;
+            background: transparent;
+            border-radius: 0;
+            border: none;
         }
 
         .llm-item:last-child {
@@ -2009,10 +2395,10 @@
             color: #6b7280;
             margin-top: 16px;
             padding-top: 16px;
-            border-top: 1px solid #f3f4f6;
-            background: #ffffff;
+            border-top: none;
+            background: transparent;
             padding: 12px;
-            border-radius: 6px;
+            border-radius: 0;
         }
 
         .llm-link {
@@ -2079,9 +2465,9 @@
             justify-content: space-between;
             align-items: center;
             padding: 12px 16px;
-            background: #f9fafb;
-            border-radius: 8px;
-            border: 1px solid #e5e7eb;
+            background: transparent;
+            border-radius: 0;
+            border: none;
         }
 
         .material-label {
@@ -2142,53 +2528,71 @@
             display: block;
         }
 
-        /* Modal LLM content styles */
+        /* Modal LLM content styles - use body text (正文) */
         .modal .llm-content {
-            padding: 20px 2rem;
-            font-size: 14px;
-            line-height: 1.6;
-            color: #374151;
+            padding: 0 !important;
+            font-family: inherit !important;
+            font-size: 14px !important;
+            line-height: 1.6 !important;
+            color: #1f2937 !important;
+            font-style: normal !important;
+            font-weight: 400 !important;
         }
 
         .modal .llm-item {
-            margin-bottom: 20px;
-            padding: 16px;
-            background: #f9fafb;
-            border-radius: 8px;
-            border-left: 4px solid #f59e0b;
+            margin: 0 0 8px 0 !important;
+            padding: 0 !important;
+            background: transparent !important;
+            border: none !important;
+            border-left: none !important;
+            border-radius: 0 !important;
         }
 
         .modal .llm-item:last-of-type {
-            margin-bottom: 20px;
+            margin-bottom: 0 !important;
         }
 
         .modal .llm-number {
-            font-weight: 700;
-            color: #7c3aed;
-            font-size: 15px;
-            display: block;
-            margin-bottom: 8px;
+            font-family: inherit !important;
+            font-weight: 400 !important;
+            color: #1f2937 !important;
+            font-size: 14px !important;
+            line-height: 1.6 !important;
+            display: inline !important;
+            margin: 0 !important;
+            font-style: normal !important;
         }
 
         .modal .llm-reference {
-            font-size: 12px;
-            color: #6b7280;
-            margin-top: 0;
-            padding: 16px;
-            background: #f3f4f6;
-            border-radius: 8px;
-            line-height: 1.5;
+            font-family: inherit !important;
+            font-size: 14px !important;
+            color: #1f2937 !important;
+            margin-top: 8px !important;
+            padding: 0 !important;
+            background: transparent !important;
+            border-radius: 0 !important;
+            line-height: 1.6 !important;
+            border: none !important;
+            font-style: normal !important;
+            font-weight: 400 !important;
         }
 
         .modal .llm-link {
-            color: #fbbf24;
-            text-decoration: none;
-            font-weight: 500;
+            color: inherit !important;
+            text-decoration: underline !important;
+            font-weight: normal !important;
         }
 
         .modal .llm-link:hover {
-            text-decoration: underline;
-            color: #2563eb;
+            text-decoration: underline !important;
+            color: inherit !important;
+        }
+
+        /* Extra horizontal spacing for modal LLM block */
+        .modal .modal-llm {
+            padding-left: 16px !important;
+            padding-right: 16px !important;
+            margin-top: -30px !important;
         }
 
         /* Scrollbar styling for modal */
@@ -2293,10 +2697,10 @@
                 <a href="#" class="nav-item">Filter</a>
                 <a href="#" class="nav-item">Favorites</a>
             <div class="nav-item dropdown prediction-dropdown active">
-                <a href="#" class="nav-item prediction-main-link">Prediction</a>
+                <a href="#" class="nav-item prediction-main-link">Predict</a>
                     <div class="dropdown-menu">
                         <a href="battery-prediction.html" class="dropdown-item active">
-                            电池性能表征
+                            Battery System Selection
                         </a>
                         <a href="prediction-tool.html" class="dropdown-item">
                         电池早期生命预测工具 <span class="beta-badge">Beta</span>
@@ -2347,7 +2751,7 @@
                         <!-- 页面标题区域 -->
                 <div class="page-title-bar">
                     <h1 class="page-title">
-                        Cell Performance Prediction
+                        Battery System Selection
                         <span class="beta-badge">Beta</span>
                     </h1>
             </div>
@@ -2356,66 +2760,56 @@
         <div class="battery-layout">
             <!-- 左侧：功能区 -->
             <div class="function-area">
-                <!-- Material Selection Title -->
-                <h2 class="material-selection-title">Material Selection</h2>
+                <!-- Battery System Selection Title -->
+                <h2 class="material-selection-title">Battery System Selection</h2>
                 
-                <!-- Material Selection -->
+                <!-- Battery System Selection -->
                 <div class="material-selection">
                     <div class="material-selection-body">
-                        <div class="material-row three-columns">
-                            <div class="material-group-with-ratio">
-                                <label class="material-label">Cathode</label>
-                                <div class="material-input-row">
-                                    <select id="cathode" class="material-select">
-                                <option value="NCM811" selected>NCM811</option>
-                                <option value="NCM622">NCM622</option>
-                                <option value="NCM523">NCM523</option>
-                                <option value="LFP">LFP</option>
-                                <option value="LCO">LCO</option>
-                            </select>
-                                    <div class="ratio-input-group">
-                                        <input type="number" id="cathodeRatio" class="ratio-input" placeholder="50" value="50" min="1" max="100" step="0.1">
-                                        <span class="ratio-unit">%</span>
-                        </div>
-                                </div>
-                            </div>
-                            <div class="material-group-with-ratio">
-                                <label class="material-label">Anode</label>
-                                <div class="material-input-row">
-                                    <select id="anode" class="material-select">
-                                <option value="12%Si+Graphite" selected>12%Si+Graphite</option>
-                                <option value="Graphite">Graphite</option>
-                                <option value="Li-Metal">Li-Metal</option>
-                                <option value="LTO">LTO</option>
-                            </select>
-                                    <div class="ratio-input-group">
-                                        <input type="number" id="anodeRatio" class="ratio-input" placeholder="30" value="30" min="1" max="100" step="0.1">
-                                        <span class="ratio-unit">%</span>
-                        </div>
-                                </div>
-                            </div>
-                            <div class="material-group-with-ratio">
-                                <label class="material-label">Base electrolyte</label>
-                                <div class="material-input-row">
-                                    <select id="electrolyte" class="material-select">
-                                <option value="Carbonate(EC/EMC/DEC)" selected>Carbonate(EC/EMC/DEC)</option>
-                                <option value="Carbonate(EC/DMC)">Carbonate(EC/DMC)</option>
-                                <option value="Carbonate(EC/PC)">Carbonate(EC/PC)</option>
-                                <option value="Ether">Ether</option>
-                            </select>
-                                    <div class="ratio-input-group">
-                                        <input type="number" id="electrolyteRatio" class="ratio-input" placeholder="20" value="20" min="1" max="100" step="0.1">
-                                        <span class="ratio-unit">%</span>
-                        </div>
-                        </div>
-                            </div>
-                        </div>
                         <div class="material-row">
                             <div class="material-group">
-                                <label class="material-label">Additive (SMILES) *</label>
-                                <input type="text" id="additive" class="material-select" placeholder="O=C(OC(C)(C)C)O" value="O=C(OC(C)(C)C)O" oninput="showCompoundInfo(this.value)">
+                                <label class="material-label">Battery System</label>
+                                <select id="batterySystem" class="material-select" onchange="showBatterySystemInfo()">
+                                    <option value="" disabled selected>Please select a battery system</option>
+                                    <option value="NCM811-12%Si/graphite-Carbonate electrolyte">NCM811 - 12%Si/graphite - Carbonate electrolyte</option>
+                                    <option value="NCM811-100%Si-Carbonate electrolyte">NCM811 - 100%Si - Carbonate electrolyte</option>
+                                </select>
                             </div>
-                                                </div>
+                        </div>
+                        
+                        <!-- Battery System Information Card -->
+                        <div id="batterySystemInfo" class="battery-system-info" style="display: none;">
+                            <div class="info-card">
+                                <div class="info-header">
+                                    <h4>System Specifications</h4>
+                                    <button class="close-info" onclick="hideBatterySystemInfo()">×</button>
+                                </div>
+                                <div class="info-content">
+                                    <div class="spec-item">
+                                        <span class="spec-label">Cathode:</span>
+                                        <span class="spec-value">Polycrystal NCM811, 4 mAh/cm²</span>
+                                    </div>
+                                    <div class="spec-item">
+                                        <span class="spec-label">Anode:</span>
+                                        <span class="spec-value">12% SiC + Graphite</span>
+                                    </div>
+                                    <div class="spec-item">
+                                        <span class="spec-label">Benchmark Electrolyte:</span>
+                                        <span class="spec-value">Solvent EC/EMC/DEC (2:3:2) + Salt 1M LiPF6/LiFSI + Additive VC/FEC</span>
+                                    </div>
+                                    <div class="spec-item">
+                                        <span class="spec-label">Cell design:</span>
+                                        <span class="spec-value">4/5 layer pouch cell, 1.07 NP ratio, 1 Ah capacity</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="material-row additive-row">
+                            <div class="material-group">
+                                <label class="material-label">Additive (SMILES) *</label>
+                                <input type="text" id="additive" class="material-select" placeholder="Enter SMILES molecular formula" value="" oninput="showCompoundInfo(this.value)">
+                            </div>
+                        </div>
 
                         <!-- Compound Information Display -->
                         <div id="compoundInfo" class="compound-info" style="display: none;">
@@ -2502,6 +2896,7 @@
                                     <p>Please re-enter a valid SMILES string or try this example:</p>
                                     <ul>
                                         <li><code>O=c1occo1</code> - ethylene carbonate</li>
+                                        <li><code>H2O</code> - water</li>
                                     </ul>
                                 </div>
                             </div>
@@ -2518,8 +2913,8 @@
 
 
                         
-                <!-- Cell Performance Prediction Title -->
-                <h3 class="performance-prediction-title" id="performancePredictionTitle" style="display: none;">Cell Performance Prediction</h3>
+                    <!-- Battery System Selection Title -->
+                        <h3 class="performance-prediction-title" id="performancePredictionTitle" style="display: none;">Cell Performance Prediction</h3>
                 
                 <!-- 性能预测结果 -->
                 <div class="performance-prediction" id="performanceResults" style="display: none;">
@@ -2539,9 +2934,9 @@
 
                     <!-- 25°C Performance Content -->
                     <div class="performance-content" id="performance25C">
-                        <div class="performance-grid performance-grid-two">
+                        <div class="performance-grid">
                             <div class="performance-card">
-                                <div class="performance-card-title">Cycling test - CE</div>
+                                <div class="performance-card-title">25 °C Cycle life</div>
                                 <div class="performance-result">
                                     <div class="result-indicator result-positive">
                                         <svg class="result-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2552,11 +2947,11 @@
                                 </div>
                                 <div class="confidence-section">
                                     <div class="confidence-label">Confidence</div>
-                                    <div class="confidence-value" id="ceValue25C">98.5%</div>
+                                    <div class="confidence-value" id="cycleLifeValue25C">98.5%</div>
                                 </div>
                             </div>
                             <div class="performance-card">
-                                <div class="performance-card-title">Cycling test - Cycling life</div>
+                                <div class="performance-card-title">25 °C CE</div>
                                 <div class="performance-result">
                                     <div class="result-indicator result-negative">
                                         <svg class="result-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2567,7 +2962,22 @@
                                 </div>
                                 <div class="confidence-section">
                                     <div class="confidence-label">Confidence</div>
-                                    <div class="confidence-value" id="cycleValue25C">95.2%</div>
+                                    <div class="confidence-value" id="ceValue25C">95.2%</div>
+                                </div>
+                            </div>
+                            <div class="performance-card">
+                                <div class="performance-card-title">25 °C Rate performance</div>
+                                <div class="performance-result">
+                                    <div class="result-indicator result-negative">
+                                        <svg class="result-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                        </svg>
+                                        Negative
+                                    </div>
+                                </div>
+                                <div class="confidence-section">
+                                    <div class="confidence-label">Confidence</div>
+                                    <div class="confidence-value" id="rateValue25C">94.3%</div>
                                 </div>
                             </div>
                         </div>
@@ -2575,9 +2985,9 @@
 
                     <!-- 45°C Performance Content -->
                     <div class="performance-content" id="performance45C" style="display: none;">
-                        <div class="performance-grid">
+                        <div class="performance-grid performance-grid-two">
                             <div class="performance-card">
-                                <div class="performance-card-title">Cycling test - CE</div>
+                                <div class="performance-card-title">45 °C Cycle Life</div>
                                 <div class="performance-result">
                                     <div class="result-indicator result-positive">
                                         <svg class="result-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2588,11 +2998,11 @@
                                 </div>
                                 <div class="confidence-section">
                                     <div class="confidence-label">Confidence</div>
-                                    <div class="confidence-value" id="ceValue45C">96.8%</div>
+                                    <div class="confidence-value" id="cycleLifeValue45C">96.8%</div>
                                 </div>
                             </div>
                             <div class="performance-card">
-                                <div class="performance-card-title">Cycling test - Cycling life</div>
+                                <div class="performance-card-title">45 °C CE</div>
                                 <div class="performance-result">
                                     <div class="result-indicator result-negative">
                                         <svg class="result-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2603,22 +3013,7 @@
                                 </div>
                                 <div class="confidence-section">
                                     <div class="confidence-label">Confidence</div>
-                                    <div class="confidence-value" id="cycleValue45C">92.1%</div>
-                                </div>
-                            </div>
-                            <div class="performance-card">
-                                <div class="performance-card-title">Rate test — 5C capacity retention</div>
-                                <div class="performance-result">
-                                    <div class="result-indicator result-negative">
-                                        <svg class="result-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                        </svg>
-                                        Negative
-                                    </div>
-                                </div>
-                                <div class="confidence-section">
-                                    <div class="confidence-label">Confidence</div>
-                                    <div class="confidence-value" id="rateValue45C">94.3%</div>
+                                    <div class="confidence-value" id="ceValue45C">92.1%</div>
                                 </div>
                             </div>
                         </div>
@@ -2709,7 +3104,7 @@
     <script>
         let batteryHistory = [];
 
-        // 电池性能表征工具函数
+        // Battery System Selection Tool函数
         function decreaseAmount() {
             const input = document.getElementById('additive-amount');
             const currentValue = parseFloat(input.value);
@@ -2754,7 +3149,7 @@
             // 模拟计算过程
             setTimeout(() => {
                 // 生成模拟结果
-                const result = generateMockResult(cathode, anode, electrolyte, additive, additiveAmount, temperature);
+                const result = generateMockResult(batterySystem, additive, additiveAmount, temperature);
                 
                 // 显示结果
                 showResult(result);
@@ -2769,24 +3164,24 @@
             }, 2000);
         }
 
-        function generateMockResult(cathode, anode, electrolyte, additive, additiveAmount, temperature) {
+        function generateMockResult(batterySystem, additive, additiveAmount, temperature) {
             return {
                 id: Date.now(),
                 timestamp: new Date().toLocaleString('zh-CN'),
                 materials: {
-                    cathode: cathode,
-                    anode: anode,
-                    electrolyte: electrolyte,
+                    batterySystem: batterySystem,
                     additive: additive,
                     additiveAmount: additiveAmount,
                     temperature: temperature
                 },
-                performance: {
-                    cycleLife: Math.floor(Math.random() * 500) + 300,
-                    capacityRetention: (Math.random() * 20 + 80).toFixed(1),
-                    coulombicEfficiency: (Math.random() * 5 + 95).toFixed(2),
-                    energyDensity: (Math.random() * 50 + 200).toFixed(1),
-                    powerDensity: (Math.random() * 1000 + 2000).toFixed(0)
+                performance25C: {
+                    cycleLife: { result: Math.random() > 0.5 ? 'Positive' : 'Negative' },
+                    ce: { result: Math.random() > 0.5 ? 'Positive' : 'Negative' },
+                    ratePerformance: { result: Math.random() > 0.5 ? 'Positive' : 'Negative' }
+                },
+                performance45C: {
+                    cycleLife: { result: Math.random() > 0.5 ? 'Positive' : 'Negative' },
+                    ce: { result: Math.random() > 0.5 ? 'Positive' : 'Negative' }
                 }
             };
         }
@@ -2801,19 +3196,11 @@
                         <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
                         </svg>
-                        Material Configuration
+                        Battery System Configuration
                     </h4>
                     <div class="material-item">
-                        <span class="material-label">Cathode Material</span>
-                        <span class="material-value">${result.materials.cathode}</span>
-                    </div>
-                    <div class="material-item">
-                        <span class="material-label">Anode Material</span>
-                        <span class="material-value">${result.materials.anode}</span>
-                    </div>
-                    <div class="material-item">
-                        <span class="material-label">Base Electrolyte</span>
-                        <span class="material-value">${result.materials.electrolyte}</span>
+                        <span class="material-label">Battery System</span>
+                        <span class="material-value">${result.materials.batterySystem}</span>
                     </div>
                     <div class="material-item">
                         <span class="material-label">Additive</span>
@@ -2834,7 +3221,7 @@
                         <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                         </svg>
-                        Cell Performance Prediction
+                        Battery System Selection
                     </h4>
                     <div class="result-grid">
                         <div class="result-item">
@@ -2875,7 +3262,8 @@
                 id: result.id,
                 timestamp: result.timestamp,
                 materials: result.materials,
-                performance: result.performance
+                performance25C: result.performance25C,
+                performance45C: result.performance45C
             };
             
             batteryHistory.unshift(historyItem);
@@ -2910,17 +3298,19 @@
                     <div class="history-item-content">
                         <div class="history-main-info">
                             <div class="additive-primary">
-                                <span class="additive-smiles">${item.materials.additive}</span>
-                                <span class="additive-amount">(${item.materials.additiveAmount}%)</span>
+                                <span class="additive-smiles">${item.materials.batterySystem}</span>
+                            </div>
+                            <div class="additive-secondary">
+                                <span class="additive-smiles">${item.materials.additive || 'No additive'}</span>
                             </div>
                         </div>
                         <div class="history-secondary-info">
                             <div class="performance-overview">
                                 <span class="performance-indicator ${getPerformanceClass(item.performance25C)}">
-                                    25°C: ${getPerformanceSummary(item.performance25C)}
+                                    25°C: ${getPerformanceSummary(item.performance25C, '25C')}
                                 </span>
                                 <span class="performance-indicator ${getPerformanceClass(item.performance45C)}">
-                                    45°C: ${getPerformanceSummary(item.performance45C)}
+                                    45°C: ${getPerformanceSummary(item.performance45C, '45C')}
                                 </span>
                             </div>
                         </div>
@@ -2938,17 +3328,17 @@
             let positiveCount = 0;
             let totalCount = 0;
             
-            // 统计25°C性能
-            Object.values(item.performance25C).forEach(test => {
-                totalCount++;
-                if (test.result === 'Positive') positiveCount++;
-            });
+            // 统计25°C性能（3个指标）
+            const performance25C = Object.values(item.performance25C);
+            const positive25C = performance25C.filter(test => test.result === 'Positive').length;
+            positiveCount += Math.min(positive25C, 3);
+            totalCount += 3;
             
-            // 统计45°C性能
-            Object.values(item.performance45C).forEach(test => {
-                totalCount++;
-                if (test.result === 'Positive') positiveCount++;
-            });
+            // 统计45°C性能（2个指标）
+            const performance45C = Object.values(item.performance45C);
+            const positive45C = performance45C.filter(test => test.result === 'Positive').length;
+            positiveCount += Math.min(positive45C, 2);
+            totalCount += 2;
             
             return (positiveCount / totalCount) * 100;
         }
@@ -2964,20 +3354,34 @@
             return 'poor';
         }
 
-        function getPerformanceSummary(performance) {
+        function getPerformanceSummary(performance, temperature) {
             const positiveCount = Object.values(performance).filter(test => test.result === 'Positive').length;
-            const totalCount = Object.values(performance).length;
-            return `${positiveCount}/${totalCount} Positive`;
+            let totalCount;
+            
+            if (temperature === '25C') {
+                totalCount = 3; // 25°C有3个指标：Cycle Life, CE, Rate Performance
+            } else if (temperature === '45C') {
+                totalCount = 2; // 45°C有2个指标：Cycle Life, CE
+            } else {
+                totalCount = Object.values(performance).length; // 默认使用实际数量
+            }
+            
+            // 确保Positive数量不超过总数量
+            const adjustedPositiveCount = Math.min(positiveCount, totalCount);
+            
+            return `${adjustedPositiveCount}/${totalCount} Positive`;
         }
 
         function viewHistoryResult(id) {
             const item = batteryHistory.find(h => h.id === id);
             if (item) {
+                console.log('History item found:', item);
                 const result = {
                     materials: item.materials,
                     performance25C: item.performance25C,
                     performance45C: item.performance45C
                 };
+                console.log('Result to show:', result);
                 showHistoryResult(result);
             }
         }
@@ -2986,145 +3390,99 @@
             const modal = document.getElementById('resultModal');
             const resultBody = document.getElementById('resultBody');
             
+            // 添加三个小标题
             resultBody.innerHTML = `
-                <!-- 功能区第一部分：材料选择 -->
-                <div class="result-section">
-                    <h4 class="result-title">
-                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
-                        </svg>
-                        Material Configuration
-                    </h4>
-                    <div class="material-config-compact">
-                        <div class="material-config-row">
-                            <div class="material-config-item">
-                                <span class="material-config-label">Cathode</span>
-                                <span class="material-config-value">${result.materials.cathode} ${result.materials.cathodeRatio}%</span>
-                            </div>
-                            <div class="material-config-item">
-                                <span class="material-config-label">Anode</span>
-                                <span class="material-config-value">${result.materials.anode} ${result.materials.anodeRatio}%</span>
-                            </div>
-                            <div class="material-config-item">
-                                <span class="material-config-label">Electrolyte</span>
-                                <span class="material-config-value">${result.materials.electrolyte} ${result.materials.electrolyteRatio}%</span>
-                            </div>
-                        </div>
-                        <div class="material-config-row">
-                            <div class="material-config-item">
-                                <span class="material-config-label">Additive</span>
-                                <span class="material-config-value">${result.materials.additive}</span>
-                            </div>
-                            <div class="material-config-item">
-                                <span class="material-config-label">Content</span>
-                                <span class="material-config-value">${result.materials.additiveAmount} wt%</span>
+                <div class="modal-sections">
+                    <div class="modal-section">
+                        <h4 class="section-title">Battery System Selection</h4>
+                        <div class="section-content">
+                            <div class="material-content">
+                                <div class="material-row">
+                                    <div class="material-item">
+                                        <span class="material-label">Battery System:</span>
+                                        <span class="material-value">${result.materials?.batterySystem || 'N/A'}</span>
+                                    </div>
+                                </div>
+                                <div class="material-row">
+                                    <div class="material-item">
+                                        <span class="material-label">Additive:</span>
+                                        <span class="material-value">${result.materials?.additive || 'N/A'}</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <!-- 功能区第二部分：性能预测 -->
-                <div class="result-section">
-                    <h4 class="result-title">
-                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                        </svg>
-                        Performance Prediction
-                    </h4>
+                    
+                    <div class="modal-section">
+                        <h4 class="section-title">Cell Performance Prediction</h4>
+                        <div class="section-content">
+                            <div class="performance-content">
+                                <div class="temp-section">
+                                    <div class="temp-title">25℃ Performance</div>
+                                    <div class="performance-grid">
+                                        <div class="performance-card">
+                                            <div class="performance-card-title">25 °C Cycle life</div>
+                                            <div class="performance-result">${result.performance25C?.cycleLife?.result || 'N/A'}</div>
+                                            <div class="confidence-value">98.5%</div>
+                                        </div>
+                                        <div class="performance-card">
+                                            <div class="performance-card-title">25 °C CE</div>
+                                            <div class="performance-result">${result.performance25C?.ce?.result || 'N/A'}</div>
+                                            <div class="confidence-value">95.2%</div>
+                                        </div>
+                                        <div class="performance-card">
+                                            <div class="performance-card-title">25 °C Rate performance</div>
+                                            <div class="performance-result">${result.performance25C?.ratePerformance?.result || 'N/A'}</div>
+                                            <div class="confidence-value">94.3%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="temp-section">
+                                    <div class="temp-title">45℃ Performance</div>
+                                    <div class="performance-grid performance-grid-two">
+                                        <div class="performance-card">
+                                            <div class="performance-card-title">45 °C Cycle life</div>
+                                            <div class="performance-result">${result.performance45C?.cycleLife?.result || 'N/A'}</div>
+                                            <div class="confidence-value">96.8%</div>
+                                        </div>
+                                        <div class="performance-card">
+                                            <div class="performance-card-title">45 °C CE</div>
+                                            <div class="performance-result">${result.performance45C?.ce?.result || 'N/A'}</div>
+                                            <div class="confidence-value">92.1%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     
-                    <!-- 温度切换标签 -->
-                    <div class="history-temp-tabs">
-                        <button class="history-temp-tab active" onclick="switchHistoryTempTab('25C')" data-temp="25C">
-                            25°C Performance
-                        </button>
-                        <button class="history-temp-tab" onclick="switchHistoryTempTab('45C')" data-temp="45C">
-                            45°C Performance
-                        </button>
-                    </div>
-                    
-                    <!-- 25°C性能结果 -->
-                    <div class="history-perf-content" id="historyPerformance25C">
-                        <div class="history-perf-grid">
-                            <div class="history-perf-item">
-                                <div class="history-perf-header">
-                                    <span class="history-perf-name">CE Test</span>
-                                    <div class="history-perf-result ${result.performance25C.ce.result === 'Positive' ? 'positive' : 'negative'}">
-                                        ${result.performance25C.ce.result}
+                    <div class="modal-section">
+                        <h4 class="section-title">LLM Analysis</h4>
+                        <div class="section-content">
+                            <div class="llm-analysis modal-llm">
+                                <div class="llm-body">
+                                    <div class="llm-content">
+                                        <div class="llm-item">
+                                            <span class="llm-number">1. Nickel Dehydrogenation Optimization</span><br>
+                                            • The dimethyl dicarbonate-based molecule (SMILES: O=C(OC(C)(C)C)O) acts as a conductor in nickel-catalyzed denitrogenation products. This reaction can improve CE degradation under voltage. During the CE optimization process, when generating this structure with electrical nickel, it is essential to maintain good CE settings, cycle reversal CE display enhancement, and optimize aging CE display improvement patterns.
+                                        </div>
+                                        <div class="llm-item">
+                                            <span class="llm-number">2. 4°C Cycling Optimization</span><br>
+                                            The rolling disc approach involves enhanced material comparison and LiFe distribution optimization for secondary reactions. This biochemical nickel enhancement process addresses charge-discharge cycles under nickel conditions, improving efficiency through systematic laboratory validation at 4°C conditions with simplified testing protocols.
+                                        </div>
+                                        <div class="llm-item">
+                                            <span class="llm-number">3. Comprehensive Recommendations</span><br>
+                                            • Optimal reduction positioning at 2% to 4°C conditions is essential for effective CE and cycling performance. Multiple verification cycles using EC/EMC/DEC/LiFe with UC/LiPF6 low-grade electrolyte systems are recommended for material state optimization.
+                                        </div>
+                                        <div class="llm-reference">
+                                            References [1] Ling-Fei Zhao et al. Hard Carbon Anodes: Fundamental Understanding and Commercial Perspectives for Na-ion Batteries beyond Li-ion and K-ion Counterparts, Advanced Energy Materials, 2002[04, 2020. <a href="https://doi.org/10.1002/aenm.202002704" class="llm-link" target="_blank" rel="noopener noreferrer">https://doi.org/10.1002/aenm.202002704</a><br>
+                                            [2] Xiaonan Zhang et al. Lithium dendrite-free and fast-charging for high voltage nickel-rich lithium metal batteries enabled by bifunctional sulfone-containing electrolyte additives, Journal of Power Sources, 452/227833, 2020. <a href="https://doi.org/10.1016/j.jpowsour.2020.227833" class="llm-link" target="_blank" rel="noopener noreferrer">https://doi.org/10.1016/j.jpowsour.2020.227833</a><br>
+                                            [3] Simeng Zhang et al. Low-temperature molten salt as a versatile Electrolyte Additive towards LiNi0.8Co0.1Mn0.1O2/Graphite Batteries Working in a Wide-Temperature Range, ACS Applied Materials & Interfaces, 10 (35):29628-29518, 2018. <a href="https://doi.org/10.1021/acsami.8b04743" class="llm-link" target="_blank" rel="noopener noreferrer">https://doi.org/10.1021/acsami.8b04743</a>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="history-perf-confidence">Confidence: ${result.performance25C.ce.confidence}</div>
                             </div>
-                            <div class="history-perf-item">
-                                <div class="history-perf-header">
-                                    <span class="history-perf-name">Cycling Life</span>
-                                    <div class="history-perf-result ${result.performance25C.cyclingLife.result === 'Positive' ? 'positive' : 'negative'}">
-                                        ${result.performance25C.cyclingLife.result}
-                                    </div>
-                                </div>
-                                <div class="history-perf-confidence">Confidence: ${result.performance25C.cyclingLife.confidence}</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 45°C性能结果 -->
-                    <div class="history-perf-content" id="historyPerformance45C" style="display: none;">
-                        <div class="history-perf-grid">
-                            <div class="history-perf-item">
-                                <div class="history-perf-header">
-                                    <span class="history-perf-name">CE Test</span>
-                                    <div class="history-perf-result ${result.performance45C.ce.result === 'Positive' ? 'positive' : 'negative'}">
-                                        ${result.performance45C.ce.result}
-                                    </div>
-                                </div>
-                                <div class="history-perf-confidence">Confidence: ${result.performance45C.ce.confidence}</div>
-                            </div>
-                            <div class="history-perf-item">
-                                <div class="history-perf-header">
-                                    <span class="history-perf-name">Cycling Life</span>
-                                    <div class="history-perf-result ${result.performance45C.cyclingLife.result === 'Positive' ? 'positive' : 'negative'}">
-                                        ${result.performance45C.cyclingLife.result}
-                                    </div>
-                                </div>
-                                <div class="history-perf-confidence">Confidence: ${result.performance45C.cyclingLife.confidence}</div>
-                            </div>
-                            <div class="history-perf-item">
-                                <div class="history-perf-header">
-                                    <span class="history-perf-name">Rate Test</span>
-                                    <div class="history-perf-result ${result.performance45C.rateTest.result === 'Positive' ? 'positive' : 'negative'}">
-                                        ${result.performance45C.rateTest.result}
-                                    </div>
-                                </div>
-                                <div class="history-perf-confidence">Confidence: ${result.performance45C.rateTest.confidence}</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 功能区第三部分：LLM分析 -->
-                <div class="result-section">
-                    <h4 class="result-title">
-                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
-                        </svg>
-                        LLM Analysis
-                    </h4>
-                    <div class="llm-analysis-content">
-                        <div class="llm-item">
-                            <span class="llm-number">1. Nickel Dehydrogenation Optimization</span><br>
-                            • The dimethyl dicarbonate-based molecule (SMILES: ${result.materials.additive}) acts as a conductor in nickel-catalyzed denitrogenation products. This reaction can improve CE degradation under voltage. During the CE optimization process, when generating this structure with electrical nickel, it is essential to maintain good CE settings, cycle reversal CE display enhancement, and optimize aging CE display improvement patterns.
-                        </div>
-                        <div class="llm-item">
-                            <span class="llm-number">2. 4°C Cycling Optimization</span><br>
-                            The rolling disc approach involves enhanced material comparison and LiFe distribution optimization for secondary reactions. This biochemical nickel enhancement process addresses charge-discharge cycles under nickel conditions, improving efficiency through systematic laboratory validation at 4°C conditions with simplified testing protocols.
-                        </div>
-                        <div class="llm-item">
-                            <span class="llm-number">3. Comprehensive Recommendations</span><br>
-                            • Optimal reduction positioning at 2% to 4°C conditions is essential for effective CE and cycling performance. Multiple verification cycles using EC/EMC/DEC/LiFe with UC/LiPF6 low-grade electrolyte systems are recommended for material state optimization.
-                        </div>
-                        <div class="llm-reference">
-                            References [1] Ling-Fei Zhao et al. Hard Carbon Anodes: Fundamental Understanding and Commercial Perspectives for Na-ion Batteries beyond Li-ion and K-ion Counterparts, Advanced Energy Materials, 2002[04, 2020. <a href="https://doi.org/10.1002/aenm.202002704" class="llm-link" target="_blank" rel="noopener noreferrer">https://doi.org/10.1002/aenm.202002704</a><br>
-                            [2] Xiaonan Zhang et al. Lithium dendrite-free and fast-charging for high voltage nickel-rich lithium metal batteries enabled by bifunctional sulfone-containing electrolyte additives, Journal of Power Sources, 452/227833, 2020. <a href="https://doi.org/10.1016/j.jpowsour.2020.227833" class="llm-link" target="_blank" rel="noopener noreferrer">https://doi.org/10.1016/j.jpowsour.2020.227833</a><br>
-                            [3] Simeng Zhang et al. Low-temperature molten salt as a versatile Electrolyte Additive towards LiNi0.8Co0.1Mn0.1O2/Graphite Batteries Working in a Wide-Temperature Range, ACS Applied Materials & Interfaces, 10 (35):29628-29518, 2018. <a href="https://doi.org/10.1021/acsami.8b04743" class="llm-link" target="_blank" rel="noopener noreferrer">https://doi.org/10.1021/acsami.8b04743</a>
                         </div>
                     </div>
                 </div>
@@ -3132,6 +3490,8 @@
             
             modal.classList.add('show');
         }
+
+
 
         function switchHistoryTempTab(temperature) {
             // Remove active class from all performance tabs
@@ -3212,66 +3572,33 @@
                 `;
             }
             
-            // Scroll to material selection
+            // Scroll to battery system selection
             document.querySelector('.material-selection').scrollIntoView({ 
                 behavior: 'smooth' 
             });
         }
 
         function createNewPrediction() {
-            // Array of possible material combinations
-            const materialCombinations = [
-                {
-                    cathode: 'NCM811',
-                    anode: 'Graphite',
-                    electrolyte: 'Carbonate(EC/DMC)',
-                    additive: 'CCOCC',
-                    cathodeRatio: '45',
-                    anodeRatio: '35',
-                    electrolyteRatio: '20'
-                },
-                {
-                    cathode: 'LFP',
-                    anode: '12%Si+Graphite',
-                    electrolyte: 'Carbonate(EC/EMC/DEC)',
-                    additive: 'CC(C)(C)OCCOC(C)(C)C',
-                    cathodeRatio: '50',
-                    anodeRatio: '30',
-                    electrolyteRatio: '20'
-                },
-                {
-                    cathode: 'NCM622',
-                    anode: 'Li-Metal',
-                    electrolyte: 'Ether',
-                    additive: 'O=C(OC(C)(C)C)O',
-                    cathodeRatio: '40',
-                    anodeRatio: '40',
-                    electrolyteRatio: '20'
-                },
-                {
-                    cathode: 'NCM523',
-                    anode: 'LTO',
-                    electrolyte: 'Carbonate(EC/PC)',
-                    additive: 'CCOCCOCCOC',
-                    cathodeRatio: '55',
-                    anodeRatio: '25',
-                    electrolyteRatio: '20'
-                }
+            // Array of possible battery systems
+            const batterySystems = [
+                'NCM811 - 12%Si/graphite - Carbonate electrolyte',
+                'NCM811 - 100%Si - Carbonate electrolyte'
             ];
 
-            // Select a random combination
-            const randomCombination = materialCombinations[Math.floor(Math.random() * materialCombinations.length)];
+            // Array of possible additives
+            const additives = [
+                'CCOCC',
+                'CC(C)(C)OCCOC(C)(C)C',
+                'O=C(OC(C)(C)C)O',
+                'CCOCCOCCOC'
+            ];
+
+            // Select random battery system and additive
+            const randomBatterySystem = batterySystems[Math.floor(Math.random() * batterySystems.length)];
+            const randomAdditive = additives[Math.floor(Math.random() * additives.length)];
             
             // Generate performance result
-            const result = generatePerformanceResult(
-                randomCombination.cathode,
-                randomCombination.anode,
-                randomCombination.electrolyte,
-                randomCombination.additive,
-                randomCombination.cathodeRatio,
-                randomCombination.anodeRatio,
-                randomCombination.electrolyteRatio
-            );
+            const result = generatePerformanceResult(randomBatterySystem, randomAdditive);
             
             // Add to history
             addToHistory(result);
@@ -3328,9 +3655,40 @@
             }
         };
 
+        function showBatterySystemInfo() {
+            const batterySystem = document.getElementById('batterySystem').value;
+            const infoCard = document.getElementById('batterySystemInfo');
+            const calculateButton = document.querySelector('.calculate-button');
+            
+            if (batterySystem && batterySystem === 'NCM811-12%Si/graphite-Carbonate electrolyte') {
+                infoCard.style.display = 'block';
+            } else {
+                infoCard.style.display = 'none';
+            }
+            
+            // Check if both battery system and additive are valid to enable calculate button
+            if (batterySystem && batterySystem !== '') {
+                const additive = document.getElementById('additive').value;
+                if (additive.trim() && /^[A-Za-z0-9()\[\]{}@+\-=\/#%\.]+$/.test(additive)) {
+                    calculateButton.disabled = false;
+                    calculateButton.style.opacity = '1';
+                    calculateButton.style.cursor = 'pointer';
+                }
+            } else {
+                calculateButton.disabled = true;
+                calculateButton.style.opacity = '0.5';
+                calculateButton.style.cursor = 'not-allowed';
+            }
+        }
+
+        function hideBatterySystemInfo() {
+            document.getElementById('batterySystemInfo').style.display = 'none';
+        }
+
         function showCompoundInfo(smiles) {
             const compoundInfo = document.getElementById('compoundInfo');
             const smilesHint = document.getElementById('smilesHint');
+            const calculateButton = document.querySelector('.calculate-button');
             const compound = compoundDatabase[smiles];
             
             // Hide both displays initially
@@ -3338,12 +3696,38 @@
             smilesHint.style.display = 'none';
             
             if (!smiles.trim()) {
-                // Empty input - hide both displays
+                // Empty input - hide both displays and disable button
+                calculateButton.disabled = true;
+                calculateButton.style.opacity = '0.5';
+                calculateButton.style.cursor = 'not-allowed';
+                return;
+            }
+            
+            // Check if input is a valid SMILES format (basic validation)
+            const isValidSmiles = /^[A-Za-z0-9()\[\]{}@+\-=\/#%\.]+$/.test(smiles);
+            
+            if (!isValidSmiles) {
+                // Invalid SMILES format - show error and disable button
+                smilesHint.innerHTML = `
+                    <div class="hint-header">
+                        <h4>Invalid SMILES Format</h4>
+                    </div>
+                    <div class="hint-content">
+                        <div class="hint-text">
+                            <p>The input does not appear to be a valid SMILES molecular formula.</p>
+                            <p>Please enter a valid SMILES string.</p>
+                        </div>
+                    </div>
+                `;
+                smilesHint.style.display = 'block';
+                calculateButton.disabled = true;
+                calculateButton.style.opacity = '0.5';
+                calculateButton.style.cursor = 'not-allowed';
                 return;
             }
             
             if (compound) {
-                // Compound found in database - show molecular information
+                // Compound found in database - show molecular information and enable button
                 document.getElementById('compoundSmiles').textContent = compound.smiles;
                 document.getElementById('compoundMolWeight').textContent = compound.molWeight;
                 document.getElementById('compoundUmapX').textContent = compound.umapX;
@@ -3361,11 +3745,16 @@
                 // Update molecular structure image
                 updateMolecularStructure(smiles);
                 
-                // Show the compound info
+                // Show the compound info and enable button
                 compoundInfo.style.display = 'block';
+                calculateButton.disabled = false;
+                calculateButton.style.opacity = '1';
+                calculateButton.style.cursor = 'pointer';
             } else {
-                // Compound not found in database - show hint
-                smilesHint.style.display = 'block';
+                // Compound not found in database - no display change but enable button
+                calculateButton.disabled = false;
+                calculateButton.style.opacity = '1';
+                calculateButton.style.cursor = 'pointer';
             }
         }
 
@@ -3431,33 +3820,39 @@
         }
 
         function hideSmilesHint() {
-            document.getElementById('smilesHint').style.display = 'none';
+            const smilesHint = document.getElementById('smilesHint');
+            smilesHint.style.display = 'none';
+            
+            // Restore original content
+            smilesHint.innerHTML = `
+                <div class="hint-header">
+                    <h4>SMILES Not Found</h4>
+                    <button class="close-hint" onclick="hideSmilesHint()">×</button>
+                </div>
+                <div class="hint-content">
+                    <div class="hint-text">
+                        <p>The SMILES string you entered is not found in our database.</p>
+                        <p>Please re-enter a valid SMILES string or try this example:</p>
+                        <ul>
+                            <li><code>O=c1occo1</code> - ethylene carbonate</li>
+                            <li><code>H2O</code> - water</li>
+                        </ul>
+                    </div>
+                </div>
+            `;
         }
 
         function calculatePerformance() {
-            const cathode = document.getElementById('cathode').value;
-            const anode = document.getElementById('anode').value;
-            const electrolyte = document.getElementById('electrolyte').value;
+            const batterySystem = document.getElementById('batterySystem').value;
             const additive = document.getElementById('additive').value;
-            const cathodeRatio = document.getElementById('cathodeRatio').value;
-            const anodeRatio = document.getElementById('anodeRatio').value;
-            const electrolyteRatio = document.getElementById('electrolyteRatio').value;
+
+            if (!batterySystem || batterySystem === '') {
+                alert('Please select a battery system');
+                return;
+            }
 
             if (!additive.trim()) {
                 alert('Please enter the SMILES molecular structure of the additive');
-                return;
-            }
-
-            // Validate ratio inputs
-            if (!cathodeRatio || !anodeRatio || !electrolyteRatio) {
-                alert('Please enter all material ratios');
-                return;
-            }
-
-            // Check if ratios sum to 100%
-            const totalRatio = parseFloat(cathodeRatio) + parseFloat(anodeRatio) + parseFloat(electrolyteRatio);
-            if (Math.abs(totalRatio - 100) > 0.1) {
-                alert(`Material ratios should sum to 100%, current total is ${totalRatio.toFixed(1)}%`);
                 return;
             }
 
@@ -3470,7 +3865,7 @@
 
             setTimeout(() => {
                 // 生成预测结果
-                const result = generatePerformanceResult(cathode, anode, electrolyte, additive, cathodeRatio, anodeRatio, electrolyteRatio);
+                const result = generatePerformanceResult(batterySystem, additive);
                 
                 // 显示结果
                 showPerformanceResults(result);
@@ -3480,10 +3875,9 @@
             }, 2000);
         }
 
-        function generatePerformanceResult(cathode, anode, electrolyte, additive, cathodeRatio, anodeRatio, electrolyteRatio) {
-            // 模拟性能预测结果，考虑材料比例影响
-            const ratioFactor = (parseFloat(cathodeRatio) + parseFloat(anodeRatio) + parseFloat(electrolyteRatio)) / 100;
-            const basePerformance = ratioFactor * 0.95 + 0.05; // 比例影响基础性能
+        function generatePerformanceResult(batterySystem, additive) {
+            // 模拟性能预测结果
+            const basePerformance = 0.95 + Math.random() * 0.1; // 基础性能
 
             const results = {
                 ce: (98.5 * basePerformance + Math.random() * 1.5).toFixed(1) + '%',
@@ -3495,19 +3889,17 @@
                 id: Date.now(),
                 timestamp: new Date().toLocaleString('zh-CN'),
                 materials: { 
-                    cathode, 
-                    anode, 
-                    electrolyte, 
-                    additive,
-                    cathodeRatio: cathodeRatio + '%',
-                    anodeRatio: anodeRatio + '%',
-                    electrolyteRatio: electrolyteRatio + '%'
+                    batterySystem, 
+                    additive
                 },
-                performance: {
-                    cycleLife: Math.floor((200 + Math.random() * 200) * basePerformance),
-                    capacityRetention: parseFloat(results.cycle),
-                    ce: parseFloat(results.ce),
-                    rate: parseFloat(results.rate)
+                performance25C: {
+                    cycleLife: { result: Math.random() > 0.5 ? 'Positive' : 'Negative' },
+                    ce: { result: Math.random() > 0.5 ? 'Positive' : 'Negative' },
+                    ratePerformance: { result: Math.random() > 0.5 ? 'Positive' : 'Negative' }
+                },
+                performance45C: {
+                    cycleLife: { result: Math.random() > 0.5 ? 'Positive' : 'Negative' },
+                    ce: { result: Math.random() > 0.5 ? 'Positive' : 'Negative' }
                 },
                 results
             };
@@ -3596,72 +3988,57 @@
                     id: Date.now() - 86400000,
                     timestamp: new Date(Date.now() - 86400000).toLocaleString('zh-CN'),
                     materials: {
-                        cathode: 'NCM811',
-                        cathodeRatio: '50',
-                        anode: '12%Si+Graphite',
-                        anodeRatio: '30',
-                        electrolyte: 'Carbonate(EC/EMC/DEC)',
-                        electrolyteRatio: '20',
+                        batterySystem: 'NCM811 - 12%Si/graphite - Carbonate electrolyte',
                         additive: 'CC(C)(C)OCCOC(C)(C)C',
                         additiveAmount: '2.0',
                         temperature: '25.0'
                     },
                     performance25C: {
-                        ce: { result: 'Positive', confidence: '98.5%' },
-                        cyclingLife: { result: 'Negative', confidence: '95.2%' }
+                        cycleLife: { result: 'Positive', confidence: '98.5%' },
+                        ce: { result: 'Negative', confidence: '95.2%' },
+                        ratePerformance: { result: 'Negative', confidence: '94.3%' }
                     },
                     performance45C: {
-                        ce: { result: 'Positive', confidence: '96.8%' },
-                        cyclingLife: { result: 'Negative', confidence: '92.1%' },
-                        rateTest: { result: 'Negative', confidence: '94.3%' }
+                        cycleLife: { result: 'Positive', confidence: '96.8%' },
+                        ce: { result: 'Negative', confidence: '92.1%' }
                     }
                 },
                 {
                     id: Date.now() - 172800000,
                     timestamp: new Date(Date.now() - 172800000).toLocaleString('zh-CN'),
                     materials: {
-                        cathode: 'LFP',
-                        cathodeRatio: '60',
-                        anode: 'Graphite',
-                        anodeRatio: '25',
-                        electrolyte: 'Carbonate(EC/DMC)',
-                        electrolyteRatio: '15',
+                        batterySystem: 'NCM811 - 100%Si - Carbonate electrolyte',
                         additive: 'CCOCC',
                         additiveAmount: '1.5',
                         temperature: '45.0'
                     },
                     performance25C: {
-                        ce: { result: 'Positive', confidence: '97.8%' },
-                        cyclingLife: { result: 'Positive', confidence: '96.3%' }
+                        cycleLife: { result: 'Positive', confidence: '97.8%' },
+                        ce: { result: 'Positive', confidence: '96.3%' },
+                        ratePerformance: { result: 'Positive', confidence: '93.7%' }
                     },
                     performance45C: {
-                        ce: { result: 'Positive', confidence: '95.4%' },
-                        cyclingLife: { result: 'Positive', confidence: '93.7%' },
-                        rateTest: { result: 'Positive', confidence: '91.2%' }
+                        cycleLife: { result: 'Positive', confidence: '95.4%' },
+                        ce: { result: 'Positive', confidence: '91.2%' }
                     }
                 },
                 {
                     id: Date.now() - 259200000,
                     timestamp: new Date(Date.now() - 259200000).toLocaleString('zh-CN'),
                     materials: {
-                        cathode: 'NCM622',
-                        cathodeRatio: '55',
-                        anode: 'Li-Metal',
-                        anodeRatio: '20',
-                        electrolyte: 'Carbonate(EC/PC)',
-                        electrolyteRatio: '25',
+                        batterySystem: 'NCM811 - 12%Si/graphite - Carbonate electrolyte',
                         additive: 'O=c1occo1',
                         additiveAmount: '3.0',
                         temperature: '25.0'
                     },
                     performance25C: {
-                        ce: { result: 'Negative', confidence: '89.2%' },
-                        cyclingLife: { result: 'Negative', confidence: '87.5%' }
+                        cycleLife: { result: 'Negative', confidence: '89.2%' },
+                        ce: { result: 'Negative', confidence: '87.5%' },
+                        ratePerformance: { result: 'Negative', confidence: '88.9%' }
                     },
                     performance45C: {
-                        ce: { result: 'Negative', confidence: '85.6%' },
-                        cyclingLife: { result: 'Negative', confidence: '83.2%' },
-                        rateTest: { result: 'Negative', confidence: '88.9%' }
+                        cycleLife: { result: 'Negative', confidence: '85.6%' },
+                        ce: { result: 'Negative', confidence: '83.2%' }
                     }
                 }
             ];
@@ -3685,6 +4062,17 @@
 
             // 初始化菜单功能
             initializeMenu();
+            
+            // 初始化电池系统信息显示（默认不显示，因为还没有选择）
+            // showBatterySystemInfo();
+            
+            // 初始化计算按钮状态（默认禁用，因为没有选择电池系统）
+            const calculateButton = document.querySelector('.calculate-button');
+            if (calculateButton) {
+                calculateButton.disabled = true;
+                calculateButton.style.opacity = '0.5';
+                calculateButton.style.cursor = 'not-allowed';
+            }
         });
 
         // 菜单功能初始化
